@@ -35,18 +35,28 @@ def resize_window_cb(e):
     global blue_circle
     blue_circle = PhotoImage(file="./images/bluecircle.png")
     blue_circle = blue_circle.subsample(10)
-    my_canvas.create_image(100,100, image=blue_circle, anchor='nw')
+    my_canvas.create_image(100,100, image=blue_circle)
+
+    # Create a text
+    global my_text
+    my_text = my_canvas.create_text(100,100, text="hello", fill='#000000')
 
 
 def move(e):
+    # Update circle position
     global blue_circle
     blue_circle = PhotoImage(file="./images/bluecircle.png")
     blue_circle = blue_circle.subsample(10)     # Since we have to copy these lines so frequently, recommend we create a class or function
-    blue_circle_img = my_canvas.create_image(e.x,e.y, image=blue_circle)
+    blue_circle_img = my_canvas.create_image(e.x,100, image=blue_circle) # now locaked to the 100 pixel mark
+
+
+    # Update label position and coordinates
+    my_canvas.coords(my_text, e.x, 100)
+    my_canvas.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
+    my_canvas.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
     
-
-#     my_label.config(text="Coordinate: x:" + str(e.x) + " " + " y:" + str(e.y))
-
+    # Update label coordinates
+    my_label.config(text="Coordinate: x:" + str(e.x) + " " + " y:" + str(e.y))
 
 my_label = Label(root, text="")
 my_label.pack(pady=20)
