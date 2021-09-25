@@ -2,9 +2,14 @@ from tkinter import *
 from PIL import ImageTk, Image
 import os
 
+
 root = Tk()
 root.title('Test Coordinates')
 root.geometry("800x600")
+
+tk_legend = Tk()
+tk_legend.title('Selector')
+tk_legend.geometry("150x400")
 
 w = 600
 h = 400
@@ -14,6 +19,9 @@ y = h/2
 # Create the canvas
 my_canvas = Canvas(root, width=w, height=h, bg="white")
 my_canvas.pack(fill=BOTH, expand=True)
+
+leg_canvas = Canvas(tk_legend, width=w, height=h, bg="white")
+leg_canvas.pack(fill=BOTH, expand=True)
 
 # Add the image to the canvas
 
