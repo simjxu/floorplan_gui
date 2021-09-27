@@ -20,10 +20,15 @@ y = h/2
 my_canvas = Canvas(root, width=w, height=h, bg="white")
 my_canvas.pack(fill=BOTH, expand=True)
 
-leg_canvas = Canvas(tk_legend, width=w, height=h, bg="white")
-leg_canvas.pack(fill=BOTH, expand=True)
+# leg_canvas = Canvas(tk_legend, width=w, height=h, bg="white")
+# leg_canvas.pack(fill=BOTH, expand=True)
 
-# Add the image to the canvas
+# Add Checkboxes to the legend canvas
+var1 = IntVar()
+Checkbutton(tk_legend, text="male", variable=var1).grid(row=0, sticky=W)
+var2 = IntVar()
+Checkbutton(tk_legend, text="female", variable=var2).grid(row=1, sticky=W)
+print(str(var1))
 
 
 # Puts the image of the layout into the canvas and resizes it based upon the window size
@@ -66,8 +71,10 @@ def move(e):
     # Update label coordinates
     my_label.config(text="Coordinate: x:" + str(e.x) + " " + " y:" + str(e.y))
 
+# Add a label to the bottom of the main canvas
 my_label = Label(root, text="")
 my_label.pack(pady=20)
+
 
 # Button of mouse tracking
 my_canvas.bind('<B1-Motion>', move)
