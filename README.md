@@ -12,5 +12,7 @@ Intended to make it easier to create floorplans
 - User can name the different builds based upon CSV file
 
 ## Updates
+9/26/21: Moving towards having more classes in tkinter. Check out this link for two windows: https://stackoverflow.com/questions/16115378/tkinter-example-code-for-multiple-windows-why-wont-buttons-load-correctly
+- https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 9/23/21: Looks like I have to copy quite a few lines just to get it working. I should consider creating a class or function so that I don't have to copy all those lines to maintain the size
 Next item to do is see if we can lock the bluecircle to a line

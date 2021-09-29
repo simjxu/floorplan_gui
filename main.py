@@ -10,9 +10,16 @@ class Main(tk.Canvas):
         h = 400
         x = w/2
         y = h/2
-        tk.Canvas.__init__(self, width=w, height=h, bg="white")
+        self.canvas = tk.Canvas.__init__(self, width=w, height=h, bg="white")
         self.pack(fill=tk.BOTH, expand=True)
-
+        self.bind("<Configure>", self.resize_window_cb)
+    
+    def resize_window_cb(self, e):
+        global layout, layout_resized, layout2
+        layout = Image.open("./images/layout.png")
+        layout_resized = layout.resize((e.width, e.height), Image.ANTIALIAS)
+        layout2 = ImageTk.PhotoImage(layout_resized)
+        self.create_image(0,0, image=layout2, anchor='nw')
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
