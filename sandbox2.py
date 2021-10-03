@@ -1,58 +1,96 @@
 import tkinter as tk
 from tkinter import ttk
+from PIL import ImageTk, Image
+import os
+
 
 # root window
 root = tk.Tk()
-root.geometry("800x600")
-root.title('Login')
+root.geometry("1200x800")
+root.title('Floor Plan')
 
 # configure the grid
 # root.columnconfigure(0, weight=1)
-# root.columnconfigure(1, weight=3)
+# root.columnconfigure(1, weight=1)
+root.grid_columnconfigure(0, minsize=100)
+root.grid_columnconfigure(1, minsize=100)
+root.grid_columnconfigure(2, minsize=100)
+root.grid_columnconfigure(3, minsize=100)
 
 
-# # Months going horizontal on top
-# month1 = ttk.Label(root, text="Jan")
-# month1.grid(column=1, row=0, padx=40, pady=5)
 
-# month2 = ttk.Label(root, text="Feb")
-# month2.grid(column=2, row=0, padx=40, pady=5)
 
-# month3 = ttk.Label(root, text="Mar")
-# month3.grid(column=3, row=0, padx=40, pady=5)
 
-# # Builds going vertical on the left side
-# build1 = ttk.Label(root, text="System")
-# build1.grid(column=0, row=1, padx=10, pady=80)
+# Months going horizontal on top
+month1 = tk.Label(root, text="  Jan", relief="ridge")
+month1.grid(column=1, row=0, padx=0, pady=0,)
 
-# build1 = ttk.Label(root, text="EVT")
-# build1.grid(column=0, row=2, padx=10, pady=80)
+month2 = tk.Label(root, text="  Feb")
+month2.grid(column=2, row=0, padx=0, pady=0,)
 
-# Insert Frame Starting at the bottom right corner of the 0,0 cell,
-# Ending at the 
+month3 = tk.Label(root, text="  Mar")
+month3.grid(column=3, row=0, padx=0, pady=0,)
 
-# timeline1 = tk.Frame(root, width=100, height=50, bg=="red", width=100)
-timeline1 = tk.Frame(root,width=100,height=50,  
-       highlightcolor="yellow",highlightbackground="red",  
-       highlightthickness=10)
-# timeline1.grid(column=1, row=1, columnspan=3, rowspan=1)
+# Builds going vertical on the left side
+build1 = tk.Label(root, text="System")
+build1.grid(column=0, row=1, padx=10, pady=80)
 
-# topleft_ptr = 
-# botright_ptr = 
+build1 = tk.Label(root, text="EVT")
+build1.grid(column=0, row=2, padx=10, pady=80)
 
-# username_entry = ttk.Entry(root)
-# username_entry.grid(column=1, row=0, sticky=tk.E, padx=5, pady=5)
+# Create the Canvas
 
-# # password
-# password_label = ttk.Label(root, text="Password:")
-# password_label.grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
+my_canvas = tk.Canvas(root)
+my_canvas.grid(column=1, row=1, columnspan=3, rowspan=1)
 
-# password_entry = ttk.Entry(root,  show="*")
-# password_entry.grid(column=1, row=1, sticky=tk.E, padx=5, pady=5)
+my_canvas2 = tk.Canvas(root)
+my_canvas2.grid(column=1, row=2, columnspan=3, rowspan=1)
 
-# # login button
-# login_button = ttk.Button(root, text="Login")
-# login_button.grid(column=1, row=3, sticky=tk.E, padx=5, pady=5)
+# Add the circle into the window
+global blue_circle
+blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
+blue_circle = blue_circle.subsample(30)
+my_canvas.create_image(100,100,image=blue_circle)
+
+global blue_circle2
+blue_circle2 = tk.PhotoImage(file="./images/bluecircle.png")
+blue_circle2 = blue_circle2.subsample(30)
+my_canvas2.create_image(100,100,image=blue_circle2)
+
+# Add the text
+global my_text
+my_text = my_canvas.create_text(100,100, text="hello", fill='white')
+
+global my_text2
+my_text2 = my_canvas2.create_text(100,100, text="hello", fill='white')
+
+def move(e):
+	global blue_circle
+	blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
+	blue_circle = blue_circle.subsample(30)     # Since we have to copy these lines so frequently, recommend we create a class or function
+	blue_circle_img = my_canvas.create_image(e.x,100, image=blue_circle) # now locaked to the 100 pixel mark
+
+	# Update label position and coordinates
+	my_canvas.coords(my_text, e.x, 120)
+	my_canvas.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
+	my_canvas.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
+
+	
+
+def move2(e):
+	global blue_circle2
+	blue_circle2 = tk.PhotoImage(file="./images/bluecircle.png")
+	blue_circle2 = blue_circle2.subsample(30)     # Since we have to copy these lines so frequently, recommend we create a class or function
+	blue_circle_img2 = my_canvas2.create_image(e.x,100, image=blue_circle2) # now locaked to the 100 pixel mark
+
+	# Update label position and coordinates
+	my_canvas2.coords(my_text2, e.x, 120)
+	my_canvas2.tag_raise(my_text2)            # Bring the text to the front, otherwise it is behind the circle.
+	my_canvas2.itemconfig(my_text2, text=str(e.x) + "," + str(e.y))
+
+
+my_canvas.bind('<B1-Motion>', move)
+my_canvas2.bind('<B1-Motion>', move2)
 
 
 root.mainloop()
