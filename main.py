@@ -5,9 +5,10 @@ from PIL import ImageTk, Image
 import os
 
 class Timeline(tk.Canvas):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, **kwargs):
         self.canvas = tk.Canvas.__init__(self)
-        self.grid(column=1, row=1, columnspan=3, rowspan=1)
+        self.grid(column=kwargs['column'], row=kwargs['row'], \
+            columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
 
         # Add the circle plus accompanying text
         global blue_circle
@@ -61,8 +62,11 @@ class MainApplication(tk.Frame):
         self.month3.grid(column=3, row=0, padx=0, pady=0)
 
         # # Try putting 2 timelines on
-        firsttimeline = Timeline(self)
+        firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1)
         firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
+
+        secondtimeline = Timeline(self, column=1, row=2, columnspan=3, rowspan=1)
+        secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
         # Builds going vertical on the left side
         self.build1 = tk.Label(parent, text="System")
