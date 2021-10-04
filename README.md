@@ -15,6 +15,8 @@ Intended to make it easier to create floorplans
 10/3/21: Updated main.py to at least be working. I'm not sure why I have to use parent (tk.Tk()) for the Label, but it won't work if I try to createa  label within the Frame.
 Next steps is to add the calendar library into the application, and translate a coordinate (100)--> a date
 Also, the class Timeline needs to take in arguments in order for me to define what grid placement the timeline should be on.
+Also, working with an image for a circle is too hard. We are going to switch to the build in circles
+https://stackoverflow.com/questions/17985216/simpler-way-to-draw-a-circle-with-tkinter 
 
 9/26/21: Moving towards having more classes in tkinter. Check out this link for two windows: https://stackoverflow.com/questions/16115378/tkinter-example-code-for-multiple-windows-why-wont-buttons-load-correctly
 - https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application

@@ -11,10 +11,10 @@ class Timeline(tk.Canvas):
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
 
         # Add the circle plus accompanying text
-        global blue_circle
-        blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
-        blue_circle = blue_circle.subsample(30)
-        self.create_image(100,100,image=blue_circle)
+        # global blue_circle
+        # blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
+        # blue_circle = blue_circle.subsample(30)
+        # self.create_image(100,100,image=blue_circle)
 
         global my_text
         my_text = self.create_text(100,100, text="hello", fill='white')
