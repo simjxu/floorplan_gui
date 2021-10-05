@@ -8,7 +8,7 @@ import math
 START_MONTH = 1 # Month to begin
 END_MONTH = 3  # Month to end
 
-# Add the _create_circle function ot the Canvas function
+# Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
@@ -31,6 +31,7 @@ class Timeline(tk.Canvas):
         my_text = self.create_text(100,100, text="hello", fill='white')
     
     def update_date(self, x):
+        # Create the text that goes under the marker indicating the date
         # x is the position that the mouse moves the marker to
         if x < 100:
             return str(START_MONTH) + "/" + \
@@ -44,19 +45,21 @@ class Timeline(tk.Canvas):
 
     
     def move_cb(self, e):
-        circle_coords = self.coords(my_circle)
-        x0 = circle_coords[0]
+        # Callback when moving the marker
+        circle_coords = self.coords(my_circle)      # Returns top left and bottom right corners
+        x0 = circle_coords[0]   # currently unused, go off of the mouse position
         y0 = circle_coords[1]
-        x1 = circle_coords[2]
+        x1 = circle_coords[2]   # currently unused, go off of the mouse position
         y1 = circle_coords[3]
         self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
-        # Update label position and coordinates
+        # Update label position and date
         self.coords(my_text, e.x, 120)
         self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
         # self.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
         self.itemconfig(my_text, text=str(self.update_date(e.x)))
 
+    # BELOW ITEMS ARE NOT COMPLETE
     def resize_window_cb(self, e):
         global layout, layout_resized, layout2
         layout = Image.open("./images/layout.png")
