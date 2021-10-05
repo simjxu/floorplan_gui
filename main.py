@@ -4,13 +4,23 @@ import tkinter as tk
 from PIL import ImageTk, Image
 import os
 
+# Add the _create_circle function ot the Canvas function
+def _create_circle(self, x, y, r, **kwargs):
+    return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
+tk.Canvas.create_circle = _create_circle
+
 class Timeline(tk.Canvas):
+    MARKER_RADIUS = 6 # All marker radii will be the same
+
     def __init__(self, parent, **kwargs):
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
 
         # Add the circle plus accompanying text
+        global my_circle
+        my_circle = self.create_circle(100, 100, self.MARKER_RADIUS, fill="blue", \
+            outline="white", width=2)
         # global blue_circle
         # blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
         # blue_circle = blue_circle.subsample(30)
@@ -21,10 +31,12 @@ class Timeline(tk.Canvas):
 
     
     def move_cb(self, e):
-        global blue_circle
-        blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
-        blue_circle = blue_circle.subsample(30)     # Since we have to copy these lines so frequently, recommend we create a class or function
-        blue_circle_img = self.create_image(e.x,100, image=blue_circle) # now locaked to the 100 pixel mark
+        circle_coords = self.coords(my_circle)
+        x0 = circle_coords[0]
+        y0 = circle_coords[1]
+        x1 = circle_coords[2]
+        y1 = circle_coords[3]
+        self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
         # Update label position and coordinates
         self.coords(my_text, e.x, 120)

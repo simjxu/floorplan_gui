@@ -12,6 +12,9 @@ Intended to make it easier to create floorplans
 - User can name the different builds based upon CSV file
 
 ## Updates
+10/4/21: Update the Circle to use the built in circles. If here's time, add in calendar conversion
+Next time, create input for the calendar range
+
 10/3/21: Updated main.py to at least be working. I'm not sure why I have to use parent (tk.Tk()) for the Label, but it won't work if I try to createa  label within the Frame.
 Next steps is to add the calendar library into the application, and translate a coordinate (100)--> a date
 Also, the class Timeline needs to take in arguments in order for me to define what grid placement the timeline should be on.

@@ -19,7 +19,7 @@ def _create_circle_arc(self, x, y, r, **kwargs):
     return self.create_arc(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle_arc = _create_circle_arc
 
-canvas.create_circle(100, 120, 50, fill="blue", outline="#DDD", width=4)
+canvas.create_circle(100, 100, 50, fill="blue", outline="yellow", width=4)
 canvas.create_circle_arc(100, 120, 48, fill="green", outline="", start=45, end=140)
 canvas.create_circle_arc(100, 120, 48, fill="green", outline="", start=275, end=305)
 canvas.create_circle_arc(100, 120, 45, style="arc", outline="white", width=6,
