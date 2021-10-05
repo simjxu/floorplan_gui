@@ -3,6 +3,10 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 import os
+import math
+
+START_MONTH = 1 # Month to begin
+END_MONTH = 3  # Month to end
 
 # Add the _create_circle function ot the Canvas function
 def _create_circle(self, x, y, r, **kwargs):
@@ -13,6 +17,7 @@ class Timeline(tk.Canvas):
     MARKER_RADIUS = 6 # All marker radii will be the same
 
     def __init__(self, parent, **kwargs):
+        # Create canvas that covers the the entire row
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
@@ -21,13 +26,21 @@ class Timeline(tk.Canvas):
         global my_circle
         my_circle = self.create_circle(100, 100, self.MARKER_RADIUS, fill="blue", \
             outline="white", width=2)
-        # global blue_circle
-        # blue_circle = tk.PhotoImage(file="./images/bluecircle.png")
-        # blue_circle = blue_circle.subsample(30)
-        # self.create_image(100,100,image=blue_circle)
 
         global my_text
         my_text = self.create_text(100,100, text="hello", fill='white')
+    
+    def update_date(self, x):
+        # x is the position that the mouse moves the marker to
+        if x < 100:
+            return str(START_MONTH) + "/" + \
+                str(math.ceil((x+1)/100*MainApplication.NUMBER_OF_DAYS[0]))
+        elif x < 200:
+            return str(START_MONTH+1) + "/" + \
+                str(math.ceil((x-99)/100*MainApplication.NUMBER_OF_DAYS[1]))
+        elif x < 300:
+            return str(START_MONTH+2) + "/" + \
+                str(math.ceil((x-199)/100*MainApplication.NUMBER_OF_DAYS[2]))
 
     
     def move_cb(self, e):
@@ -41,7 +54,8 @@ class Timeline(tk.Canvas):
         # Update label position and coordinates
         self.coords(my_text, e.x, 120)
         self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-        self.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
+        # self.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
+        self.itemconfig(my_text, text=str(self.update_date(e.x)))
 
     def resize_window_cb(self, e):
         global layout, layout_resized, layout2
@@ -52,6 +66,8 @@ class Timeline(tk.Canvas):
     
     
 class MainApplication(tk.Frame):
+    NUMBER_OF_DAYS = [31, 28, 31]
+
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         
@@ -97,22 +113,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     MainApplication(root)
     root.mainloop()
-
-
-# class Navbar(tk.Frame): ...
-# class Toolbar(tk.Frame): ...
-# class Statusbar(tk.Frame): ...
-# class Main(tk.Frame): ...
-
-# class MainApplication(tk.Frame):
-#     def __init__(self, parent, *args, **kwargs):
-#         tk.Frame.__init__(self, parent, *args, **kwargs)
-#         self.statusbar = Statusbar(self, ...)
-#         self.toolbar = Toolbar(self, ...)
-#         self.navbar = Navbar(self, ...)
-#         self.main = Main(self, ...)d
-
-#         self.statusbar.pack(side="bottom", fill="x")
-#         self.toolbar.pack(side="top", fill="x")
-#         self.navbar.pack(side="left", fill="y")
-#         self.main.pack(side="right", fill="both", expand=True)
