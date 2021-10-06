@@ -13,7 +13,8 @@ Intended to make it easier to create floorplans
 
 ## Updates
 10/4/21: Update the Circle to use the built in circles. If here's time, add in calendar conversion
-Next time, create input for the calendar range
+Create input for the calendar range
+Next time: use the calendar library to input dates. Also, parse a text file (yaml?) for dates and be able to save them
 
 10/3/21: Updated main.py to at least be working. I'm not sure why I have to use parent (tk.Tk()) for the Label, but it won't work if I try to createa  label within the Frame.
 Next steps is to add the calendar library into the application, and translate a coordinate (100)--> a date

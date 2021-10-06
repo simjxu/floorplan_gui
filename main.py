@@ -4,9 +4,13 @@ import tkinter as tk
 from PIL import ImageTk, Image
 import os
 import math
+import calendar
+import datetime
 
 START_MONTH = 1 # Month to begin
+START_YEAR = 2021   # Associated year
 END_MONTH = 3  # Month to end
+END_YEAR = 2021     # Associated year
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
@@ -42,6 +46,8 @@ class Timeline(tk.Canvas):
         elif x < 300:
             return str(START_MONTH+2) + "/" + \
                 str(math.ceil((x-199)/100*MainApplication.NUMBER_OF_DAYS[2]))
+        else:
+            print("Error: pixels out of bounds")
 
     
     def move_cb(self, e):
@@ -74,6 +80,12 @@ class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         
+        # Handle months
+        # Abbreviated names of month
+        print(calendar.month_abbr[START_MONTH])
+        # Number of days in each month
+        print(calendar.monthrange(START_YEAR,START_MONTH)[1])
+
         # Configure size
         parent.grid_columnconfigure(0, minsize=100)
         parent.grid_columnconfigure(1, minsize=100)
