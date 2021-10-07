@@ -7,10 +7,12 @@ import math
 import calendar
 import datetime
 
-START_MONTH = 1 # Month to begin
+START_MONTH = 3 # Month to begin
 START_YEAR = 2021   # Associated year
-END_MONTH = 3  # Month to end
+END_MONTH = 5  # Month to end
 END_YEAR = 2021     # Associated year
+
+BUILDS = ["SYSTEM", "EVT"]
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
@@ -76,33 +78,25 @@ class Timeline(tk.Canvas):
     
 class MainApplication(tk.Frame):
     NUMBER_OF_DAYS = [31, 28, 31]
+    EXTRA_SPACES = "  "
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         
-        # Handle months
-        # Abbreviated names of month
-        print(calendar.month_abbr[START_MONTH])
-        # Number of days in each month
-        print(calendar.monthrange(START_YEAR,START_MONTH)[1])
+        # # Handle months
+        # # Abbreviated names of month
+        # print(calendar.month_abbr[START_MONTH])
+        # # Number of days in each month
+        # print(calendar.monthrange(START_YEAR,START_MONTH)[1])
 
         # Configure size
-        parent.grid_columnconfigure(0, minsize=100)
-        parent.grid_columnconfigure(1, minsize=100)
-        parent.grid_columnconfigure(2, minsize=100)
-        parent.grid_columnconfigure(3, minsize=100)
+        root.grid_columnconfigure(0, minsize=100)
+        root.grid_columnconfigure(1, minsize=100)
+        root.grid_columnconfigure(2, minsize=100)
+        root.grid_columnconfigure(3, minsize=100)
 
-        # Months going horizontal on top
-        # Not sure why the labels have to be created with the parent,
-        # maybe someday I can fix this.
-        self.month1 = tk.Label(parent, text="  Jan")
-        self.month1.grid(column=1, row=0, padx=0, pady=0)
-
-        self.month2 = tk.Label(parent, text="  Feb")
-        self.month2.grid(column=2, row=0, padx=0, pady=0)
-
-        self.month3 = tk.Label(parent, text="  Mar")
-        self.month3.grid(column=3, row=0, padx=0, pady=0)
+        # Create top row of months
+        self.create_months()
 
         # # Try putting 2 timelines on
         firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1)
@@ -117,6 +111,27 @@ class MainApplication(tk.Frame):
 
         self.build1 = tk.Label(parent, text="EVT")
         self.build1.grid(column=0, row=2, padx=10, pady=80)
+
+    # Function to get the months and create array of days
+    def create_months(self):
+        monthdays_arr = []
+        start_date = datetime.datetime(START_YEAR,START_MONTH,1)
+        end_date = datetime.datetime(END_YEAR, END_MONTH, 1)
+        num_months = (end_date.year - start_date.year) * 12 \
+            + (end_date.month - start_date.month) + 1
+        
+        label_arr = []
+
+        for i in range(num_months):
+            month_name = calendar.month_abbr[START_MONTH+i]
+
+            label_arr.append(tk.Label(root, \
+                text=self.EXTRA_SPACES+calendar.month_abbr[START_MONTH+i]))
+            label_arr[i].grid(column=i+1, row=0, padx=0, pady=0)
+            # Create an array of objects and insert each of the new objects in there.
+            # https://stackoverflow.com/questions/43323865/how-to-make-an-array-of-objects-in-python/43323943
+
+        return monthdays_arr
 
 
 # class Legend(tk.Frame):

@@ -21,15 +21,26 @@ root.grid_columnconfigure(3, minsize=100)
 
 
 
-# Months going horizontal on top
-month1 = tk.Label(root, text="  Jan", relief="ridge")
-month1.grid(column=1, row=0, padx=0, pady=0,)
+# # Months going horizontal on top
+# month1 = tk.Label(root, text="  Jan")
+# month1.grid(column=1, row=0, padx=0, pady=0,)
 
-month2 = tk.Label(root, text="  Feb")
-month2.grid(column=2, row=0, padx=0, pady=0,)
+# month2 = tk.Label(root, text="  Feb")
+# month2.grid(column=2, row=0, padx=0, pady=0,)
 
-month3 = tk.Label(root, text="  Mar")
-month3.grid(column=3, row=0, padx=0, pady=0,)
+# month3 = tk.Label(root, text="  Mar")
+# month3.grid(column=3, row=0, padx=0, pady=0,)
+
+# Same thing as above with an array
+label_arr = []
+label_arr.append(tk.Label(root, text="  Jan"))
+label_arr[0].grid(column=1, row=0, padx=0, pady=0)
+
+label_arr.append(tk.Label(root, text="  Feb"))
+label_arr[1].grid(column=2, row=0, padx=0, pady=0)
+
+label_arr.append(tk.Label(root, text="  Mar"))
+label_arr[2].grid(column=3, row=0, padx=0, pady=0,)
 
 # Builds going vertical on the left side
 build1 = tk.Label(root, text="System")
@@ -37,6 +48,9 @@ build1.grid(column=0, row=1, padx=10, pady=80)
 
 build1 = tk.Label(root, text="EVT")
 build1.grid(column=0, row=2, padx=10, pady=80)
+
+
+
 
 # Create the Canvas
 
