@@ -7,10 +7,10 @@ import math
 import calendar
 import datetime
 
-START_MONTH = 3 # Month to begin
+START_MONTH = 11 # Month to begin
 START_YEAR = 2021   # Associated year
-END_MONTH = 5  # Month to end
-END_YEAR = 2021     # Associated year
+END_MONTH = 1  # Month to end
+END_YEAR = 2022     # Associated year
 
 BUILDS = ["SYSTEM", "EVT"]
 
@@ -77,8 +77,7 @@ class Timeline(tk.Canvas):
     
     
 class MainApplication(tk.Frame):
-    NUMBER_OF_DAYS = [31, 28, 31]
-    EXTRA_SPACES = "  "
+    _NUMBER_OF_DAYS = []
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -95,8 +94,8 @@ class MainApplication(tk.Frame):
         root.grid_columnconfigure(2, minsize=100)
         root.grid_columnconfigure(3, minsize=100)
 
-        # Create top row of months
-        self.create_months()
+        # Create top row of months, get array of days
+        self.NUMBER_OF_DAYS = self.create_months()
 
         # # Try putting 2 timelines on
         firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1)
@@ -115,21 +114,28 @@ class MainApplication(tk.Frame):
     # Function to get the months and create array of days
     def create_months(self):
         monthdays_arr = []
+
+        # Calculate the number of months between the date ranges
         start_date = datetime.datetime(START_YEAR,START_MONTH,1)
         end_date = datetime.datetime(END_YEAR, END_MONTH, 1)
         num_months = (end_date.year - start_date.year) * 12 \
             + (end_date.month - start_date.month) + 1
-        
-        label_arr = []
 
+        # Create the month labels on the first row
+        label_arr = []
+        year = START_YEAR
+        month = START_MONTH
         for i in range(num_months):
-            month_name = calendar.month_abbr[START_MONTH+i]
+            # Account for months rollover at end of year
+            if month==13:
+                month = 1
+                year += 1
 
             label_arr.append(tk.Label(root, \
-                text=self.EXTRA_SPACES+calendar.month_abbr[START_MONTH+i]))
+                text="  "+calendar.month_abbr[month]))
             label_arr[i].grid(column=i+1, row=0, padx=0, pady=0)
-            # Create an array of objects and insert each of the new objects in there.
-            # https://stackoverflow.com/questions/43323865/how-to-make-an-array-of-objects-in-python/43323943
+            monthdays_arr.append(calendar.monthrange(year,month)[1])
+            month += 1
 
         return monthdays_arr
 
