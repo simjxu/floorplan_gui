@@ -7,10 +7,10 @@ import math
 import calendar
 import datetime
 
-START_MONTH = 11 # Month to begin
+START_MONTH = 1 # Month to begin
 START_YEAR = 2021   # Associated year
-END_MONTH = 1  # Month to end
-END_YEAR = 2022     # Associated year
+END_MONTH = 3  # Month to end
+END_YEAR = 2021     # Associated year
 
 BUILDS = ["SYSTEM", "EVT"]
 
@@ -27,6 +27,9 @@ class Timeline(tk.Canvas):
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
+        
+        # Get number of days
+        self.num_days = kwargs['num_days']
 
         # Add the circle plus accompanying text
         global my_circle
@@ -35,19 +38,22 @@ class Timeline(tk.Canvas):
 
         global my_text
         my_text = self.create_text(100,100, text="hello", fill='white')
+
+        # for i in range(3):
+        #     print(parent._NUMBER_OF_DAYS[i])
     
     def update_date(self, x):
         # Create the text that goes under the marker indicating the date
         # x is the position that the mouse moves the marker to
         if x < 100:
             return str(START_MONTH) + "/" + \
-                str(math.ceil((x+1)/100*MainApplication.NUMBER_OF_DAYS[0]))
+                str(math.ceil((x+1)/100*self.num_days[0]))
         elif x < 200:
             return str(START_MONTH+1) + "/" + \
-                str(math.ceil((x-99)/100*MainApplication.NUMBER_OF_DAYS[1]))
+                str(math.ceil((x-99)/100*self.num_days[1]))
         elif x < 300:
             return str(START_MONTH+2) + "/" + \
-                str(math.ceil((x-199)/100*MainApplication.NUMBER_OF_DAYS[2]))
+                str(math.ceil((x-199)/100*self.num_days[2]))
         else:
             print("Error: pixels out of bounds")
 
@@ -64,7 +70,6 @@ class Timeline(tk.Canvas):
         # Update label position and date
         self.coords(my_text, e.x, 120)
         self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-        # self.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
         self.itemconfig(my_text, text=str(self.update_date(e.x)))
 
     # BELOW ITEMS ARE NOT COMPLETE
@@ -95,13 +100,15 @@ class MainApplication(tk.Frame):
         root.grid_columnconfigure(3, minsize=100)
 
         # Create top row of months, get array of days
-        self.NUMBER_OF_DAYS = self.create_months()
+        self._NUMBER_OF_DAYS = self.create_months()
 
         # # Try putting 2 timelines on
-        firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1)
+        firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1, \
+            num_days=self._NUMBER_OF_DAYS)
         firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
 
-        secondtimeline = Timeline(self, column=1, row=2, columnspan=3, rowspan=1)
+        secondtimeline = Timeline(self, column=1, row=2, columnspan=3, rowspan=1, \
+            num_days=self._NUMBER_OF_DAYS)
         secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
         # Builds going vertical on the left side
@@ -139,6 +146,9 @@ class MainApplication(tk.Frame):
 
         return monthdays_arr
 
+    def create_builds(self):
+        a = 0
+        return a
 
 # class Legend(tk.Frame):
 #     def __init__(self, parent, *args, **kwargs):
