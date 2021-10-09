@@ -7,12 +7,13 @@ import math
 import calendar
 import datetime
 
-START_MONTH = 12 # Month to begin
+START_MONTH = 10 # Month to begin
 START_YEAR = 2021   # Associated year
-END_MONTH = 5  # Month to end
+END_MONTH = 4  # Month to end
 END_YEAR = 2022     # Associated year
 
-_NUMCOLS = 7
+# Need to input the values to ensure the columns and canvas sizes are correct
+_NUMCOLS = 8
 _NUMROWS = 3
 _MINSIZE = 100
 
@@ -27,15 +28,16 @@ class Timeline(tk.Canvas):
     MARKER_RADIUS = 6 # All marker radii will be the same
 
     def __init__(self, parent, **kwargs):
+        # Get number of days and months
+        self.num_days = kwargs['num_days']
+        self.num_months = kwargs['num_months']
+        
         # Create canvas that covers the the entire row
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
-        self.configure(width=100*(_NUMCOLS-1), height=100)
+        self.configure(width=100*(self.num_months), height=100)
         
-        # Get number of days
-        self.num_days = kwargs['num_days']
-
         # Add the circle plus accompanying text
         global my_circle
         my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
@@ -85,8 +87,8 @@ class Timeline(tk.Canvas):
     
 class MainApplication(tk.Frame):
     _NUMBER_OF_DAYS = []
+    _NUMBER_OF_MONTHS = 0
     
-
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
@@ -98,15 +100,16 @@ class MainApplication(tk.Frame):
             root.columnconfigure(i, minsize=_MINSIZE)
 
         # Create top row of months, get array of days, set column/rowspan
+        self._NUMBER_OF_MONTHS = self.get_num_months()
         self._NUMBER_OF_DAYS = self.create_months()
 
-        # # Try putting 2 timelines on
+        # # Try putting 2 timelines on -----FIX: need to create an array of Timelines
         firsttimeline = Timeline(self, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
-            num_days=self._NUMBER_OF_DAYS)
+            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
         firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
 
         secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
-            num_days=self._NUMBER_OF_DAYS)
+            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
         secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
         # Builds going vertical on the left side
@@ -116,15 +119,17 @@ class MainApplication(tk.Frame):
         self.build1 = tk.Label(parent, text="EVT")
         self.build1.grid(column=0, row=2, padx=10, pady=80)
 
+    # Function to count number of months based upon inputs
+    def get_num_months(self):
+        start_date = datetime.datetime(START_YEAR,START_MONTH,1)
+        end_date = datetime.datetime(END_YEAR, END_MONTH, 1)
+        return (end_date.year - start_date.year) * 12 \
+            + (end_date.month - start_date.month) + 1
+
     # Function to get the months and create array of days
     def create_months(self):
         monthdays_arr = []
-
-        # Calculate the number of months between the date ranges
-        start_date = datetime.datetime(START_YEAR,START_MONTH,1)
-        end_date = datetime.datetime(END_YEAR, END_MONTH, 1)
-        num_months = (end_date.year - start_date.year) * 12 \
-            + (end_date.month - start_date.month) + 1
+        num_months = self._NUMBER_OF_MONTHS
 
         # Create the month labels on the first row
         label_arr = []
