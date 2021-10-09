@@ -4,9 +4,20 @@ import tkinter as tk
 from PIL import ImageTk, Image
 import os
 import math
+import calendar
+import datetime
 
-START_MONTH = 1 # Month to begin
-END_MONTH = 3  # Month to end
+START_MONTH = 10 # Month to begin
+START_YEAR = 2021   # Associated year
+END_MONTH = 4  # Month to end
+END_YEAR = 2022     # Associated year
+
+# Need to input the values to ensure the columns and canvas sizes are correct
+_NUMCOLS = 8
+_NUMROWS = 3
+_MINSIZE = 100
+
+BUILDS = ["SYSTEM", "EVT"]
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
@@ -17,31 +28,38 @@ class Timeline(tk.Canvas):
     MARKER_RADIUS = 6 # All marker radii will be the same
 
     def __init__(self, parent, **kwargs):
+        # Get number of days and months
+        self.num_days = kwargs['num_days']
+        self.num_months = kwargs['num_months']
+        
         # Create canvas that covers the the entire row
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
-
+        self.configure(width=100*(self.num_months), height=100)
+        
         # Add the circle plus accompanying text
         global my_circle
-        my_circle = self.create_circle(100, 100, self.MARKER_RADIUS, fill="blue", \
+        my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
             outline="white", width=2)
 
         global my_text
-        my_text = self.create_text(100,100, text="hello", fill='white')
+        my_text = self.create_text(50, 50, text="hello", fill='white')
     
     def update_date(self, x):
         # Create the text that goes under the marker indicating the date
         # x is the position that the mouse moves the marker to
-        if x < 100:
-            return str(START_MONTH) + "/" + \
-                str(math.ceil((x+1)/100*MainApplication.NUMBER_OF_DAYS[0]))
-        elif x < 200:
-            return str(START_MONTH+1) + "/" + \
-                str(math.ceil((x-99)/100*MainApplication.NUMBER_OF_DAYS[1]))
-        elif x < 300:
-            return str(START_MONTH+2) + "/" + \
-                str(math.ceil((x-199)/100*MainApplication.NUMBER_OF_DAYS[2]))
+        # 1. Divide the pixel count by 100
+        # 2. Round down to integer
+        # 3. Map the integer to the month Start Month + integer
+
+        month_iter = math.floor(x/100)
+        month_num = START_MONTH+month_iter
+        month_num = month_num if month_num <= 12 else month_num-12  # Rollover to January
+
+        return str(month_num) + "/" + \
+            str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
+        # TODO: Set bounds so that the marker doesn't go out of bounds
 
     
     def move_cb(self, e):
@@ -54,9 +72,8 @@ class Timeline(tk.Canvas):
         self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
         # Update label position and date
-        self.coords(my_text, e.x, 120)
+        self.coords(my_text, e.x, 60)
         self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-        # self.itemconfig(my_text, text=str(e.x) + "," + str(e.y))
         self.itemconfig(my_text, text=str(self.update_date(e.x)))
 
     # BELOW ITEMS ARE NOT COMPLETE
@@ -69,34 +86,30 @@ class Timeline(tk.Canvas):
     
     
 class MainApplication(tk.Frame):
-    NUMBER_OF_DAYS = [31, 28, 31]
-
+    _NUMBER_OF_DAYS = []
+    _NUMBER_OF_MONTHS = 0
+    
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        
-        # Configure size
-        parent.grid_columnconfigure(0, minsize=100)
-        parent.grid_columnconfigure(1, minsize=100)
-        parent.grid_columnconfigure(2, minsize=100)
-        parent.grid_columnconfigure(3, minsize=100)
+        self.parent = parent
 
-        # Months going horizontal on top
-        # Not sure why the labels have to be created with the parent,
-        # maybe someday I can fix this.
-        self.month1 = tk.Label(parent, text="  Jan")
-        self.month1.grid(column=1, row=0, padx=0, pady=0)
+        # Configure size of the grid on root
+        for i in range(_NUMCOLS):
+            root.columnconfigure(i, minsize=_MINSIZE)
+        for i in range(_NUMROWS):
+            root.columnconfigure(i, minsize=_MINSIZE)
 
-        self.month2 = tk.Label(parent, text="  Feb")
-        self.month2.grid(column=2, row=0, padx=0, pady=0)
+        # Create top row of months, get array of days, set column/rowspan
+        self._NUMBER_OF_MONTHS = self.get_num_months()
+        self._NUMBER_OF_DAYS = self.create_months()
 
-        self.month3 = tk.Label(parent, text="  Mar")
-        self.month3.grid(column=3, row=0, padx=0, pady=0)
-
-        # # Try putting 2 timelines on
-        firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1)
+        # # Try putting 2 timelines on -----FIX: need to create an array of Timelines
+        firsttimeline = Timeline(self, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
+            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
         firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
 
-        secondtimeline = Timeline(self, column=1, row=2, columnspan=3, rowspan=1)
+        secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
+            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
         secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
         # Builds going vertical on the left side
@@ -106,6 +119,39 @@ class MainApplication(tk.Frame):
         self.build1 = tk.Label(parent, text="EVT")
         self.build1.grid(column=0, row=2, padx=10, pady=80)
 
+    # Function to count number of months based upon inputs
+    def get_num_months(self):
+        start_date = datetime.datetime(START_YEAR,START_MONTH,1)
+        end_date = datetime.datetime(END_YEAR, END_MONTH, 1)
+        return (end_date.year - start_date.year) * 12 \
+            + (end_date.month - start_date.month) + 1
+
+    # Function to get the months and create array of days
+    def create_months(self):
+        monthdays_arr = []
+        num_months = self._NUMBER_OF_MONTHS
+
+        # Create the month labels on the first row
+        label_arr = []
+        year = START_YEAR
+        month = START_MONTH
+        for i in range(num_months):
+            # Account for months rollover at end of year
+            if month==13:
+                month = 1
+                year += 1
+
+            label_arr.append(tk.Label(root, \
+                text="  "+calendar.month_abbr[month]))
+            label_arr[i].grid(column=i+1, row=0, padx=0, pady=0)
+            monthdays_arr.append(calendar.monthrange(year,month)[1])
+            month += 1
+
+        return monthdays_arr
+
+    def create_builds(self):
+        a = 0
+        return a
 
 # class Legend(tk.Frame):
 #     def __init__(self, parent, *args, **kwargs):
@@ -114,5 +160,6 @@ class MainApplication(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.geometry("800x600")
     MainApplication(root)
     root.mainloop()
