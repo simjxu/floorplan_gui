@@ -33,8 +33,8 @@ build1.grid(column=0, row=1)
 
 # Place a canvas underneath
 my_canvas = tk.Canvas(root)
-my_canvas.configure(bg='white', height=50, width=300)
-my_canvas.grid(column=1, row=1, sticky='w', columnspan=3)
+my_canvas.configure(bg='white', height=50, width=100*(NUMCOLS-1))
+my_canvas.grid(column=1, row=1, sticky='w', columnspan=NUMCOLS-1)
 
 
 

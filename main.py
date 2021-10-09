@@ -12,6 +12,10 @@ START_YEAR = 2021   # Associated year
 END_MONTH = 5  # Month to end
 END_YEAR = 2022     # Associated year
 
+_NUMCOLS = 7
+_NUMROWS = 3
+_MINSIZE = 100
+
 BUILDS = ["SYSTEM", "EVT"]
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
@@ -27,7 +31,7 @@ class Timeline(tk.Canvas):
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
-        self.configure(height=100)
+        self.configure(width=100*(_NUMCOLS-1), height=100)
         
         # Get number of days
         self.num_days = kwargs['num_days']
@@ -81,34 +85,27 @@ class Timeline(tk.Canvas):
     
 class MainApplication(tk.Frame):
     _NUMBER_OF_DAYS = []
-    _COLUMNSPAN = 6
+    
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
 
-        # Configure size
-        root.grid_columnconfigure(0, uniform="col")
-        root.grid_columnconfigure(1, uniform="col")
-        root.grid_columnconfigure(2, uniform="col")
-        root.grid_columnconfigure(3, uniform="col")
-        root.grid_columnconfigure(4, uniform="col")
-        root.grid_columnconfigure(5, uniform="col")
-        # root.grid_columnconfigure(6, minsize=100)
-        # root.grid_columnconfigure(7, minsize=100)
-        # root.grid_columnconfigure(8, minsize=100)
-        # root.grid_columnconfigure(9, minsize=100)
+        # Configure size of the grid on root
+        for i in range(_NUMCOLS):
+            root.columnconfigure(i, minsize=_MINSIZE)
+        for i in range(_NUMROWS):
+            root.columnconfigure(i, minsize=_MINSIZE)
 
         # Create top row of months, get array of days, set column/rowspan
         self._NUMBER_OF_DAYS = self.create_months()
-        self.grid(column=1, row=1, columnspan=self._COLUMNSPAN, rowspan=3)
 
         # # Try putting 2 timelines on
-        firsttimeline = Timeline(self, column=1, row=1, columnspan=self._COLUMNSPAN, rowspan=1, \
+        firsttimeline = Timeline(self, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS)
         firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
 
-        secondtimeline = Timeline(self, column=1, row=2, columnspan=self._COLUMNSPAN, rowspan=1, \
+        secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS)
         secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
