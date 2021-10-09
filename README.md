@@ -12,6 +12,7 @@ Intended to make it easier to create floorplans
 - User can name the different builds based upon CSV file
 
 ## Updates
+10/8/21: Issue with expanding the number of months. Need to figure out how to use frame properly to add additional columns.
 10/6/21: Need to fix update_date to account for month rollover. Variable _NUMBER_OF_DAYS is not being shared with the class Timeline
 10/4/21: Update the Circle to use the built in circles. If here's time, add in calendar conversion
 Create input for the calendar range

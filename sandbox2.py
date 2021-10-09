@@ -12,11 +12,12 @@ root.title('Floor Plan')
 # configure the grid
 # root.columnconfigure(0, weight=1)
 # root.columnconfigure(1, weight=1)
-root.grid_columnconfigure(0, minsize=100)
-root.grid_columnconfigure(1, minsize=100)
-root.grid_columnconfigure(2, minsize=100)
-root.grid_columnconfigure(3, minsize=100)
-
+root.grid_columnconfigure(0, minsize=100, weight=1, uniform="foo")
+root.grid_columnconfigure(1, minsize=100, weight=1, uniform="foo")
+root.grid_columnconfigure(2, minsize=100, weight=1, uniform="foo")
+root.grid_columnconfigure(3, minsize=100, weight=1, uniform="foo")
+root.grid_columnconfigure(4, minsize=100, weight=1, uniform="foo")
+root.grid_columnconfigure(5, minsize=100, weight=1, uniform="foo")
 
 
 
@@ -42,12 +43,15 @@ label_arr[1].grid(column=2, row=0, padx=0, pady=0)
 label_arr.append(tk.Label(root, text="  Mar"))
 label_arr[2].grid(column=3, row=0, padx=0, pady=0,)
 
+label_arr.append(tk.Label(root, text="  Apr"))
+label_arr[3].grid(column=4, row=0, padx=0, pady=0,)
+
 # Builds going vertical on the left side
 build1 = tk.Label(root, text="System")
-build1.grid(column=0, row=1, padx=10, pady=80)
+build1.grid(column=0, row=1)
 
 build1 = tk.Label(root, text="EVT")
-build1.grid(column=0, row=2, padx=10, pady=80)
+build1.grid(column=0, row=2)
 
 
 
@@ -55,10 +59,10 @@ build1.grid(column=0, row=2, padx=10, pady=80)
 # Create the Canvas
 
 my_canvas = tk.Canvas(root)
-my_canvas.grid(column=1, row=1, columnspan=3, rowspan=1)
+my_canvas.grid(column=1, row=1, columnspan=20)
 
 my_canvas2 = tk.Canvas(root)
-my_canvas2.grid(column=1, row=2, columnspan=3, rowspan=1)
+my_canvas2.grid(column=1, row=2, columnspan=20)
 
 # Add the circle into the window
 global blue_circle

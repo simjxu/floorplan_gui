@@ -7,10 +7,10 @@ import math
 import calendar
 import datetime
 
-START_MONTH = 1 # Month to begin
+START_MONTH = 12 # Month to begin
 START_YEAR = 2021   # Associated year
-END_MONTH = 3  # Month to end
-END_YEAR = 2021     # Associated year
+END_MONTH = 5  # Month to end
+END_YEAR = 2022     # Associated year
 
 BUILDS = ["SYSTEM", "EVT"]
 
@@ -27,35 +27,33 @@ class Timeline(tk.Canvas):
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
+        self.configure(height=100)
         
         # Get number of days
         self.num_days = kwargs['num_days']
 
         # Add the circle plus accompanying text
         global my_circle
-        my_circle = self.create_circle(100, 100, self.MARKER_RADIUS, fill="blue", \
+        my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
             outline="white", width=2)
 
         global my_text
-        my_text = self.create_text(100,100, text="hello", fill='white')
-
-        # for i in range(3):
-        #     print(parent._NUMBER_OF_DAYS[i])
+        my_text = self.create_text(50, 50, text="hello", fill='white')
     
     def update_date(self, x):
         # Create the text that goes under the marker indicating the date
         # x is the position that the mouse moves the marker to
-        if x < 100:
-            return str(START_MONTH) + "/" + \
-                str(math.ceil((x+1)/100*self.num_days[0]))
-        elif x < 200:
-            return str(START_MONTH+1) + "/" + \
-                str(math.ceil((x-99)/100*self.num_days[1]))
-        elif x < 300:
-            return str(START_MONTH+2) + "/" + \
-                str(math.ceil((x-199)/100*self.num_days[2]))
-        else:
-            print("Error: pixels out of bounds")
+        # 1. Divide the pixel count by 100
+        # 2. Round down to integer
+        # 3. Map the integer to the month Start Month + integer
+
+        month_iter = math.floor(x/100)
+        month_num = START_MONTH+month_iter
+        month_num = month_num if month_num <= 12 else month_num-12  # Rollover to January
+
+        return str(month_num) + "/" + \
+            str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
+        # TODO: Set bounds so that the marker doesn't go out of bounds
 
     
     def move_cb(self, e):
@@ -68,7 +66,7 @@ class Timeline(tk.Canvas):
         self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
         # Update label position and date
-        self.coords(my_text, e.x, 120)
+        self.coords(my_text, e.x, 60)
         self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
         self.itemconfig(my_text, text=str(self.update_date(e.x)))
 
@@ -83,31 +81,34 @@ class Timeline(tk.Canvas):
     
 class MainApplication(tk.Frame):
     _NUMBER_OF_DAYS = []
+    _COLUMNSPAN = 6
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        
-        # # Handle months
-        # # Abbreviated names of month
-        # print(calendar.month_abbr[START_MONTH])
-        # # Number of days in each month
-        # print(calendar.monthrange(START_YEAR,START_MONTH)[1])
+        self.parent = parent
 
         # Configure size
-        root.grid_columnconfigure(0, minsize=100)
-        root.grid_columnconfigure(1, minsize=100)
-        root.grid_columnconfigure(2, minsize=100)
-        root.grid_columnconfigure(3, minsize=100)
+        root.grid_columnconfigure(0, uniform="col")
+        root.grid_columnconfigure(1, uniform="col")
+        root.grid_columnconfigure(2, uniform="col")
+        root.grid_columnconfigure(3, uniform="col")
+        root.grid_columnconfigure(4, uniform="col")
+        root.grid_columnconfigure(5, uniform="col")
+        # root.grid_columnconfigure(6, minsize=100)
+        # root.grid_columnconfigure(7, minsize=100)
+        # root.grid_columnconfigure(8, minsize=100)
+        # root.grid_columnconfigure(9, minsize=100)
 
-        # Create top row of months, get array of days
+        # Create top row of months, get array of days, set column/rowspan
         self._NUMBER_OF_DAYS = self.create_months()
+        self.grid(column=1, row=1, columnspan=self._COLUMNSPAN, rowspan=3)
 
         # # Try putting 2 timelines on
-        firsttimeline = Timeline(self, column=1, row=1, columnspan=3, rowspan=1, \
+        firsttimeline = Timeline(self, column=1, row=1, columnspan=self._COLUMNSPAN, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS)
         firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
 
-        secondtimeline = Timeline(self, column=1, row=2, columnspan=3, rowspan=1, \
+        secondtimeline = Timeline(self, column=1, row=2, columnspan=self._COLUMNSPAN, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS)
         secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
@@ -157,5 +158,6 @@ class MainApplication(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.geometry("800x600")
     MainApplication(root)
     root.mainloop()
