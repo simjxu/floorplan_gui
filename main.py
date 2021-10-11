@@ -36,6 +36,8 @@ class Timeline(tk.Canvas):
         self.canvas = tk.Canvas.__init__(self)
         self.grid(column=kwargs['column'], row=kwargs['row'], \
             columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
+
+        # TODO: Update the height to be shorter, and move the marker appropriately.
         self.configure(width=100*(self.num_months), height=100)
         
         # Add the circle plus accompanying text
@@ -84,7 +86,33 @@ class Timeline(tk.Canvas):
         layout2 = ImageTk.PhotoImage(layout_resized)
         self.create_image(0,0, image=layout2, anchor='nw')
     
+class Marker(tk.Canvas):
+    MARKER_RADIUS = 6 # All marker radii will be the same
+    def __init__(self):
+        # Add the circle plus accompanying text
+        global my_circle
+        my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
+            outline="white", width=2)
+
+        global my_text
+        my_text = self.create_text(50, 50, text="hello", fill='white')
+
+    def move_cb(self, e):
+        # Callback when moving the marker
+        circle_coords = self.coords(my_circle)      # Returns top left and bottom right corners
+        x0 = circle_coords[0]   # currently unused, go off of the mouse position
+        y0 = circle_coords[1]
+        x1 = circle_coords[2]   # currently unused, go off of the mouse position
+        y1 = circle_coords[3]
+        self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
+
+        # Update label position and date
+        self.coords(my_text, e.x, 60)
+        self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
+        self.itemconfig(my_text, text=str(self.update_date(e.x)))
     
+    
+
 class MainApplication(tk.Frame):
     _NUMBER_OF_DAYS = []
     _NUMBER_OF_MONTHS = 0
@@ -114,10 +142,10 @@ class MainApplication(tk.Frame):
 
         # Builds going vertical on the left side
         self.build1 = tk.Label(parent, text="System")
-        self.build1.grid(column=0, row=1, padx=10, pady=80)
+        self.build1.grid(column=0, row=1, padx=10, pady=0)
 
         self.build1 = tk.Label(parent, text="EVT")
-        self.build1.grid(column=0, row=2, padx=10, pady=80)
+        self.build1.grid(column=0, row=2, padx=10, pady=0)
 
     # Function to count number of months based upon inputs
     def get_num_months(self):
