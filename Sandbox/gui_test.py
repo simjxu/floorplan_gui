@@ -1,16 +1,18 @@
 import tkinter as tk
 import random
 
-class Desktop:
+# Add the _create_circle function ot the Canvas function, makes it easier to create a circle
+def _create_circle(self, x, y, r, **kwargs):
+    return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
+tk.Canvas.create_circle = _create_circle
+class Timeline:
 
-    array = [(50,50,70,70),(100,50,120,70),(150,50,170,70),(150,100,170,120),
-            (150,150,170,170),(100,150,120,170),(50,150,70,170),(50,100,70,120)]
+    array = [(50,50,70,70),(100,50,120,70),(150,50,170,70)]
 
-    def __init__(self, master):
-        self.canvas = tk.Canvas(master, width=400, height=400)
-        self.canvas.pack()
-
-        self.canvas.create_rectangle(100, 250, 300, 350)
+    def __init__(self, parent):
+        self.canvas = tk.Canvas(parent, width=400, height=400)
+        self.canvas.grid(column=0, row=0)
+        self.canvas.configure(width=100*5, height=100)
 
         # to keep all IDs and its start position
         self.ovals = {}
@@ -35,19 +37,19 @@ class Desktop:
         self.selected = self.selected[0]
 
     def move(self, event):
-        # move selected item
-        self.canvas.coords(self.selected, event.x-10, event.y-10, event.x+10,event.y+10)
+        circle_coords = self.canvas.coords(self.selected)
+        x0 = circle_coords[0]   # currently unused, go off of the mouse position
+        y0 = circle_coords[1]
+        x1 = circle_coords[2]   # currently unused, go off of the mouse position
+        y1 = circle_coords[3]
+
+        # move selected item, hold y position
+        self.canvas.coords(self.selected, event.x-10, y0, event.x+10,y1)
 
     def stop_move(self, event):
-        # delete or release selected item
-        if 100 < event.x < 300 and 250 < event.y < 350:
-            self.canvas.delete(self.selected)
-            del self.ovals[self.selected]
-        else:
-            self.canvas.coords(self.selected, self.ovals[self.selected])
-        # clear it so you can use it to check if you are draging item
-        self.selected = None
+        print("stopped")
+
 
 root = tk.Tk()
-d = Desktop(root)
+d = Timeline(root)
 root.mainloop()

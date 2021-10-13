@@ -24,77 +24,52 @@ def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
 
-class Timeline(tk.Canvas):
-	MARKER_RADIUS = 6 # All marker radii will be the same
+class Timeline:
+	array = [(50,50,70,70),(100,50,120,70),(150,50,170,70),(150,100,170,120),
+            (150,150,170,170),(100,150,120,170),(50,150,70,170),(50,100,70,120)]
 
-	def __init__(self, parent, **kwargs):
+	def __init__(self, master):
+		self.canvas = tk.Canvas(master, width=400, height=400)
+		self.canvas.pack()
 
-		super().__init__(parent)
+		self.canvas.create_rectangle(100, 250, 300, 350)
 
-        # Get number of days and months
-		self.num_days = kwargs['num_days']
-		self.num_months = kwargs['num_months']
-        
-        # Create canvas that covers the the entire row
-		self.canvas = tk.Canvas.__init__(self)
-		self.grid(column=kwargs['column'], row=kwargs['row'], \
-            columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
+        # to keep all IDs and its start position
+		self.ovals = {}
 
-        # TODO: Update the height to be shorter, and move the marker appropriately.
-		self.configure(width=100*(self.num_months), height=100)
-        
-		# Add the circle plus accompanying text
-		global my_circle
-		my_circle = []
-		my_circle.append(self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
-            outline="white", width=2))
-		my_circle.append(self.create_circle(75, 75, self.MARKER_RADIUS, fill="blue", \
-            outline="white", width=2))
-		# global my_circle2
-		# my_circle2 = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
-        #     outline="white", width=2)
+		for item in self.array:
+            # create oval and get its ID
+			item_id = self.canvas.create_oval(item, fill='brown', tags='id')
+            # remember ID and its start position
+			self.ovals[item_id] = item
 
-		global my_text
-		my_text = self.create_text(50, 50, text="hello", fill='white')
-		self.tag_bind(my_circle[0], '<B1-Motion>', self.move_cb)
+		self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
+		self.canvas.tag_bind('id', '<B1-Motion>', self.move)
+		self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
 
-	def update_date(self, x):
-        # Create the text that goes under the marker indicating the date
-        # x is the position that the mouse moves the marker to
-        # 1. Divide the pixel count by 100
-        # 2. Round down to integer
-        # 3. Map the integer to the month Start Month + integer
+        # to remember selected item
+		self.selected = None
 
-		month_iter = math.floor(x/100)
-		month_num = START_MONTH+month_iter
-		month_num = month_num if month_num <= 12 else month_num-12  # Rollover to January
-		return str(month_num) + "/" + \
-            str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
-        # TODO: Set bounds so that the marker doesn't go out of bounds
+	def start_move(self, event):
+        # find all clicked items
+		self.selected = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
+        # get first selected item
+		self.selected = self.selected[0]
 
-    
-	# Now we have to indicate which circle got clicked
-	def move_cb(self, e, widget):
-        # Callback when moving the marker
-		circle_coords = self.coords(widget)      # Returns top left and bottom right corners
-		x0 = circle_coords[0]   # currently unused, go off of the mouse position
-		y0 = circle_coords[1]
-		x1 = circle_coords[2]   # currently unused, go off of the mouse position
-		y1 = circle_coords[3]
-		self.coords(widget, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
+	def move(self, event):
+        # move selected item
+		self.canvas.coords(self.selected, event.x-10, event.y-10, event.x+10,event.y+10)
 
-        # Update label position and date
-		self.coords(my_text, e.x, 60)
-		self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-		self.itemconfig(my_text, text=str(self.update_date(e.x)))
-
-    # BELOW ITEMS ARE NOT COMPLETE
-	def resize_window_cb(self, e):
-		global layout, layout_resized, layout2
-		layout = Image.open("./images/layout.png")
-		layout_resized = layout.resize((e.width, e.height), Image.ANTIALIAS)
-		layout2 = ImageTk.PhotoImage(layout_resized)
-		self.create_image(0,0, image=layout2, anchor='nw')
+	def stop_move(self, event):
+		print("stopped")
+        # # delete or release selected item
+        # if 100 < event.x < 300 and 250 < event.y < 350:
+        #     self.canvas.delete(self.selected)
+        #     del self.ovals[self.selected]
+        # else:
+        #     self.canvas.coords(self.selected, self.ovals[self.selected])
+        # # clear it so you can use it to check if you are draging item
+        # self.selected = None
     
 class Marker(tk.Canvas):
     MARKER_RADIUS = 6 # All marker radii will be the same
@@ -142,13 +117,12 @@ class MainApplication(tk.Frame):
         self._NUMBER_OF_DAYS = self.create_months()
 
         # # Try putting 2 timelines on -----FIX: need to create an array of Timelines
-        firsttimeline = Timeline(self, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
-            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+        firsttimeline = Timeline(self)
         
 
-        secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
-            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
-        # secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
+        # secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
+        #     num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+        # # secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
 
         # Builds going vertical on the left side
         self.build1 = tk.Label(parent, text="System")
