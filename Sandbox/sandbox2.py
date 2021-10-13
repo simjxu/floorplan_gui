@@ -56,7 +56,7 @@ class Timeline(tk.Canvas):
 
 		global my_text
 		my_text = self.create_text(50, 50, text="hello", fill='white')
-		self.bind('<B1-Motion>', self.move_cb)
+		self.tag_bind(my_circle[0], '<B1-Motion>', self.move_cb)
 
 	def update_date(self, x):
         # Create the text that goes under the marker indicating the date
@@ -74,14 +74,14 @@ class Timeline(tk.Canvas):
 
     
 	# Now we have to indicate which circle got clicked
-	def move_cb(self, e):
+	def move_cb(self, e, widget):
         # Callback when moving the marker
-		circle_coords = self.coords(my_circle[1])      # Returns top left and bottom right corners
+		circle_coords = self.coords(widget)      # Returns top left and bottom right corners
 		x0 = circle_coords[0]   # currently unused, go off of the mouse position
 		y0 = circle_coords[1]
 		x1 = circle_coords[2]   # currently unused, go off of the mouse position
 		y1 = circle_coords[3]
-		self.coords(my_circle[1], e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
+		self.coords(widget, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
         # Update label position and date
 		self.coords(my_text, e.x, 60)
