@@ -13,7 +13,7 @@ END_YEAR = 2022     # Associated year
 # Need to input the values to ensure the columns and canvas sizes are correct
 _NUMCOLS = 8
 _NUMROWS = 3
-_MINSIZE = 50
+_MINSIZE = 100
 
 BUILDS = ["SYSTEM", "EVT"]
 
@@ -23,19 +23,19 @@ def _create_circle(self, x, y, r, **kwargs):
 tk.Canvas.create_circle = _create_circle
 class Timeline(tk.Frame):
     
-    MARKER_RADIUS = 6 # All marker radii will be the same
-
-    array = [(50,50),(100,50),(150,50)]
+    MARKER_RADIUS = 8 # All marker radii will be the same
+    marker_ypos = _MINSIZE/2+MARKER_RADIUS/2
+    array = [(25,marker_ypos),(50,marker_ypos),(75,marker_ypos)]
 
     def __init__(self, parent, **kwargs):
 
         self.num_months = kwargs['num_months']
 
-        self.canvas = tk.Canvas(parent, width=400, height=400)
+        self.canvas = tk.Canvas(parent)
         # self.canvas.pack()
         self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
             columnspan=kwargs['columnspan'])
-        self.canvas.configure(width=100*(self.num_months), height=100, bg='white')
+        self.canvas.configure(width=_MINSIZE*(self.num_months), height=_MINSIZE, bg='green')
 
         # to keep all IDs and its start position
         self.ovals = {}
@@ -83,9 +83,6 @@ class MainApplication:
         self.mainframe = tk.Frame(parent, width=1000, height=1000)
         self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)
 
-        # c = tk.Canvas(self.mainframe, bg='white', width=350, height=50)
-        # c.grid(column=1, row=1, columnspan=7)
-
         # Configure size of the grid on root
         for i in range(_NUMCOLS):
             root.columnconfigure(i, minsize=_MINSIZE)
@@ -100,8 +97,8 @@ class MainApplication:
         firsttimeline = Timeline(self.mainframe, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
 
-    #     # secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
-    #     #     num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+        secondtimeline = Timeline(self.mainframe, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
+            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
 
 
         # Builds going vertical on the left side
