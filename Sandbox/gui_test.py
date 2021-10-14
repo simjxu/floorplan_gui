@@ -6,8 +6,9 @@ def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
 class Timeline:
+    MARKER_RADIUS = 6 # All marker radii will be the same
 
-    array = [(50,50,70,70),(100,50,120,70),(150,50,170,70)]
+    array = [(50,50),(100,50),(150,50)]
 
     def __init__(self, parent):
         self.canvas = tk.Canvas(parent, width=400, height=400)
@@ -17,9 +18,11 @@ class Timeline:
         # to keep all IDs and its start position
         self.ovals = {}
 
+        # Create markers for every item in the array
         for item in self.array:
             # create oval and get its ID
-            item_id = self.canvas.create_oval(item, fill='brown', tags='id')
+            item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
+                fill='blue', outline='white', tags='id')
             # remember ID and its start position
             self.ovals[item_id] = item
 
@@ -44,7 +47,8 @@ class Timeline:
         y1 = circle_coords[3]
 
         # move selected item, hold y position
-        self.canvas.coords(self.selected, event.x-10, y0, event.x+10,y1)
+        self.canvas.coords(self.selected, event.x-self.MARKER_RADIUS, \
+            y0, event.x+self.MARKER_RADIUS,y1)
 
     def stop_move(self, event):
         print("stopped")
