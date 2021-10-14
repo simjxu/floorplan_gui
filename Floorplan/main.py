@@ -1,5 +1,3 @@
-
-# Don't go off of pixels, first find the size of the window and then plaste the image based upon locatino
 import tkinter as tk
 from PIL import ImageTk, Image
 import os
@@ -23,31 +21,46 @@ BUILDS = ["SYSTEM", "EVT"]
 def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
-
-class Timeline(tk.Canvas):
-    MARKER_RADIUS = 6 # All marker radii will be the same
+class Timeline(tk.Frame):
+    
+    MARKER_RADIUS = 8 # All marker radii will be the same
+    marker_ypos = _MINSIZE/2+MARKER_RADIUS/2
+    array = [(25,marker_ypos),(50,marker_ypos),(75,marker_ypos)]
 
     def __init__(self, parent, **kwargs):
-        # Get number of days and months
         self.num_days = kwargs['num_days']
         self.num_months = kwargs['num_months']
-        
-        # Create canvas that covers the the entire row
-        self.canvas = tk.Canvas.__init__(self)
-        self.grid(column=kwargs['column'], row=kwargs['row'], \
-            columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
 
-        # TODO: Update the height to be shorter, and move the marker appropriately.
-        self.configure(width=100*(self.num_months), height=100)
-        
-        # Add the circle plus accompanying text
-        global my_circle
-        my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
-            outline="white", width=2)
+        self.canvas = tk.Canvas(parent)
+        # self.canvas.pack()
+        self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
+            columnspan=kwargs['columnspan'])
+        self.canvas.configure(width=_MINSIZE*(self.num_months), height=_MINSIZE, bg='green')
 
-        global my_text
-        my_text = self.create_text(50, 50, text="hello", fill='white')
-    
+        # to keep all IDs and its start position
+        self.ovals = {}
+        self.texts = {}
+
+        # Create markers for every item in the array
+        for item in self.array:
+            # create oval and get its ID
+            item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
+                fill='blue', outline='white', tags='id')
+            # remember ID and its start position
+            self.ovals[item_id] = item
+
+            # text_id = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
+            #     text="hello", fill='white')
+            self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
+                text="hello", fill='white')
+
+        self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
+        self.canvas.tag_bind('id', '<B1-Motion>', self.move)
+        self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
+
+        # # to remember selected item
+        # self.selected = None
+
     def update_date(self, x):
         # Create the text that goes under the marker indicating the date
         # x is the position that the mouse moves the marker to
@@ -63,63 +76,42 @@ class Timeline(tk.Canvas):
             str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
         # TODO: Set bounds so that the marker doesn't go out of bounds
 
-    
-    def move_cb(self, e):
-        # Callback when moving the marker
-        circle_coords = self.coords(my_circle)      # Returns top left and bottom right corners
+    def start_move(self, event):
+        # find all clicked items
+        self.selected = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
+        # get first selected item
+        self.selected = self.selected[0]
+
+        # get selected text tag
+        self.selected_text = self.canvas.find_withtag(self.texts[self.selected])
+
+    def move(self, event):
+        circle_coords = self.canvas.coords(self.selected)
         x0 = circle_coords[0]   # currently unused, go off of the mouse position
         y0 = circle_coords[1]
         x1 = circle_coords[2]   # currently unused, go off of the mouse position
         y1 = circle_coords[3]
-        self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
-        # Update label position and date
-        self.coords(my_text, e.x, 60)
-        self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-        self.itemconfig(my_text, text=str(self.update_date(e.x)))
+        # move selected item, hold y position
+        self.canvas.coords(self.selected, event.x-self.MARKER_RADIUS, \
+            y0, event.x+self.MARKER_RADIUS,y1)
 
-    # BELOW ITEMS ARE NOT COMPLETE
-    def resize_window_cb(self, e):
-        global layout, layout_resized, layout2
-        layout = Image.open("./images/layout.png")
-        layout_resized = layout.resize((e.width, e.height), Image.ANTIALIAS)
-        layout2 = ImageTk.PhotoImage(layout_resized)
-        self.create_image(0,0, image=layout2, anchor='nw')
-    
-class Marker(tk.Canvas):
-    MARKER_RADIUS = 6 # All marker radii will be the same
-    def __init__(self):
-        # Add the circle plus accompanying text
-        global my_circle
-        my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
-            outline="white", width=2)
+        # Also move the label position and date
+        self.canvas.coords(self.selected_text, event.x, \
+            self.marker_ypos+2*self.MARKER_RADIUS)
+        self.canvas.tag_raise(self.selected_text)
+        self.canvas.itemconfig(self.selected_text, text=str(self.update_date(event.x)))
 
-        global my_text
-        my_text = self.create_text(50, 50, text="hello", fill='white')
+    def stop_move(self, event):
+        print("stopped")
 
-    def move_cb(self, e):
-        # Callback when moving the marker
-        circle_coords = self.coords(my_circle)      # Returns top left and bottom right corners
-        x0 = circle_coords[0]   # currently unused, go off of the mouse position
-        y0 = circle_coords[1]
-        x1 = circle_coords[2]   # currently unused, go off of the mouse position
-        y1 = circle_coords[3]
-        self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
-
-        # Update label position and date
-        self.coords(my_text, e.x, 60)
-        self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-        self.itemconfig(my_text, text=str(self.update_date(e.x)))
-    
-    
-
-class MainApplication(tk.Frame):
+class MainApplication:
     _NUMBER_OF_DAYS = []
     _NUMBER_OF_MONTHS = 0
     
-    def __init__(self, parent, *args, **kwargs):
-        tk.Frame.__init__(self, parent, *args, **kwargs)
-        self.parent = parent
+    def __init__(self, parent):
+        self.mainframe = tk.Frame(parent, width=1000, height=1000)
+        self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)
 
         # Configure size of the grid on root
         for i in range(_NUMCOLS):
@@ -132,19 +124,18 @@ class MainApplication(tk.Frame):
         self._NUMBER_OF_DAYS = self.create_months()
 
         # # Try putting 2 timelines on -----FIX: need to create an array of Timelines
-        firsttimeline = Timeline(self, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
+        firsttimeline = Timeline(self.mainframe, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
-        firsttimeline.bind('<B1-Motion>', firsttimeline.move_cb)
 
-        secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
+        secondtimeline = Timeline(self.mainframe, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
             num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
-        secondtimeline.bind('<B1-Motion>', secondtimeline.move_cb)
+
 
         # Builds going vertical on the left side
-        self.build1 = tk.Label(parent, text="System")
+        self.build1 = tk.Label(self.mainframe, text="System")
         self.build1.grid(column=0, row=1, padx=10, pady=0)
 
-        self.build1 = tk.Label(parent, text="EVT")
+        self.build1 = tk.Label(self.mainframe, text="EVT")
         self.build1.grid(column=0, row=2, padx=10, pady=0)
 
     # Function to count number of months based upon inputs
@@ -169,7 +160,7 @@ class MainApplication(tk.Frame):
                 month = 1
                 year += 1
 
-            label_arr.append(tk.Label(root, \
+            label_arr.append(tk.Label(self.mainframe, \
                 text="  "+calendar.month_abbr[month]))
             label_arr[i].grid(column=i+1, row=0, padx=0, pady=0)
             monthdays_arr.append(calendar.monthrange(year,month)[1])
@@ -181,13 +172,9 @@ class MainApplication(tk.Frame):
         a = 0
         return a
 
-# class Legend(tk.Frame):
-#     def __init__(self, parent, *args, **kwargs):
-
-
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("800x600")
-    MainApplication(root)
+    d = MainApplication(root)
     root.mainloop()
