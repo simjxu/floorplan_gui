@@ -11,7 +11,7 @@ root.title('Floor Plan')
 
 NUMCOLS = 7
 NUMROWS = 3
-MINSIZE = 100
+MINSIZE = 50
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
 
 # Configure the size of the Grid
