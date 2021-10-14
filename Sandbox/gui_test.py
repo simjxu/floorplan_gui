@@ -80,11 +80,11 @@ class MainApplication:
     _NUMBER_OF_MONTHS = 0
     
     def __init__(self, parent):
-        self.frame = tk.Frame(parent, width=1000, height=1000)
-        self.frame.grid(column=0, row=0, rowspan=20, columnspan=20)
+        self.mainframe = tk.Frame(parent, width=1000, height=1000)
+        self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)
 
-        c = tk.Canvas(self.frame, bg='white', width=350, height=50)
-        c.grid(column=1, row=1, columnspan=7)
+        # c = tk.Canvas(self.mainframe, bg='white', width=350, height=50)
+        # c.grid(column=1, row=1, columnspan=7)
 
         # Configure size of the grid on root
         for i in range(_NUMCOLS):
@@ -96,19 +96,19 @@ class MainApplication:
         self._NUMBER_OF_MONTHS = self.get_num_months()
         self._NUMBER_OF_DAYS = self.create_months()
 
-    #     # # Try putting 2 timelines on -----FIX: need to create an array of Timelines
-    #     firsttimeline = Timeline(self, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
-    #         num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+        # # Try putting 2 timelines on -----FIX: need to create an array of Timelines
+        firsttimeline = Timeline(self.mainframe, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
+            num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
 
     #     # secondtimeline = Timeline(self, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
     #     #     num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
 
 
         # Builds going vertical on the left side
-        self.build1 = tk.Label(self.frame, text="System")
+        self.build1 = tk.Label(self.mainframe, text="System")
         self.build1.grid(column=0, row=1, padx=10, pady=0)
 
-        self.build1 = tk.Label(self.frame, text="EVT")
+        self.build1 = tk.Label(self.mainframe, text="EVT")
         self.build1.grid(column=0, row=2, padx=10, pady=0)
 
     # Function to count number of months based upon inputs
@@ -133,7 +133,7 @@ class MainApplication:
                 month = 1
                 year += 1
 
-            label_arr.append(tk.Label(self.frame, \
+            label_arr.append(tk.Label(self.mainframe, \
                 text="  "+calendar.month_abbr[month]))
             label_arr[i].grid(column=i+1, row=0, padx=0, pady=0)
             monthdays_arr.append(calendar.monthrange(year,month)[1])
