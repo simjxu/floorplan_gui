@@ -49,8 +49,7 @@ class Timeline(tk.Frame):
             # remember ID and its start position
             self.ovals[item_id] = item
 
-            # text_id = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
-            #     text="hello", fill='white')
+            # Create texts and store the text tag id for reference during move
             self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
                 text="hello", fill='white')
 
@@ -104,6 +103,10 @@ class Timeline(tk.Frame):
 
     def stop_move(self, event):
         print("stopped")
+
+class YAML_outputs:
+    def __init__(self):
+        print("YAML")
 
 class MainApplication:
     _NUMBER_OF_DAYS = []
