@@ -1,19 +1,25 @@
 ---
-doe: "a deer, a female deer"
-ray: "a drop of golden sun"
-pi: 3.14159
-xmas: true
-french-hens: 3
-calling-birds:
-  - huey
-  - dewey
-  - louie
-  - fred
-xmas-fifth-day:
-  calling-birds: four
-  french-hens: 3
-  golden-rings: 5
-  partridges:
-    count: 1
-    location: "a pear tree"
-  turtle-doves: two
+Assembly:
+  Proto:
+    - date: 1/1/20
+  EVT:
+    - date: 3/30/20
+Module:
+  Proto:
+    - A:
+      - date: 12/1/19
+    - B:
+      - date: 12/15/19
+    - C:
+      - date: 12/30/19
+    - D:
+      - date: 1/15/20
+  EVT:
+    - A:
+      - date: 1/30/20
+    - B:
+      - date: 2/15/20
+    - C:
+      - date: 2/28/20
+    - D:
+      - date: 3/15/20
