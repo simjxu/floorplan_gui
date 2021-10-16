@@ -3,6 +3,9 @@ import os
 import math
 import calendar
 import datetime
+from YAMLoutput import YAMLoutput
+
+ymlFile = "./Sandbox/example.yml"
 
 START_MONTH = 1 # Month to begin
 START_YEAR = 2021   # Associated year
@@ -23,7 +26,7 @@ tk.Canvas.create_circle = _create_circle
 class Timeline(tk.Frame):
     
 	MARKER_RADIUS = 8 # All marker radii will be the same
-	marker_ypos = _MINSIZE/2+MARKER_RADIUS/2
+	marker_ypos = _MINSIZE/2+MARKER_RADIUS/2	# marker needs to be in the middle of the row
 
 	# This needs to move into the __init__ function, from reading from the yaml
 	array = [(25,marker_ypos),(50,marker_ypos),(75,marker_ypos)]
@@ -105,15 +108,14 @@ class Timeline(tk.Frame):
 	def stop_move(self, event):
 		print("stopped")
 
-class YAML_outputs:
-	def __init__(self):
-		print("YAML")
-
 class MainApplication:
 	_NUMBER_OF_DAYS = []
 	_NUMBER_OF_MONTHS = 0
     
 	def __init__(self, parent):
+		# import the yaml file data
+		self.yaml_dateobj = YAMLoutput(self, file=ymlFile)
+
 		self.mainframe = tk.Frame(parent, width=1000, height=1000)
 		self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)
 

@@ -93,10 +93,10 @@ class YAMLoutput:
 	def save_current():
 		print("placeholder")
 
-class YAMLApplication:
+class MainApplication:
 	def __init__(self, **kwargs):
 		yamlobj = YAMLoutput(self, file=kwargs['file'])
 
 if __name__ == "__main__":
 	ymlfile = "./Sandbox/example.yaml"
-	app = YAMLApplication(file=ymlfile)
+	app = MainApplication(file=ymlfile)

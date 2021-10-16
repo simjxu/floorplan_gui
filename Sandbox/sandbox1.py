@@ -1,29 +1,11 @@
-import tkinter as tk
+from sandbox import YAMLoutput
 
 
-def make_draggable(widget):
-    widget.bind("<Button-1>", on_drag_start)
-    widget.bind("<B1-Motion>", on_drag_motion)
+class MainApplication:
+    def __init__(self, **kwargs):
+        yamlobj = YAMLoutput(self, file=kwargs['file'])
+        print(yamlobj.DATE_ARRAYS)
 
-def on_drag_start(event):
-    widget = event.widget
-    widget._drag_start_x = event.x
-    widget._drag_start_y = event.y
-
-def on_drag_motion(event):
-    widget = event.widget
-    x = widget.winfo_x() - widget._drag_start_x + event.x
-    y = widget.winfo_y() - widget._drag_start_y + event.y
-    widget.place(x=x, y=y)
-
-main = tk.Tk()
-
-frame = tk.Frame(main, bd=4, bg="grey")
-frame.place(x=10, y=10)
-make_draggable(frame)
-
-notes = tk.Text(frame)
-notes.pack()
-
-main.mainloop()
-
+if __name__ == "__main__":
+	ymlfile = "./Sandbox/example.yaml"
+	app = MainApplication(file=ymlfile)
