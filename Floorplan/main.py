@@ -5,16 +5,11 @@ import calendar
 import datetime
 from YAMLoutput import YAMLoutput
 
-ymlFile = "./Sandbox/example.yml"
-
-START_MONTH = 1 # Month to begin
-START_YEAR = 2021   # Associated year
-END_MONTH = 5  # Month to end
-END_YEAR = 2021     # Associated year
+ymlFile = './Sandbox/example.yaml'
 
 # Need to input the values to ensure the columns and canvas sizes are correct
-_NUMCOLS = 6
-_NUMROWS = 3
+_NUMCOLS = 6					# number of columns for the timeline canvas
+_NUMROWS = 3					# number of timeliens to produce
 _MINSIZE = 100
 
 BUILDS = ["SYSTEM", "EVT"]
@@ -24,7 +19,8 @@ def _create_circle(self, x, y, r, **kwargs):
 	return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
 class Timeline(tk.Frame):
-    
+  
+	START_MONTH = 12
 	MARKER_RADIUS = 8 # All marker radii will be the same
 	marker_ypos = _MINSIZE/2+MARKER_RADIUS/2	# marker needs to be in the middle of the row
 
@@ -70,9 +66,8 @@ class Timeline(tk.Frame):
 		# 1. Divide the pixel count by 100
 		# 2. Round down to integer
 		# 3. Map the integer to the month Start Month + integer
-
 		month_iter = math.floor(x/100)
-		month_num = START_MONTH+month_iter
+		month_num = self.START_MONTH+month_iter
 		month_num = month_num if month_num <= 12 else month_num-12  # Rollover to January
 
 		return str(month_num) + "/" + \
@@ -106,15 +101,44 @@ class Timeline(tk.Frame):
 		self.canvas.itemconfig(self.selected_text, text=str(self.update_date(event.x)))
 
 	def stop_move(self, event):
-		print("stopped")
+		pass
 
 class MainApplication:
 	_NUMBER_OF_DAYS = []
 	_NUMBER_OF_MONTHS = 0
-    
+	START_MONTH = 0
+	START_YEAR = 0
+	END_MONTH = 0
+	END_YEAR = 0
+
 	def __init__(self, parent):
 		# import the yaml file data
 		self.yaml_dateobj = YAMLoutput(self, file=ymlFile)
+
+		self.START_MONTH = self.yaml_dateobj.START_MONTH
+		self.START_YEAR = self.yaml_dateobj.START_YEAR
+		self.END_MONTH = self.yaml_dateobj.END_MONTH
+		self.END_YEAR = self.yaml_dateobj.END_YEAR
+
+		# print(START_YEAR)
+		# print(START_MONTH)
+
+		# Update the number of columns
+		_NUMCOLS = 2		# Start at 1 to include the builds column, first month
+		month_ptr = self.START_MONTH
+		year_ptr = self.START_YEAR
+		while month_ptr != self.END_MONTH or year_ptr != self.END_YEAR:
+			_NUMCOLS += 1
+			if month_ptr == 12:
+				month_ptr = 1
+				year_ptr += 1
+			else:
+				month_ptr += 1
+
+		# Update the number of rows
+		_NUMROWS = len(self.yaml_dateobj.BUILD_NAMES) + 1
+		
+
 
 		self.mainframe = tk.Frame(parent, width=1000, height=1000)
 		self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)
@@ -125,29 +149,53 @@ class MainApplication:
 		for i in range(_NUMROWS):
 				root.columnconfigure(i, minsize=_MINSIZE)
 
+
+		print(self.START_MONTH)
+		print(self.START_YEAR)
+		# print(END_MONTH)
+		# print(END_YEAR)
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
+
 		self._NUMBER_OF_DAYS = self.create_months()
 
-		# # Try putting 2 timelines on -----FIX: need to create an array of Timelines
-		firsttimeline = Timeline(self.mainframe, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
-			num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+		# print(self._NUMBER_OF_MONTHS)
+		# print(self._NUMBER_OF_DAYS)
 
-		secondtimeline = Timeline(self.mainframe, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
-			num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+		# # Try putting 2 timelines on -----FIX: need to create an array of Timelines
+		# firsttimeline = Timeline(self.mainframe, column=1, row=1, columnspan=_NUMCOLS-1, rowspan=1, \
+		# 	num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+
+		# secondtimeline = Timeline(self.mainframe, column=1, row=2, columnspan=_NUMCOLS-1, rowspan=1, \
+		# 	num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS)
+		
+		# 
+		self.timeline_arr = []
+		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
+			self.timeline_arr.append(Timeline(self.mainframe, column=1, row=i+1, columnspan=_NUMCOLS, rowspan=1, \
+				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS))
 
 
 		# Builds going vertical on the left side
-		self.build1 = tk.Label(self.mainframe, text="System")
-		self.build1.grid(column=0, row=1, padx=10, pady=0)
+		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
+			self.build = tk.Label(self.mainframe, text=self.yaml_dateobj.BUILD_NAMES[i])
+			self.build.grid(column=0, row=i+1, padx=10, pady=0)
 
-		self.build1 = tk.Label(self.mainframe, text="EVT")
-		self.build1.grid(column=0, row=2, padx=10, pady=0)
+		# self.build1 = tk.Label(self.mainframe, text="System")
+		# self.build1.grid(column=0, row=1, padx=10, pady=0)
+
+		# self.build1 = tk.Label(self.mainframe, text="EVT")
+		# self.build1.grid(column=0, row=2, padx=10, pady=0)
 
     # Function to count number of months based upon inputs
+
 	def get_num_months(self):
-		start_date = datetime.datetime(START_YEAR,START_MONTH,1)
-		end_date = datetime.datetime(END_YEAR, END_MONTH, 1)
+		print(self.START_MONTH)
+		print(self.START_YEAR)
+		start_date = datetime.datetime(self.START_YEAR,self.START_MONTH,1)
+		end_date = datetime.datetime(self.END_YEAR, self.END_MONTH, 1)
+		print(start_date)
+		print(end_date)
 		return (end_date.year - start_date.year) * 12 \
 			+ (end_date.month - start_date.month) + 1
 
@@ -158,8 +206,8 @@ class MainApplication:
 
 		# Create the month labels on the first row
 		label_arr = []
-		year = START_YEAR
-		month = START_MONTH
+		year = self.START_YEAR
+		month = self.START_MONTH
 		for i in range(num_months):
 			# Account for months rollover at end of year
 			if month==13:
