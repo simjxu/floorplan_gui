@@ -1,29 +1,23 @@
-import tkinter as tk
 
 
-def make_draggable(widget):
-    widget.bind("<Button-1>", on_drag_start)
-    widget.bind("<B1-Motion>", on_drag_motion)
+START_MONTH = 12
+START_YEAR = 2019
+END_MONTH = 3
+END_YEAR = 2020
 
-def on_drag_start(event):
-    widget = event.widget
-    widget._drag_start_x = event.x
-    widget._drag_start_y = event.y
+_NUMCOLS = 1		# Start at 1 to include the builds column
+month_ptr = START_MONTH
+year_ptr = START_YEAR
 
-def on_drag_motion(event):
-    widget = event.widget
-    x = widget.winfo_x() - widget._drag_start_x + event.x
-    y = widget.winfo_y() - widget._drag_start_y + event.y
-    widget.place(x=x, y=y)
+while month_ptr != END_MONTH or year_ptr != END_YEAR:
+	_NUMCOLS += 1
+	if month_ptr == 12:
+		month_ptr = 1
+		year_ptr += 1
+	else:
+		month_ptr += 1
+	print(month_ptr)
+	print(year_ptr)
 
-main = tk.Tk()
 
-frame = tk.Frame(main, bd=4, bg="grey")
-frame.place(x=10, y=10)
-make_draggable(frame)
-
-notes = tk.Text(frame)
-notes.pack()
-
-main.mainloop()
-
+print(_NUMCOLS)
