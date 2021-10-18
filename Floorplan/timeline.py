@@ -5,21 +5,24 @@ class Timeline:
 	MARKER_RADIUS = 8 # All marker radii will be the same
 
 	def __init__(self, parent, **kwargs):
-		self.START_MONTH = parent.START_MONTH
 
 		# Pull in variables from the parent class, MainApplication
+		self.START_MONTH = kwargs['start_month']
 		self.num_days = kwargs['num_days']
 		self.num_months = kwargs['num_months']
-		self._MINSIZE = kwargs['minsize']
+		self._MINSIZE = kwargs['min_size']
+		self.date_arrays = kwargs['date_arrays']
+		self.label_arrays = kwargs['label_arrays']
 		
 		# This needs to move into the __init__ function, from reading from the yaml
+		self.array = []
 		self.marker_ypos = self._MINSIZE/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
 		self.array = [(25,self.marker_ypos),(50,self.marker_ypos),(75,self.marker_ypos)]
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		# self.canvas.pack()
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
-				columnspan=kwargs['columnspan'])
+			columnspan=kwargs['columnspan'])
 		self.canvas.configure(width=self._MINSIZE*(self.num_months), height=self._MINSIZE, bg='green')
 
 		# to keep all IDs and its start position

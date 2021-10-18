@@ -19,28 +19,24 @@ tk.Canvas.create_circle = _create_circle
 class MainApplication:
 	_NUMBER_OF_DAYS = []
 	_NUMBER_OF_MONTHS = 0
-	START_MONTH = 0
-	START_YEAR = 0
-	END_MONTH = 0
-	END_YEAR = 0
+	
+	DATE_ARRAYS = []
+	LABEL_ARRAYS = []
 
 	def __init__(self, parent):
 		# import the yaml file data
 		self.yaml_dateobj = YAMLoutput(self, file=ymlFile)
-
-		self.START_MONTH = self.yaml_dateobj.START_MONTH
-		self.START_YEAR = self.yaml_dateobj.START_YEAR
-		self.END_MONTH = self.yaml_dateobj.END_MONTH
-		self.END_YEAR = self.yaml_dateobj.END_YEAR
+		self.DATE_ARRAYS = self.yaml_dateobj.DATE_ARRAYS
+		self.LABEL_ARRAYS = self.yaml_dateobj.LABEL_ARRAYS
 
 		# print(START_YEAR)
 		# print(START_MONTH)
 
 		# Update the number of columns
 		self._NUMCOLS = 2		# Start at 1 to include the builds column, first month
-		month_ptr = self.START_MONTH
-		year_ptr = self.START_YEAR
-		while month_ptr != self.END_MONTH or year_ptr != self.END_YEAR:
+		month_ptr = self.yaml_dateobj.START_MONTH
+		year_ptr = self.yaml_dateobj.START_YEAR
+		while month_ptr != self.yaml_dateobj.END_MONTH or year_ptr != self.yaml_dateobj.END_YEAR:
 			self._NUMCOLS += 1
 			if month_ptr == 12:
 				month_ptr = 1
@@ -62,8 +58,8 @@ class MainApplication:
 				root.columnconfigure(i, minsize=_MINSIZE)
 
 
-		# print(self.START_MONTH)
-		# print(self.START_YEAR)
+		# print(self.yaml_dateobj.START_MONTH)
+		# print(self.yaml_dateobj.START_YEAR)
 		# print(END_MONTH)
 		# print(END_YEAR)
 		# Create top row of months, get array of days, set column/rowspan
@@ -77,7 +73,9 @@ class MainApplication:
 		self.timeline_arr = []
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
 			self.timeline_arr.append(Timeline(self, column=1, row=i+1, columnspan=self._NUMCOLS-1, rowspan=1, \
-				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, minsize=_MINSIZE))
+				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
+				start_month=self.yaml_dateobj.START_MONTH, min_size=_MINSIZE, \
+				date_arrays=self.yaml_dateobj.DATE_ARRAYS[i], label_arrays=self.yaml_dateobj.LABEL_ARRAYS[i]))
 
 		# Builds going vertical on the left side
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
@@ -86,10 +84,10 @@ class MainApplication:
 
 
 	def get_num_months(self):
-		# print(self.START_MONTH)
-		# print(self.START_YEAR)
-		start_date = datetime.datetime(self.START_YEAR,self.START_MONTH,1)
-		end_date = datetime.datetime(self.END_YEAR, self.END_MONTH, 1)
+		# print(self.yaml_dateobj.START_MONTH)
+		# print(self.yaml_dateobj.START_YEAR)
+		start_date = datetime.datetime(self.yaml_dateobj.START_YEAR,self.yaml_dateobj.START_MONTH,1)
+		end_date = datetime.datetime(self.yaml_dateobj.END_YEAR, self.yaml_dateobj.END_MONTH, 1)
 		# print(start_date)
 		# print(end_date)
 		return (end_date.year - start_date.year) * 12 \
@@ -102,8 +100,8 @@ class MainApplication:
 
 		# Create the month labels on the first row
 		label_arr = []
-		year = self.START_YEAR
-		month = self.START_MONTH
+		year = self.yaml_dateobj.START_YEAR
+		month = self.yaml_dateobj.START_MONTH
 		for i in range(num_months):
 			# Account for months rollover at end of year
 			if month==13:
