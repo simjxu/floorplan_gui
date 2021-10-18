@@ -7,18 +7,13 @@ from YAMLoutput import YAMLoutput
 
 ymlFile = './Sandbox/example.yaml'
 
-# Need to input the values to ensure the columns and canvas sizes are correct
-_NUMCOLS = 6					# number of columns for the timeline canvas
-_NUMROWS = 3					# number of timeliens to produce
+# Input width of each cell
 _MINSIZE = 100
-
-BUILDS = ["SYSTEM", "EVT"]
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
 	return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
-
 
 class MainApplication:
 	_NUMBER_OF_DAYS = []
@@ -41,11 +36,11 @@ class MainApplication:
 		# print(START_MONTH)
 
 		# Update the number of columns
-		_NUMCOLS = 2		# Start at 1 to include the builds column, first month
+		self._NUMCOLS = 2		# Start at 1 to include the builds column, first month
 		month_ptr = self.START_MONTH
 		year_ptr = self.START_YEAR
 		while month_ptr != self.END_MONTH or year_ptr != self.END_YEAR:
-			_NUMCOLS += 1
+			self._NUMCOLS += 1
 			if month_ptr == 12:
 				month_ptr = 1
 				year_ptr += 1
@@ -53,16 +48,16 @@ class MainApplication:
 				month_ptr += 1
 
 		# Update the number of rows
-		_NUMROWS = len(self.yaml_dateobj.BUILD_NAMES) + 1
+		self._NUMROWS = len(self.yaml_dateobj.BUILD_NAMES) + 1
 		
 		# tk.Frame for the Main Application, for reference in child class Timeline
 		self.mainframe = tk.Frame(parent, width=1000, height=1000)
 		self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)		# max out at 20 rows, 20 cols right now
 
 		# Configure size of the grid on root
-		for i in range(_NUMCOLS):
+		for i in range(self._NUMCOLS):
 			root.columnconfigure(i, minsize=_MINSIZE)
-		for i in range(_NUMROWS):
+		for i in range(self._NUMROWS):
 				root.columnconfigure(i, minsize=_MINSIZE)
 
 
@@ -80,7 +75,7 @@ class MainApplication:
 		# Create Timeline opbjects
 		self.timeline_arr = []
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
-			self.timeline_arr.append(Timeline(self, column=1, row=i+1, columnspan=_NUMCOLS-1, rowspan=1, \
+			self.timeline_arr.append(Timeline(self, column=1, row=i+1, columnspan=self._NUMCOLS-1, rowspan=1, \
 				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS))
 
 		# Builds going vertical on the left side
@@ -129,7 +124,6 @@ class MainApplication:
 
 class Timeline(MainApplication):
   
-	
 	MARKER_RADIUS = 8 # All marker radii will be the same
 	marker_ypos = _MINSIZE/2+MARKER_RADIUS/2	# marker needs to be in the middle of the row
 
