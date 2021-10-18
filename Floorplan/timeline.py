@@ -1,30 +1,50 @@
 import tkinter as tk
+import math
 
-
-class Timeline(tk.Canvas):
-    MARKER_RADIUS = 6 # All marker radii will be the same
+# Add the _create_circle function ot the Canvas function, makes it easier to create a circle
+def _create_circle(self, x, y, r, **kwargs):
+    return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
+tk.Canvas.create_circle = _create_circle
+class Timeline(tk.Frame):
+    
+    MARKER_RADIUS = 8 # All marker radii will be the same
+    marker_ypos = _MINSIZE/2+MARKER_RADIUS/2
+    array = [(25,marker_ypos),(50,marker_ypos),(75,marker_ypos)]
 
     def __init__(self, parent, **kwargs):
-        # Get number of days and months
         self.num_days = kwargs['num_days']
         self.num_months = kwargs['num_months']
-        
-        # Create canvas that covers the the entire row
-        self.canvas = tk.Canvas.__init__(self)
-        self.grid(column=kwargs['column'], row=kwargs['row'], \
-            columnspan=kwargs['columnspan'], rowspan=kwargs['rowspan'])
 
-        # TODO: Update the height to be shorter, and move the marker appropriately.
-        self.configure(width=100*(self.num_months), height=100)
-        
-        # Add the circle plus accompanying text
-        global my_circle
-        my_circle = self.create_circle(50, 50, self.MARKER_RADIUS, fill="blue", \
-            outline="white", width=2)
+        self.canvas = tk.Canvas(parent)
+        # self.canvas.pack()
+        self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
+            columnspan=kwargs['columnspan'])
+        self.canvas.configure(width=_MINSIZE*(self.num_months), height=_MINSIZE, bg='green')
 
-        global my_text
-        my_text = self.create_text(50, 50, text="hello", fill='white')
-    
+        # to keep all IDs and its start position
+        self.ovals = {}
+        self.texts = {}
+
+        # Create markers for every item in the array
+        for item in self.array:
+            # create oval and get its ID
+            item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
+                fill='blue', outline='white', tags='id')
+            # remember ID and its start position
+            self.ovals[item_id] = item
+
+            # text_id = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
+            #     text="hello", fill='white')
+            self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
+                text="hello", fill='white')
+
+        self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
+        self.canvas.tag_bind('id', '<B1-Motion>', self.move)
+        self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
+
+        # # to remember selected item
+        # self.selected = None
+
     def update_date(self, x):
         # Create the text that goes under the marker indicating the date
         # x is the position that the mouse moves the marker to
@@ -40,25 +60,31 @@ class Timeline(tk.Canvas):
             str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
         # TODO: Set bounds so that the marker doesn't go out of bounds
 
-    
-    def move_cb(self, e):
-        # Callback when moving the marker
-        circle_coords = self.coords(my_circle)      # Returns top left and bottom right corners
+    def start_move(self, event):
+        # find all clicked items
+        self.selected = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
+        # get first selected item
+        self.selected = self.selected[0]
+
+        # get selected text tag
+        self.selected_text = self.canvas.find_withtag(self.texts[self.selected])
+
+    def move(self, event):
+        circle_coords = self.canvas.coords(self.selected)
         x0 = circle_coords[0]   # currently unused, go off of the mouse position
         y0 = circle_coords[1]
         x1 = circle_coords[2]   # currently unused, go off of the mouse position
         y1 = circle_coords[3]
-        self.coords(my_circle, e.x-self.MARKER_RADIUS, y0, e.x+self.MARKER_RADIUS, y1)
 
-        # Update label position and date
-        self.coords(my_text, e.x, 60)
-        self.tag_raise(my_text)            # Bring the text to the front, otherwise it is behind the circle.
-        self.itemconfig(my_text, text=str(self.update_date(e.x)))
+        # move selected item, hold y position
+        self.canvas.coords(self.selected, event.x-self.MARKER_RADIUS, \
+            y0, event.x+self.MARKER_RADIUS,y1)
 
-    # BELOW ITEMS ARE NOT COMPLETE
-    def resize_window_cb(self, e):
-        global layout, layout_resized, layout2
-        layout = Image.open("./images/layout.png")
-        layout_resized = layout.resize((e.width, e.height), Image.ANTIALIAS)
-        layout2 = ImageTk.PhotoImage(layout_resized)
-        self.create_image(0,0, image=layout2, anchor='nw')
+        # Also move the label position and date
+        self.canvas.coords(self.selected_text, event.x, \
+            self.marker_ypos+2*self.MARKER_RADIUS)
+        self.canvas.tag_raise(self.selected_text)
+        self.canvas.itemconfig(self.selected_text, text=str(self.update_date(event.x)))
+
+    def stop_move(self, event):
+        print("stopped")

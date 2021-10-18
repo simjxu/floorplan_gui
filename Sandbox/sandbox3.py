@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from PIL import ImageTk, Image
 import os
 
 
@@ -9,7 +8,7 @@ root = tk.Tk()
 root.geometry("1200x800")
 root.title('Floor Plan')
 
-NUMCOLS = 7
+NUMCOLS = 10
 NUMROWS = 3
 MINSIZE = 50
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
