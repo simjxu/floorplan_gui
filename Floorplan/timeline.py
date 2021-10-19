@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+from YAMLoutput import YAMLoutput
 class Timeline:
   
 	MARKER_RADIUS = 8 # All marker radii will be the same
@@ -140,7 +141,7 @@ class Timeline:
 		self.canvas.coords(self.selected_label, event.x, \
 				self.marker_ypos-2*self.MARKER_RADIUS)
 		self.canvas.tag_raise(self.selected_label)
-		
+
 		# Also move the date and update it
 		self.canvas.coords(self.selected_text, event.x, \
 				self.marker_ypos+2*self.MARKER_RADIUS)
