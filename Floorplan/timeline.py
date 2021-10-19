@@ -8,16 +8,22 @@ class Timeline:
 
 		# Pull in variables from the parent class, MainApplication
 		self.START_MONTH = kwargs['start_month']
+		self.START_YEAR = kwargs['start_year']
 		self.num_days = kwargs['num_days']
 		self.num_months = kwargs['num_months']
 		self._MINSIZE = kwargs['min_size']
-		self.date_arrays = kwargs['date_arrays']
-		self.label_arrays = kwargs['label_arrays']
+		self.date_array = kwargs['date_array']
+		self.label_array = kwargs['label_array']
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
 		self.marker_ypos = self._MINSIZE/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
-		self.array = [(25,self.marker_ypos),(50,self.marker_ypos),(75,self.marker_ypos)]
+		for i in range(len(self.date_array)):
+			# Append tuple into the array
+			self.array.append((self.date2pos(self.date_array[i]),self.marker_ypos))
+		
+		# # Delete below when done
+		# self.array = [(25,self.marker_ypos),(50,self.marker_ypos),(75,self.marker_ypos)]
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		# self.canvas.pack()
@@ -39,14 +45,52 @@ class Timeline:
 
 			# Create texts and store the text tag id for reference during move
 			self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
-				text="hello", fill='white')
+				text=self.pos2date(item[0]), fill='white')
 
+			# Tie callback function to mouse actions
 			self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
 			self.canvas.tag_bind('id', '<B1-Motion>', self.move)
 			self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
 
 			# # to remember selected item
 			# self.selected = None
+
+	def pos2date(self, pos):
+		# Takes position value (not integer right now) as an input and outputs a string 
+		# without the year, e.g. 9/11
+		month_idx = math.floor(pos/self._MINSIZE)
+		year = self.START_YEAR
+		month = self.START_MONTH + month_idx
+		if month/12 > 1:			# CAREFUL... Hopefully type(month)==int
+			year += math.floor(month/12)
+			month = month-12*math.floor(month/12)
+		day = self.num_days[month_idx] * ((pos-month_idx*self._MINSIZE)/self._MINSIZE)
+		day = round(day)
+
+		# # For Debug
+		# return str(math.floor(pos))
+
+		# # Show full year string
+		# return str(month) + "/" + str(day) + "/" + str(year)[2:]
+		return str(month) + "/" + str(day) 
+
+
+	def date2pos(self, datestr):
+		# Convert the date string into a pixel position
+		# 1. Pull out the month, day, and year into integers
+		# 2. Find Month index based upon start month and year
+		# 3. Multiply month index by MINSIZE, then add days/number_days_in_month * MINSIZE
+		m_d_y = datestr.split('/')
+		m = int(m_d_y[0])
+		d = int(m_d_y[1])
+		y = int(m_d_y[2])+2000 # Need to add 2000 (won't work for after year 2099, but who cares)
+
+		if m < self.START_MONTH:
+			month_idx = m+12 - self.START_MONTH + (y-1-self.START_YEAR)*12
+		else:
+			month_idx = m - self.START_MONTH + (y-self.START_YEAR)*12
+
+		return self._MINSIZE*month_idx + d/self.num_days[month_idx]*self._MINSIZE
 
 	def update_date(self, x):
 		# Create the text that goes under the marker indicating the date

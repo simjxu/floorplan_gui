@@ -5,6 +5,7 @@ import calendar
 import datetime
 from YAMLoutput import YAMLoutput
 from timeline import Timeline
+from exception import *
 
 ymlFile = './Sandbox/example.yaml'
 
@@ -64,6 +65,11 @@ class MainApplication:
 		# print(END_YEAR)
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
+		try:
+			if self._NUMBER_OF_MONTHS >= 24:
+				raise ValueTooLargeError
+		except ValueTooLargeError:
+			print("program doesn't work for span of >= 24 months")
 		self._NUMBER_OF_DAYS = self.create_months()
 
 		# print(self._NUMBER_OF_MONTHS)
@@ -74,8 +80,9 @@ class MainApplication:
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
 			self.timeline_arr.append(Timeline(self, column=1, row=i+1, columnspan=self._NUMCOLS-1, rowspan=1, \
 				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
-				start_month=self.yaml_dateobj.START_MONTH, min_size=_MINSIZE, \
-				date_arrays=self.yaml_dateobj.DATE_ARRAYS[i], label_arrays=self.yaml_dateobj.LABEL_ARRAYS[i]))
+				start_month=self.yaml_dateobj.START_MONTH, \
+				start_year=self.yaml_dateobj.START_YEAR, min_size=_MINSIZE, \
+				date_array=self.yaml_dateobj.DATE_ARRAYS[i], label_array=self.yaml_dateobj.LABEL_ARRAYS[i]))
 
 		# Builds going vertical on the left side
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
