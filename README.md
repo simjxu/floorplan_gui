@@ -12,6 +12,7 @@ Intended to make it easier to create floorplans
 - User can name the different builds based upon CSV file
 
 ## Updates
+10/17/21: Next step to add the marker labels in, maybe figure out how to move the Timeline object to another class
 10/13/21: Next step to create a YAML input
 10/11/21: Struggled to create a Marker class to control the different circle objects.
 10/8/21: Issue with expanding the number of months. Need to figure out how to use frame properly to add additional columns.
