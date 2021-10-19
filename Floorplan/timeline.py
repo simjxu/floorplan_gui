@@ -26,14 +26,14 @@ class Timeline:
 		# self.array = [(25,self.marker_ypos),(50,self.marker_ypos),(75,self.marker_ypos)]
 
 		self.canvas = tk.Canvas(parent.mainframe)
-		# self.canvas.pack()
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'])
 		self.canvas.configure(width=self._MINSIZE*(self.num_months), height=self._MINSIZE, bg='green')
 
 		# to keep all IDs and its start position
-		self.ovals = {}
-		self.texts = {}
+		self.ovals = {}			# Holds the object IDs for circles
+		self.texts = {}			# Holds the object IDs for dates that go under the marker
+		self.labels = {}		# Holds the object IDs for labels that go over the marker
 
 		# Create markers for every item in the array
 		for item in self.array:
@@ -43,9 +43,17 @@ class Timeline:
 			# remember ID and its start position
 			self.ovals[item_id] = item
 
+			# Create labels and store the label tag_id for reference during move
+			i = self.array.index(item)			# Get the index of the item
+			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
+				text=self.label_array[i], fill='white')
+
 			# Create texts and store the text tag id for reference during move
 			self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
 				text=self.pos2date(item[0]), fill='white')
+			
+			# # Print the date texts
+			# print(self.canvas.itemcget(self.texts[item_id], 'text'))
 
 			# Tie callback function to mouse actions
 			self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
@@ -112,6 +120,8 @@ class Timeline:
 		# get first selected item
 		self.selected = self.selected[0]
 
+		# get selected label tag
+		self.selected_label = self.canvas.find_withtag(self.labels[self.selected])
 		# get selected text tag
 		self.selected_text = self.canvas.find_withtag(self.texts[self.selected])
 
@@ -126,7 +136,12 @@ class Timeline:
 		self.canvas.coords(self.selected, event.x-self.MARKER_RADIUS, \
 				y0, event.x+self.MARKER_RADIUS,y1)
 
-		# Also move the label position and date
+		# Also move the label position and 
+		self.canvas.coords(self.selected_label, event.x, \
+				self.marker_ypos-2*self.MARKER_RADIUS)
+		self.canvas.tag_raise(self.selected_label)
+		
+		# Also move the date and update it
 		self.canvas.coords(self.selected_text, event.x, \
 				self.marker_ypos+2*self.MARKER_RADIUS)
 		self.canvas.tag_raise(self.selected_text)
