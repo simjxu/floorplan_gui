@@ -6,11 +6,16 @@ import datetime
 from YAMLoutput import YAMLoutput
 from timeline import Timeline
 from exception import *
+from legend import Legend
 
-ymlFile = './Sandbox/example.yaml'
+# ymlFile = './YAMLs/x_sys.yaml'
+ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell
 _MINSIZE = 100
+
+START_ROW = 10
+START_COL = 10
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
@@ -25,6 +30,9 @@ class MainApplication:
 	LABEL_ARRAYS = []
 
 	def __init__(self, parent):
+		# Create second window
+		self.legend = Legend()
+
 		# import the yaml file data
 		self.yaml_dateobj = YAMLoutput(self, file=ymlFile)
 		self.DATE_ARRAYS = self.yaml_dateobj.DATE_ARRAYS
@@ -50,7 +58,7 @@ class MainApplication:
 		
 		# tk.Frame for the Main Application, for reference in child class Timeline
 		self.mainframe = tk.Frame(parent, width=1000, height=1000)
-		self.mainframe.grid(column=0, row=0, rowspan=20, columnspan=20)		# max out at 20 rows, 20 cols right now
+		self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
 
 		# Configure size of the grid on root
 		for i in range(self._NUMCOLS):
@@ -78,7 +86,7 @@ class MainApplication:
 		# Create Timeline opbjects
 		self.timeline_arr = []
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
-			self.timeline_arr.append(Timeline(self, column=1, row=i+1, columnspan=self._NUMCOLS-1, rowspan=1, \
+			self.timeline_arr.append(Timeline(self, column=1+START_COL, row=i+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
 				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
 				start_month=self.yaml_dateobj.START_MONTH, \
 				start_year=self.yaml_dateobj.START_YEAR, min_size=_MINSIZE, \
@@ -87,7 +95,7 @@ class MainApplication:
 		# Builds going vertical on the left side
 		for i in range(len(self.yaml_dateobj.BUILD_NAMES)):
 			self.build = tk.Label(self.mainframe, text=self.yaml_dateobj.BUILD_NAMES[i])
-			self.build.grid(column=0, row=i+1, padx=10, pady=0)
+			self.build.grid(column=0+START_COL, row=i+1+START_ROW, padx=10, pady=0)
 
 
 	def get_num_months(self):
@@ -118,7 +126,7 @@ class MainApplication:
 			label_arr.append(tk.Label(self.mainframe, \
 				text=calendar.month_abbr[month]))
 			# MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			label_arr[i].grid(column=i+1, row=0, padx=(0,15), pady=0)
+			label_arr[i].grid(column=i+1+START_COL, row=0+START_ROW, padx=(0,15), pady=0)
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
 
@@ -131,6 +139,6 @@ class MainApplication:
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	root.geometry("800x600")
-	d = MainApplication(root)
+	root.geometry("1000x800")
+	app = MainApplication(root)
 	root.mainloop()

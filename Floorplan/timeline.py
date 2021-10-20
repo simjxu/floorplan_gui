@@ -15,6 +15,9 @@ class Timeline:
 		self._MINSIZE = kwargs['min_size']
 		self.date_array = kwargs['date_array']
 		self.label_array = kwargs['label_array']
+
+		self.parent = parent
+		parent.legend.testtext = "123"
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
@@ -111,6 +114,8 @@ class Timeline:
 		month_num = self.START_MONTH+month_iter
 		month_num = month_num if month_num <= 12 else month_num-12  # Rollover to January
 
+		
+
 		return str(month_num) + "/" + \
 			str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
 		# TODO: Set bounds so that the marker doesn't go out of bounds
@@ -147,6 +152,8 @@ class Timeline:
 				self.marker_ypos+2*self.MARKER_RADIUS)
 		self.canvas.tag_raise(self.selected_text)
 		self.canvas.itemconfig(self.selected_text, text=str(self.update_date(event.x)))
+		
 
 	def stop_move(self, event):
-		pass
+		self.parent.legend.update_yaml()
+		
