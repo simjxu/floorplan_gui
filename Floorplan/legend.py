@@ -33,7 +33,7 @@ class Legend:
       date=date)
   
   def save(self):
-    self.parent.yaml_obj.save_current()
+    self.parent.yaml_obj.save_current(self.savefile)
 
   def update_canvas(self):
     print("update")

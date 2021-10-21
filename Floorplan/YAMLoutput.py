@@ -1,17 +1,6 @@
 import yaml
 import datetime
 class YAMLoutput:
-	TOP_LEVELS = []
-
-	# The following need to be accessed by Main App
-	BUILD_NAMES = []
-	DATE_ARRAYS = []
-	LABEL_ARRAYS = []
-	START_MONTH = 0
-	START_YEAR = 0
-	END_MONTH = 0
-	END_YEAR = 0
-
 
 	def __init__(self, parent, **kwargs):
 		with open(kwargs['file'], "r") as stream:
@@ -21,8 +10,22 @@ class YAMLoutput:
 			except yaml.YAMLError as exc:
 				print(exc)
 		
-		# print(yaml_dict)
-		# print(yaml_dict['Module'])
+		self.load_yaml(yaml_dict)
+
+		# print(self.BUILD_NAMES)						
+		# print(self.DATE_ARRAYS)
+		# print(self.LABEL_ARRAYS)
+
+	def load_yaml(self, yaml_dict):
+		# Reset to 0
+		# The following need to be accessed by Main App
+		self.BUILD_NAMES = []
+		self.DATE_ARRAYS = []
+		self.LABEL_ARRAYS = []
+		self.START_MONTH = 0
+		self.START_YEAR = 0
+		self.END_MONTH = 0
+		self.END_YEAR = 0
 
 		# Capture build names, the labels, and the dates
 		for key in yaml_dict:
@@ -38,13 +41,8 @@ class YAMLoutput:
 			self.LABEL_ARRAYS.append(syslabel_arr)
 			self.DATE_ARRAYS.append(sysdate_arr)
 
-
 		# Get the Start and End
-		a = self.find_startend(self.DATE_ARRAYS)
-
-		# print(self.BUILD_NAMES)						
-		# print(self.DATE_ARRAYS)
-		# print(self.LABEL_ARRAYS)
+		self.find_startend(self.DATE_ARRAYS)
 
 	def find_startend(self, date_array):
 		# Combine the lists into a single array
@@ -70,9 +68,16 @@ class YAMLoutput:
 		return 0
 
 	def update_dates(self, **kwargs):
-		print("placeholder")
+		build_name = kwargs['build_name']
+		label = kwargs['label']
+		date = kwargs['date']
+		
+		# Get index of the date you need to update
+		build_idx = self.BUILD_NAMES.index(build_name)
+		label_idx = self.LABEL_ARRAYS[build_idx].index(label)
+		self.DATE_ARRAYS[build_idx][label_idx] = date
 
-	def save_current():
+	def save_current(saveFile):
 		print("placeholder")
 
 class MainApplication:
