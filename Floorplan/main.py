@@ -71,6 +71,7 @@ class MainApplication:
 		# print(self.yaml_obj.START_YEAR)
 		# print(END_MONTH)
 		# print(END_YEAR)
+
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
 		try:
@@ -95,6 +96,8 @@ class MainApplication:
 
 		# Builds going vertical on the left side
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			# For transparency, use the parent background color
+			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
 			self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i])
 			self.build.grid(column=0+START_COL, row=i+1+START_ROW, padx=10, pady=0)
 
