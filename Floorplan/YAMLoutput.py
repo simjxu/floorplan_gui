@@ -5,18 +5,18 @@ class YAMLoutput:
 	def __init__(self, parent, **kwargs):
 		with open(kwargs['file'], "r") as stream:
 			try:
-				yaml_dict = yaml.safe_load(stream)
-				# print(yaml_dict)
+				self.yaml_dict = yaml.safe_load(stream)
+				# print(self.yaml_dict)
 			except yaml.YAMLError as exc:
 				print(exc)
 		
-		self.load_yaml(yaml_dict)
+		self.load_yaml()
 
 		# print(self.BUILD_NAMES)						
 		# print(self.DATE_ARRAYS)
 		# print(self.LABEL_ARRAYS)
 
-	def load_yaml(self, yaml_dict):
+	def load_yaml(self):
 		# Reset to 0
 		# The following need to be accessed by Main App
 		self.BUILD_NAMES = []
@@ -28,16 +28,16 @@ class YAMLoutput:
 		self.END_YEAR = 0
 
 		# Capture build names, the labels, and the dates
-		for key in yaml_dict:
+		for key in self.yaml_dict:
 			# Get builds
 			self.BUILD_NAMES.append(key)
 			syslabel_arr = []
 			sysdate_arr = []
 
 			# Get labels and dates
-			for keyS in yaml_dict[key]:
+			for keyS in self.yaml_dict[key]:
 				syslabel_arr.append(keyS)	
-				sysdate_arr.append(yaml_dict[key][keyS]['date'])
+				sysdate_arr.append(self.yaml_dict[key][keyS]['date'])
 			self.LABEL_ARRAYS.append(syslabel_arr)
 			self.DATE_ARRAYS.append(sysdate_arr)
 
@@ -71,14 +71,23 @@ class YAMLoutput:
 		build_name = kwargs['build_name']
 		label = kwargs['label']
 		date = kwargs['date']
+		# print(self.yaml_dict)
 		
-		# Get index of the date you need to update
-		build_idx = self.BUILD_NAMES.index(build_name)
-		label_idx = self.LABEL_ARRAYS[build_idx].index(label)
-		self.DATE_ARRAYS[build_idx][label_idx] = date
+		# Update the yaml dict
+		self.yaml_dict[build_name][label]['date'] = date
 
-	def save_current(saveFile):
-		print("placeholder")
+		# Reload the dict
+		self.load_yaml()
+
+		# print(self.yaml_dict)
+		# # Get index of the date you need to update
+		# build_idx = self.BUILD_NAMES.index(build_name)
+		# label_idx = self.LABEL_ARRAYS[build_idx].index(label)
+		# self.DATE_ARRAYS[build_idx][label_idx] = date
+
+	def save_current(self, saveFile):
+		with open(saveFile, 'w') as file:
+			yaml.safe_dump(self.yaml_dict,file,sort_keys=False)
 
 class MainApplication:
 	def __init__(self, **kwargs):

@@ -9,6 +9,7 @@ from exception import *
 from legend import Legend
 
 ymlFile = './YAMLs/x_sys.yaml'
+# ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell
