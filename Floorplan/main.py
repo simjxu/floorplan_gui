@@ -71,6 +71,7 @@ class MainApplication:
 		# print(self.yaml_obj.START_YEAR)
 		# print(END_MONTH)
 		# print(END_YEAR)
+
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
 		try:
@@ -85,19 +86,48 @@ class MainApplication:
 		
 		# Create Timeline opbjects
 		self.timeline_arr = []
+		self.builds_arr = []
+		self.checkbox_arr = []
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
-			self.timeline_arr.append(Timeline(self, column=1+START_COL, row=i+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
-				num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
-				start_month=self.yaml_obj.START_MONTH, \
-				start_year=self.yaml_obj.START_YEAR, min_size=_MINSIZE, \
-				date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
-				build_name=self.yaml_obj.BUILD_NAMES[i]))
+			self.checkbox_arr.append(1)
+		self.load_builds() # Builds on the left side
+		self.load_timelines()
+		
 
-		# Builds going vertical on the left side
+	def load_builds(self):
+		# Clear builds
+		for build in self.builds_arr:
+			if isinstance(build, tk.Label):
+				build.destroy()
+		self.builds_arr.clear()
+
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
-			self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i])
-			self.build.grid(column=0+START_COL, row=i+1+START_ROW, padx=10, pady=0)
+			if self.checkbox_arr[i] == 0:
+				self.builds_arr.append(type('empty', (object,), {})())		# append empty object
+			# For transparency, use the parent background color
+			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
+			else:
+				self.builds_arr.append(tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i]))
+				self.builds_arr[i].grid(column=0+START_COL, row=i+1+START_ROW, padx=10, pady=0)
+		
 
+	def load_timelines(self):
+		# print(self.checkbox_arr)
+		for timeline in self.timeline_arr:
+			# Check to see if it is a timeline object or an empty object
+			if isinstance(timeline, Timeline):
+				timeline.destroy_timeline()
+		self.timeline_arr.clear()			# if the array is not empty, clear it
+		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			if self.checkbox_arr[i] == 0:
+				self.timeline_arr.append(type('empty', (object,), {})())		# append empty object
+			else:
+				self.timeline_arr.append(Timeline(self, column=1+START_COL, row=i+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
+					num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
+					start_month=self.yaml_obj.START_MONTH, \
+					start_year=self.yaml_obj.START_YEAR, min_size=_MINSIZE, \
+					date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
+					build_name=self.yaml_obj.BUILD_NAMES[i]))
 
 	def get_num_months(self):
 		# print(self.yaml_obj.START_MONTH)
