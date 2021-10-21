@@ -36,14 +36,14 @@ class Timeline:
 
 		# to keep all IDs and its start position
 		self.ovals = {}			# Holds the object IDs for circles
-		self.texts = {}			# Holds the object IDs for dates that go under the marker
+		self.dates = {}			# Holds the object IDs for dates that go under the marker
 		self.labels = {}		# Holds the object IDs for labels that go over the marker
 
 		# Create markers for every item in the array
 		for item in self.array:
 			# create oval and get its ID
 			item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
-				fill='blue', outline='white', tags='id')
+				fill='orange', outline='black', width=4, tags='id')
 			# remember ID and its start position
 			self.ovals[item_id] = item
 
@@ -53,11 +53,11 @@ class Timeline:
 				text=self.label_array[i], fill='white')
 
 			# Create texts and store the text tag id for reference during move
-			self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
+			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
 				text=self.pos2date(item[0]), fill='white')
 			
 			# # Print the date texts
-			# print(self.canvas.itemcget(self.texts[item_id], 'text'))
+			# print(self.canvas.itemcget(self.dates[item_id], 'text'))
 
 			# Tie callback function to mouse actions
 			self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
@@ -129,7 +129,7 @@ class Timeline:
 		# get selected label tag
 		self.selected_label = self.canvas.find_withtag(self.labels[self.selected])
 		# get selected text tag
-		self.selected_text = self.canvas.find_withtag(self.texts[self.selected])
+		self.selected_text = self.canvas.find_withtag(self.dates[self.selected])
 
 	def move(self, event):
 		circle_coords = self.canvas.coords(self.selected)
@@ -155,5 +155,6 @@ class Timeline:
 		
 
 	def stop_move(self, event):
+		# send the 
 		self.parent.legend.update_yaml()
 		

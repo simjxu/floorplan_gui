@@ -8,8 +8,8 @@ from timeline import Timeline
 from exception import *
 from legend import Legend
 
-# ymlFile = './YAMLs/x_sys.yaml'
-ymlFile = './Sample_YAML/example.yaml'
+ymlFile = './YAMLs/x_sys.yaml'
+# ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell
 _MINSIZE = 100
