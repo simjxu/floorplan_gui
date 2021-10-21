@@ -4,6 +4,8 @@ from YAMLoutput import YAMLoutput
 class Timeline:
   
 	MARKER_RADIUS = 8 # All marker radii will be the same
+	TEXT_COLOR = 'black'
+	MARKER_COLOR = 'orange'
 
 	def __init__(self, parent, **kwargs):
 
@@ -26,14 +28,12 @@ class Timeline:
 		for i in range(len(self.date_array)):
 			# Append tuple into the array
 			self.array.append((self.date2pos(self.date_array[i]),self.marker_ypos))
-		
-		# # Delete below when done
-		# self.array = [(25,self.marker_ypos),(50,self.marker_ypos),(75,self.marker_ypos)]
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'])
-		self.canvas.configure(width=self._MINSIZE*(self.num_months), height=self._MINSIZE, bg='green')
+		self.canvas.configure(width=self._MINSIZE*(self.num_months), height=self._MINSIZE, bg='white', \
+			highlightthickness=0)
 
 		# to keep all IDs and its start position
 		self.ovals = {}			# Holds the object IDs for circles
@@ -44,19 +44,19 @@ class Timeline:
 		for item in self.array:
 			# create oval and get its ID
 			item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
-				fill='orange', outline='black', width=4, tags='id')
+				fill=self.MARKER_COLOR, outline='black', width=4, tags='id')
 			# remember ID and its start position
 			self.ovals[item_id] = item
 
 			# Create labels and store the label tag_id for reference during move
 			i = self.array.index(item)			# Get the index of the item
 			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
-				text=self.label_array[i], fill='white')
+				text=self.label_array[i], fill=self.TEXT_COLOR)
 
 			# Create dates and store the date tag id for reference during move
 			date_str = self.pos2date(item[0])
 			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
-				text=date_str[:-3], fill='white')
+				text=date_str[:-3], fill=self.TEXT_COLOR)
 			
 			# # Print the date texts
 			# print(self.canvas.itemcget(self.dates[item_id], 'text'))

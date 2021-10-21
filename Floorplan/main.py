@@ -30,6 +30,8 @@ class MainApplication:
 	DATE_ARRAYS = []
 	LABEL_ARRAYS = []
 
+	TEXT_COLOR = 'black'
+
 	def __init__(self, parent):
 		
 
@@ -57,7 +59,7 @@ class MainApplication:
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
 		# tk.Frame for the Main Application, for reference in child class Timeline
-		self.mainframe = tk.Frame(parent, width=1000, height=1000)
+		self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
 		self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
 
 		# Configure size of the grid on root
@@ -107,7 +109,8 @@ class MainApplication:
 			# For transparency, use the parent background color
 			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
 			else:
-				self.builds_arr.append(tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i]))
+				self.builds_arr.append(tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], \
+					fg=self.TEXT_COLOR, bg='white'))
 				self.builds_arr[i].grid(column=0+START_COL, row=i+1+START_ROW, padx=10, pady=0)
 		
 
@@ -155,7 +158,7 @@ class MainApplication:
 				year += 1
 
 			label_arr.append(tk.Label(self.mainframe, \
-				text=calendar.month_abbr[month]))
+				text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
 			# MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
 			label_arr[i].grid(column=i+1+START_COL, row=0+START_ROW, padx=(0,15), pady=0)
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
@@ -171,5 +174,6 @@ class MainApplication:
 if __name__ == "__main__":
 	root = tk.Tk()
 	root.geometry("1000x800")
+	root.configure(bg='white')
 	app = MainApplication(root)
 	root.mainloop()
