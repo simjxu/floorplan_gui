@@ -66,8 +66,6 @@ class Timeline:
 			self.canvas.tag_bind('id', '<B1-Motion>', self.move)
 			self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
 
-			# # to remember selected item
-			# self.selected = None
 
 	def pos2date(self, pos):
 		# Takes position value (not integer right now) as an input and outputs a string 
@@ -171,3 +169,6 @@ class Timeline:
 			label=self.canvas.itemcget(self.selected_label, 'text'), \
 			date=self.update_date(event.x))
 	
+	def destroy_timeline(self):
+		self.canvas.delete('all')
+		self.canvas.destroy()

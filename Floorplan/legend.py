@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter.constants import ANCHOR, W
 
 class Legend:
   def __init__(self, parent, **kwargs):
@@ -28,11 +29,12 @@ class Legend:
     self.checkarray = []
     self.checkboxes = []
     
-    for i in range(5):
+    for i in range(len(parent.yaml_obj.BUILD_NAMES)):
+      build_name = parent.yaml_obj.BUILD_NAMES[i]
       self.checkarray.append(tk.IntVar())
-      self.checkboxes.append(ttk.Checkbutton(self.window, text="TEST", variable=self.checkarray[i], \
+      self.checkboxes.append(ttk.Checkbutton(self.window, text=build_name, variable=self.checkarray[i], \
         onvalue=1, offvalue=0))
-      self.checkboxes[i].pack()
+      self.checkboxes[i].pack(side=tk.TOP, anchor=tk.W, pady=(10,0), padx=(50,0))
 
   # Pass in all YAML data into Legend object
   # Can be called when move is made
@@ -50,35 +52,15 @@ class Legend:
     print("update")
 
   def reload(self):
-    for var in self.checkarray:
-      print(var.get())
+    # Set the parent checkbox array equal to this one
+    for i in range(len(self.checkarray)):
+      self.parent.checkbox_arr[i] = self.checkarray[i].get()
+    self.parent.load_builds()
+    self.parent.load_timelines()
 
 class MainApplication:
   def __init__(self, parent, **kwargs):
     self.legend = Legend(self)
-
-    # # New window for the Legend
-    # self.window = tk.Toplevel()
-    # self.window.geometry("200x600+800+0")
-    # self.window.title("Legend")
-    # def boxstates():
-    #   for var in vars:
-    #       print (var.get())
-
-    # names = ["Mike", "Harry", "Siti"]
-
-    # labelName = tk.Label(self.window, text = "Name")
-    # labelName.pack(anchor = tk.W)
-
-    # vars = []
-
-    # for i, checkboxname in enumerate(names):
-    #   vars.append(tk.IntVar())
-    #   check = ttk.Checkbutton(self.window, text=checkboxname, variable=vars[i])
-    #   check.pack(anchor = tk.W)
-
-    # btn = ttk.Button(self.window, text="Show", command = boxstates)
-    # btn.pack(side=tk.RIGHT)
 
 if __name__ == "__main__":
   root = tk.Tk()
