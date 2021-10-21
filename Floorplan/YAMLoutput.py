@@ -26,36 +26,18 @@ class YAMLoutput:
 
 		# Capture build names, the labels, and the dates
 		for key in yaml_dict:
-			# System Level
-			if key == "System" or key == "Assembly":
-				self.BUILD_NAMES.append(key)
-				syslabel_arr = []
-				sysdate_arr = []
+			# Get builds
+			self.BUILD_NAMES.append(key)
+			syslabel_arr = []
+			sysdate_arr = []
 
-				# System Label Level
-				for keyS in yaml_dict[key]:
-					syslabel_arr.append(keyS)	
-					sysdate_arr.append(yaml_dict[key][keyS][0]['date'])
-				self.LABEL_ARRAYS.append(syslabel_arr)
-				self.DATE_ARRAYS.append(sysdate_arr)
+			# Get labels and dates
+			for keyS in yaml_dict[key]:
+				syslabel_arr.append(keyS)	
+				sysdate_arr.append(yaml_dict[key][keyS]['date'])
+			self.LABEL_ARRAYS.append(syslabel_arr)
+			self.DATE_ARRAYS.append(sysdate_arr)
 
-			else:
-				# Module Build Level
-				for bld in yaml_dict[key]:
-					self.BUILD_NAMES.append(bld)
-
-					modlabel_arr = []
-					moddate_arr = []
-
-					# Module Label Level
-					for i in range(len(yaml_dict[key][bld])):
-
-						# Moudle Date Level
-						for lbl, dateM in yaml_dict[key][bld][i].items():
-							modlabel_arr.append(lbl)
-							moddate_arr.append(dateM[0]['date'])
-					self.LABEL_ARRAYS.append(modlabel_arr)
-					self.DATE_ARRAYS.append(moddate_arr)
 
 		# Get the Start and End
 		a = self.find_startend(self.DATE_ARRAYS)
