@@ -1,0 +1,50 @@
+System:
+  P2B-PEGA:
+    date: 10/12/21
+  P2B-GTK:
+    date: 11/14/21
+  P2C:
+    date: 1/5/22
+  Pre-EVT:
+    date: 3/8/22
+Sys-Rel:
+  P2B-DA Rel:
+    date: 12/15/21
+  P2B-DCDD Rel:
+    date: 1/10/22
+  Pre-EVT Rel:
+    date: 4/5/22
+P2B-DA:
+  Ok2Mini:
+    date: 9/12/21
+  Ok2Main:
+    date: 10/6/21
+  Ok2Send:
+    date: 10/21/21
+P2BC-DB:
+  MBO:
+    date: 10/20/21
+  Ok2Mini:
+    date: 10/30/21
+  Ok2Main:
+    date: 11/9/21
+  Ok2Send:
+    date: 12/21/21
+Pre-EVT-EA:
+  MBO:
+    date: 12/10/21
+  Ok2Mini:
+    date: 12/25/21
+  Ok2Main:
+    date: 1/11/22
+  Ok2Send:
+    date: 1/25/22
+Pre-EVT-EB:
+  MBO:
+    date: 1/11/22
+  Ok2Mini:
+    date: 1/24/22
+  Ok2Main:
+    date: 2/15/22
+  Ok2Send:
+    date: 3/3/22

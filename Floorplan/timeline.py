@@ -15,6 +15,10 @@ class Timeline:
 		self._MINSIZE = kwargs['min_size']
 		self.date_array = kwargs['date_array']
 		self.label_array = kwargs['label_array']
+		self.build_name = kwargs['build_name']
+
+		self.parent = parent
+		parent.legend.testtext = "123"
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
@@ -33,14 +37,14 @@ class Timeline:
 
 		# to keep all IDs and its start position
 		self.ovals = {}			# Holds the object IDs for circles
-		self.texts = {}			# Holds the object IDs for dates that go under the marker
+		self.dates = {}			# Holds the object IDs for dates that go under the marker
 		self.labels = {}		# Holds the object IDs for labels that go over the marker
 
 		# Create markers for every item in the array
 		for item in self.array:
 			# create oval and get its ID
 			item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
-				fill='blue', outline='white', tags='id')
+				fill='orange', outline='black', width=4, tags='id')
 			# remember ID and its start position
 			self.ovals[item_id] = item
 
@@ -49,12 +53,13 @@ class Timeline:
 			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
 				text=self.label_array[i], fill='white')
 
-			# Create texts and store the text tag id for reference during move
-			self.texts[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
-				text=self.pos2date(item[0]), fill='white')
+			# Create dates and store the date tag id for reference during move
+			date_str = self.pos2date(item[0])
+			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
+				text=date_str[:-3], fill='white')
 			
 			# # Print the date texts
-			# print(self.canvas.itemcget(self.texts[item_id], 'text'))
+			# print(self.canvas.itemcget(self.dates[item_id], 'text'))
 
 			# Tie callback function to mouse actions
 			self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
@@ -80,8 +85,8 @@ class Timeline:
 		# return str(math.floor(pos))
 
 		# # Show full year string
-		# return str(month) + "/" + str(day) + "/" + str(year)[2:]
-		return str(month) + "/" + str(day) 
+		return str(month) + "/" + str(day) + "/" + str(year)[2:]
+		# return str(month) + "/" + str(day) 
 
 
 	def date2pos(self, datestr):
@@ -109,10 +114,18 @@ class Timeline:
 		# 3. Map the integer to the month Start Month + integer
 		month_iter = math.floor(x/100)
 		month_num = self.START_MONTH+month_iter
-		month_num = month_num if month_num <= 12 else month_num-12  # Rollover to January
+		if month_num <= 12:
+			month_num = month_num
+			year = self.START_YEAR
+		else: 
+			# See how many years it is covering
+			n_yrs = math.floor((month_num/12)) 
+			month_num = month_num-12*n_yrs 					# Rollover to January
+			year = self.START_YEAR + n_yrs
 
 		return str(month_num) + "/" + \
-			str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter]))
+			str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter])) + \
+			"/" + str(year)[2:]
 		# TODO: Set bounds so that the marker doesn't go out of bounds
 
 	def start_move(self, event):
@@ -124,7 +137,7 @@ class Timeline:
 		# get selected label tag
 		self.selected_label = self.canvas.find_withtag(self.labels[self.selected])
 		# get selected text tag
-		self.selected_text = self.canvas.find_withtag(self.texts[self.selected])
+		self.selected_date = self.canvas.find_withtag(self.dates[self.selected])
 
 	def move(self, event):
 		circle_coords = self.canvas.coords(self.selected)
@@ -143,10 +156,18 @@ class Timeline:
 		self.canvas.tag_raise(self.selected_label)
 
 		# Also move the date and update it
-		self.canvas.coords(self.selected_text, event.x, \
+		self.canvas.coords(self.selected_date, event.x, \
 				self.marker_ypos+2*self.MARKER_RADIUS)
-		self.canvas.tag_raise(self.selected_text)
-		self.canvas.itemconfig(self.selected_text, text=str(self.update_date(event.x)))
+		self.canvas.tag_raise(self.selected_date)
+		self.canvas.itemconfig(self.selected_date, text=self.update_date(event.x)[:-3])
+
 
 	def stop_move(self, event):
-		pass
+		# print(self.canvas.itemcget(self.selected_label, 'text'))
+		# print(self.canvas.itemcget(self.selected_date, 'text'))
+
+		# send the yaml build name over, the item array, the item, and the new date
+		self.parent.legend.update_yaml(build_name=self.build_name, \
+			label=self.canvas.itemcget(self.selected_label, 'text'), \
+			date=self.update_date(event.x))
+	
