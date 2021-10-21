@@ -1,9 +1,10 @@
 import tkinter as tk
 
 class Legend:
-  def __init__(self, **kwargs):
+  def __init__(self, parent, **kwargs):
     self.savefile = "./Sample_YAML/savefile.yaml"
     self.testtext = "ABC"   # For testing, delete
+    self.parent = parent
 
     # New window for the Legend
     self.window = tk.Tk()
@@ -25,10 +26,14 @@ class Legend:
   # Pass in all YAML data into Legend object
   # Can be called when move is made
   def update_yaml(self, **kwargs):
-    print(self.testtext)
+    build_name = kwargs['build_name']
+    label = kwargs['label']
+    date = kwargs['date']
+    self.parent.yaml_obj.update_dates(build_name=build_name, label=label, \
+      date=date)
   
   def save(self):
-    print("test")
+    self.parent.yaml_obj.save_current()
 
   def update_canvas(self):
     print("update")

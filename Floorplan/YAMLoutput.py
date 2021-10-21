@@ -69,7 +69,7 @@ class YAMLoutput:
 
 		return 0
 
-	def get_dates(selection):
+	def update_dates(self, **kwargs):
 		print("placeholder")
 
 	def save_current():
