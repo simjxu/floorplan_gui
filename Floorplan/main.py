@@ -159,7 +159,7 @@ class MainApplication:
 					start_month=self.yaml_obj.START_MONTH, \
 					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
 					date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
-					build_name=self.yaml_obj.BUILD_NAMES[i]))
+					color_array=self.yaml_obj.COLOR_ARRAYS[i], build_name=self.yaml_obj.BUILD_NAMES[i]))
 				rowptr += 1
 
 	def get_num_months(self):

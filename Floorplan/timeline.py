@@ -18,6 +18,7 @@ class Timeline:
 		self.MIN_YLEN = kwargs['min_ylen']
 		self.date_array = kwargs['date_array']
 		self.label_array = kwargs['label_array']
+		self.color_array = kwargs['color_array']
 		self.build_name = kwargs['build_name']
 
 		self.parent = parent
@@ -43,14 +44,16 @@ class Timeline:
 
 		# Create markers for every item in the array
 		for item in self.array:
+			i = self.array.index(item)			# Get the index of the item
+
 			# create oval and get its ID
 			item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
-				fill=self.MARKER_COLOR, outline='black', width=4, tags='id')
+				fill=self.color_array[i], \
+					outline='black', width=4, tags='id')
 			# remember ID and its start position
 			self.ovals[item_id] = item
 
 			# Create labels and store the label tag_id for reference during move
-			i = self.array.index(item)			# Get the index of the item
 			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
 				text=self.label_array[i], fill=self.TEXT_COLOR)
 
