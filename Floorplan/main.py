@@ -16,6 +16,10 @@ ymlFile = './YAMLs/x_sys.yaml'
 MIN_XLEN = 200
 MIN_YLEN = 100
 
+# Input width of each cell DELETE
+MIN_XLEN = 50
+MIN_YLEN = 50
+
 START_ROW = 10
 START_COL = 10
 
@@ -101,10 +105,15 @@ class MainApplication:
 		ROWS_DISP = 4  # Number of rows to display.
 		COLS_DISP = 5  # Number of columns to display.
 
+		for i in range(ROWS):
+			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
+		for i in range(COLS):
+			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
+
 		# Add the buttons to the frame.
-		for i in range(1, ROWS+1):
-			for j in range(1, COLS+1):
-				button = tk.Label(self.mainframe, padx=7, pady=7, relief=tk.RIDGE,
+		for i in range(0, ROWS):
+			for j in range(0, COLS):
+				button = tk.Label(self.mainframe, relief=tk.RIDGE,
 														text="TESTER")
 				button.grid(row=i, column=j, sticky='news')
 		
