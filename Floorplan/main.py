@@ -59,6 +59,15 @@ class MainApplication:
 		# Update the number of rows
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
+		# Need Canvas for the scrollbar
+		self.maincanvas = tk.Canvas(parent, bg="Yellow")
+		self.maincanvas.grid(row=0, column=0)
+
+		# Create a horizontal scrollbar linked to the canvas.
+		self.hsbar = tk.Scrollbar(parent, orient=tk.HORIZONTAL, command=self.maincanvas.xview)
+		self.hsbar.grid(row=1, column=0, sticky=tk.EW)
+		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
+
 		# tk.Frame for the Main Application, for reference in child class Timeline
 		self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
 		self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
@@ -69,12 +78,6 @@ class MainApplication:
 		for i in range(self._NUMROWS):
 			root.columnconfigure(i, minsize=MIN_XLEN)
 
-
-		# print(self.yaml_obj.START_MONTH)
-		# print(self.yaml_obj.START_YEAR)
-		# print(END_MONTH)
-		# print(END_YEAR)
-
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
 		try:
@@ -83,9 +86,6 @@ class MainApplication:
 		except ValueTooLargeError:
 			print("program doesn't work for span of >= 24 months")
 		self._NUMBER_OF_DAYS = self.create_months()
-
-		# print(self._NUMBER_OF_MONTHS)
-		# print(self._NUMBER_OF_DAYS)
 		
 		# Create Timeline opbjects
 		self.timeline_arr = []
@@ -96,6 +96,20 @@ class MainApplication:
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
 		
+		# Create canvas window to hold the buttons_frame.
+		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
+
+		self.mainframe.update_idletasks()  # Needed to make bbox info available.
+		bbox = self.maincanvas.bbox(tk.ALL)  # Get bounding box of canvas with Buttons.
+
+		ROWS, COLS = 20, 20  # Size of grid.
+		ROWS_DISP = 3  # Number of rows to display.
+		COLS_DISP = 4  # Number of columns to display.
+		# Define the scrollable region as entire canvas with only the desired
+		# number of rows and columns displayed.
+		w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
+		dw, dh = int((w/COLS) * COLS_DISP), int((h/ROWS) * ROWS_DISP)
+		self.maincanvas.configure(scrollregion=bbox, width=dw, height=dh)
 
 	def load_builds(self):
 		# Clear builds
