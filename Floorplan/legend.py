@@ -44,6 +44,10 @@ class Legend:
     clearcheck_button = tk.Button(update_frame, text="CLEAR", fg="black", command=self.clear)
     clearcheck_button.pack()
 
+    # Create clear checks button
+    selectall_button = tk.Button(update_frame, text="SELECT ALL", fg="black", command=self.select_all)
+    selectall_button.pack()
+
 
   # Pass in all YAML data into Legend object
   # Can be called when move is made
@@ -70,6 +74,10 @@ class Legend:
   def clear(self):
     for checkbox in self.checkarray:
       checkbox.set(0)
+
+  def select_all(self):
+    for checkbox in self.checkarray:
+      checkbox.set(1)
 
 class MainApplication:
   def __init__(self, parent, **kwargs):

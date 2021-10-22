@@ -14,7 +14,7 @@ ymlFile = './YAMLs/x_sys.yaml'
 
 # Input width of each cell
 MIN_XLEN = 150
-MIN_YLEN = 75
+MIN_YLEN = 50
 
 # # Input width of each cell
 # MIN_XLEN = 10
@@ -63,8 +63,10 @@ class MainApplication:
 		# Update the number of rows
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
-		# Need Frame for Builds
-		self.buildframe = tk.Frame(parent, bg="white")
+		# Need Canvas and Frame for Builds
+		self.buildcanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
+		self.buildcanvas.grid(row=0, column=0)
+		self.buildframe = tk.Frame(self.buildcanvas, bg="white", bd=0)
 		self.buildframe.grid(row=0, column=0)
 
 		# Need Canvas for the scrollbar
@@ -79,17 +81,18 @@ class MainApplication:
 		# tk.Frame for the Main Application, for reference in child class Timeline
 		# self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
 		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
-		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=2)
+		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=0)
 
-		ROWS_DISP = 10  # Number of rows to display.
+		ROWS_DISP = self._NUMROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display.
 
 		# Configure size of the grid
 		for i in range(self._NUMROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
-			self.buildframe.rowconfigure(i, minsize=MIN_YLEN)
+			self.buildframe.rowconfigure(i, minsize=MIN_YLEN+2)		# Added 2 because otherwise rows don't line up. Not sure why, need to fix
 		for i in range(self._NUMCOLS):
 			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
+			# self.buildframe.columnconfigure(i, minsize=MIN_XLEN)
 		
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
@@ -136,9 +139,10 @@ class MainApplication:
 			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
 			else:
 				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
-					fg=self.TEXT_COLOR, bg='white', wraplength=50))
-				self.builds_arr[i].grid(column=0, row=rowptr, padx=10, pady=0)
+					fg=self.TEXT_COLOR, bg='white', wraplength=100))
+				self.builds_arr[i].grid(column=0, row=rowptr+1)
 				rowptr += 1
+
 		
 
 	def load_timelines(self):
@@ -159,7 +163,7 @@ class MainApplication:
 					start_month=self.yaml_obj.START_MONTH, \
 					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
 					date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
-					build_name=self.yaml_obj.BUILD_NAMES[i]))
+					color_array=self.yaml_obj.COLOR_ARRAYS[i], build_name=self.yaml_obj.BUILD_NAMES[i]))
 				rowptr += 1
 
 	def get_num_months(self):
@@ -190,7 +194,7 @@ class MainApplication:
 			label_arr.append(tk.Label(self.mainframe, \
 				text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
 			# MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			label_arr[i].grid(column=i+START_COL, row=0+START_ROW, padx=(0,15), pady=0)
+			label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
 
