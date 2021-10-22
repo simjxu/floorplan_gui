@@ -63,9 +63,11 @@ class MainApplication:
 		# Update the number of rows
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
-		# Need Frame for Builds
-		self.buildframe = tk.Frame(parent, bg="white")
-		self.buildframe.grid(row=0, column=0, rowspan=self._NUMROWS+1)
+		# Need Canvas and Frame for Builds
+		self.buildcanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
+		self.buildcanvas.grid(row=0, column=0)
+		self.buildframe = tk.Frame(self.buildcanvas, bg="white", bd=0)
+		self.buildframe.grid(row=0, column=0)
 
 		# Need Canvas for the scrollbar
 		self.maincanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
@@ -79,7 +81,7 @@ class MainApplication:
 		# tk.Frame for the Main Application, for reference in child class Timeline
 		# self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
 		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
-		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=2)
+		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=0)
 
 		ROWS_DISP = self._NUMROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display.
@@ -87,7 +89,7 @@ class MainApplication:
 		# Configure size of the grid
 		for i in range(self._NUMROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
-			self.buildframe.rowconfigure(i, minsize=MIN_YLEN)
+			self.buildframe.rowconfigure(i, minsize=MIN_YLEN+2)		# Added 2 because otherwise rows don't line up. Not sure why, need to fix
 		for i in range(self._NUMCOLS):
 			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
 			# self.buildframe.columnconfigure(i, minsize=MIN_XLEN)
@@ -140,6 +142,7 @@ class MainApplication:
 					fg=self.TEXT_COLOR, bg='white', wraplength=100))
 				self.builds_arr[i].grid(column=0, row=rowptr+1)
 				rowptr += 1
+
 		
 
 	def load_timelines(self):
