@@ -14,14 +14,14 @@ ymlFile = './YAMLs/x_sys.yaml'
 
 # Input width of each cell
 MIN_XLEN = 200
-MIN_YLEN = 100
-
-# Input width of each cell DELETE
-MIN_XLEN = 50
 MIN_YLEN = 50
 
-START_ROW = 10
-START_COL = 10
+# # Input width of each cell
+# MIN_XLEN = 10
+# MIN_YLEN = 10
+
+START_ROW = 0
+START_COL = 0
 
 # Add the _create_circle function ot the Canvas function, makes it easier to create a circle
 def _create_circle(self, x, y, r, **kwargs):
@@ -64,7 +64,7 @@ class MainApplication:
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
 		# Need Canvas for the scrollbar
-		self.maincanvas = tk.Canvas(parent, bg="Yellow")
+		self.maincanvas = tk.Canvas(parent, bg="white")
 		self.maincanvas.grid(row=0, column=0)
 
 		# Create a horizontal scrollbar linked to the canvas.
@@ -75,47 +75,44 @@ class MainApplication:
 		# tk.Frame for the Main Application, for reference in child class Timeline
 		# self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
 		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
-		self.mainframe = tk.Frame(self.maincanvas, bg="Red", bd=2)
-
-		# # Configure size of the grid on root
-		# for i in range(self._NUMCOLS):
-		# 	root.columnconfigure(i, minsize=MIN_XLEN)
-		# for i in range(self._NUMROWS):
-		# 	root.columnconfigure(i, minsize=MIN_XLEN)
-
-		# # Create top row of months, get array of days, set column/rowspan
-		# self._NUMBER_OF_MONTHS = self.get_num_months()
-		# try:
-		# 	if self._NUMBER_OF_MONTHS >= 24:
-		# 		raise ValueTooLargeError
-		# except ValueTooLargeError:
-		# 	print("program doesn't work for span of >= 24 months")
-		# self._NUMBER_OF_DAYS = self.create_months()
-		
-		# # Create Timeline opbjects
-		# self.timeline_arr = []
-		# self.builds_arr = []
-		# self.checkbox_arr = []
-		# for i in range(len(self.yaml_obj.BUILD_NAMES)):
-		# 	self.checkbox_arr.append(1)
-		# self.load_builds() # Builds on the left side
-		# self.load_timelines()
+		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=2)
 
 		ROWS, COLS = 10, 10  # Size of grid.
-		ROWS_DISP = 4  # Number of rows to display.
+		ROWS_DISP = 10  # Number of rows to display.
 		COLS_DISP = 5  # Number of columns to display.
 
-		for i in range(ROWS):
+		# Configure size of the grid
+		for i in range(self._NUMROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
-		for i in range(COLS):
+		for i in range(self._NUMCOLS):
 			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
+		
+		# Create top row of months, get array of days, set column/rowspan
+		self._NUMBER_OF_MONTHS = self.get_num_months()
+		try:
+			if self._NUMBER_OF_MONTHS >= 24:
+				raise ValueTooLargeError
+		except ValueTooLargeError:
+			print("program doesn't work for span of >= 24 months")
+		self._NUMBER_OF_DAYS = self.create_months()
+		
+		# Create Timeline opbjects
+		self.timeline_arr = []
+		self.builds_arr = []
+		self.checkbox_arr = []
+		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			self.checkbox_arr.append(1)
+		self.load_builds() # Builds on the left side
+		self.load_timelines()
 
-		# Add the buttons to the frame.
-		for i in range(0, ROWS):
-			for j in range(0, COLS):
-				button = tk.Label(self.mainframe, relief=tk.RIDGE,
-														text="TESTER")
-				button.grid(row=i, column=j, sticky='news')
+		
+
+		# # Add the buttons to the frame.
+		# for i in range(0, ROWS):
+		# 	for j in range(0, COLS):
+		# 		button = tk.Label(self.mainframe, relief=tk.RIDGE,
+		# 												text="TESTER")
+		# 		button.grid(row=i, column=j, sticky='news')
 		
 		# Create canvas window to hold the buttons_frame.
 		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
@@ -126,7 +123,7 @@ class MainApplication:
 		# Define the scrollable region as entire canvas with only the desired
 		# number of rows and columns displayed.
 		w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
-		dw, dh = int((w/COLS) * COLS_DISP), int((h/ROWS) * ROWS_DISP)
+		dw, dh = int((w/self._NUMCOLS) * COLS_DISP), int((h/self._NUMROWS) * ROWS_DISP)
 		self.maincanvas.configure(scrollregion=bbox, width=dw, height=dh)
 
 	def load_builds(self):
