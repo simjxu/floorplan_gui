@@ -37,6 +37,8 @@ class MainApplication:
 
 	TEXT_COLOR = 'black'
 
+	MAX_ROWS = 5
+
 	def __init__(self, parent):
 		
 
@@ -65,13 +67,13 @@ class MainApplication:
 		
 		# Need Canvas and Frame for Builds
 		self.buildcanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
-		self.buildcanvas.grid(row=0, column=0)
+		self.buildcanvas.grid(row=0, column=0, sticky=tk.N)
 		self.buildframe = tk.Frame(self.buildcanvas, bg="white", bd=0)
 		self.buildframe.grid(row=0, column=0)
 
 		# Need Canvas for the scrollbar
 		self.maincanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
-		self.maincanvas.grid(row=0, column=1)
+		self.maincanvas.grid(row=0, column=1, sticky=tk.N)
 
 		# Create a horizontal scrollbar linked to the canvas.
 		self.hsbar = tk.Scrollbar(parent, orient=tk.HORIZONTAL, command=self.maincanvas.xview)
@@ -82,8 +84,9 @@ class MainApplication:
 		# self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
 		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
 		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=0)
+		self.mainframe.grid(row=0, column=0, sticky=tk.N)
 
-		ROWS_DISP = self._NUMROWS  # Number of rows to display.
+		ROWS_DISP = self.MAX_ROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display.
 
 		# Configure size of the grid
@@ -121,7 +124,7 @@ class MainApplication:
 		# Define the scrollable region as entire canvas with only the desired
 		# number of rows and columns displayed.
 		w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
-		dw, dh = int((w/self._NUMCOLS) * COLS_DISP), int((h/self._NUMROWS) * ROWS_DISP)
+		dw, dh = int((w/self._NUMCOLS) * COLS_DISP), int((h/self.MAX_ROWS) * ROWS_DISP)
 		self.maincanvas.configure(scrollregion=bbox, width=dw, height=dh)
 
 	def load_builds(self):
@@ -133,6 +136,8 @@ class MainApplication:
 
 		rowptr = 0
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			if rowptr >= self.MAX_ROWS:
+				break
 			if self.checkbox_arr[i] == 0:
 				self.builds_arr.append(type('empty', (object,), {})())		# append empty object
 			# For transparency, use the parent background color
@@ -140,7 +145,7 @@ class MainApplication:
 			else:
 				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
 					fg=self.TEXT_COLOR, bg='white', wraplength=100))
-				self.builds_arr[i].grid(column=0, row=rowptr+1)
+				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
 				rowptr += 1
 
 		
@@ -154,6 +159,8 @@ class MainApplication:
 		self.timeline_arr.clear()			# if the array is not empty, clear it
 		rowptr = 0
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			if rowptr >= self.MAX_ROWS:
+				break
 			if self.checkbox_arr[i] == 0:
 				# pass
 				self.timeline_arr.append(type('empty', (object,), {})())		# append empty object

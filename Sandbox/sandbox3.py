@@ -54,7 +54,7 @@
 import tkinter as tk
 
 ROWS, COLS = 10, 10  # Size of grid.
-ROWS_DISP = 4  # Number of rows to display.
+ROWS_DISP = 10  # Number of rows to display.
 COLS_DISP = 5  # Number of columns to display.
 
 class MyApp(tk.Tk):

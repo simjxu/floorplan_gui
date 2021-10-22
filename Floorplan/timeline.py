@@ -33,7 +33,7 @@ class Timeline:
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
-			columnspan=kwargs['columnspan'])
+			columnspan=kwargs['columnspan'], sticky='news')
 		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_YLEN, bg='white', \
 			highlightthickness=1)
 
