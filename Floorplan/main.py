@@ -13,7 +13,7 @@ ymlFile = './YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell
-MIN_XLEN = 200
+MIN_XLEN = 150
 MIN_YLEN = 75
 
 # # Input width of each cell
@@ -63,13 +63,17 @@ class MainApplication:
 		# Update the number of rows
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
+		# Need Frame for Builds
+		self.buildframe = tk.Frame(parent, bg="white")
+		self.buildframe.grid(row=0, column=0)
+
 		# Need Canvas for the scrollbar
 		self.maincanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
-		self.maincanvas.grid(row=0, column=0)
+		self.maincanvas.grid(row=0, column=1)
 
 		# Create a horizontal scrollbar linked to the canvas.
 		self.hsbar = tk.Scrollbar(parent, orient=tk.HORIZONTAL, command=self.maincanvas.xview)
-		self.hsbar.grid(row=1, column=0, sticky=tk.EW)
+		self.hsbar.grid(row=1, column=1, sticky=tk.EW)
 		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
 
 		# tk.Frame for the Main Application, for reference in child class Timeline
@@ -77,13 +81,13 @@ class MainApplication:
 		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
 		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=2)
 
-		ROWS, COLS = 10, 10  # Size of grid.
 		ROWS_DISP = 10  # Number of rows to display.
-		COLS_DISP = 5  # Number of columns to display.
+		COLS_DISP = 7  # Number of columns to display.
 
 		# Configure size of the grid
 		for i in range(self._NUMROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
+			self.buildframe.rowconfigure(i, minsize=MIN_YLEN)
 		for i in range(self._NUMCOLS):
 			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
 		
@@ -96,7 +100,7 @@ class MainApplication:
 			print("program doesn't work for span of >= 24 months")
 		self._NUMBER_OF_DAYS = self.create_months()
 		
-		# Create Timeline opbjects
+		# Create Timeline objects
 		self.timeline_arr = []
 		self.builds_arr = []
 		self.checkbox_arr = []
@@ -104,15 +108,6 @@ class MainApplication:
 			self.checkbox_arr.append(1)
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
-
-		
-
-		# # Add the buttons to the frame.
-		# for i in range(0, ROWS):
-		# 	for j in range(0, COLS):
-		# 		button = tk.Label(self.mainframe, relief=tk.RIDGE,
-		# 												text="TESTER")
-		# 		button.grid(row=i, column=j, sticky='news')
 		
 		# Create canvas window to hold the buttons_frame.
 		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
@@ -140,9 +135,9 @@ class MainApplication:
 			# For transparency, use the parent background color
 			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
 			else:
-				self.builds_arr.append(tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], \
-					fg=self.TEXT_COLOR, bg='white'))
-				self.builds_arr[i].grid(column=0+START_COL, row=rowptr+1+START_ROW, padx=10, pady=0)
+				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
+					fg=self.TEXT_COLOR, bg='white', wraplength=50))
+				self.builds_arr[i].grid(column=0, row=rowptr, padx=10, pady=0)
 				rowptr += 1
 		
 
@@ -159,7 +154,7 @@ class MainApplication:
 				# pass
 				self.timeline_arr.append(type('empty', (object,), {})())		# append empty object
 			else:
-				self.timeline_arr.append(Timeline(self, column=1+START_COL, row=rowptr+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
+				self.timeline_arr.append(Timeline(self, column=0, row=rowptr+1, columnspan=self._NUMCOLS-1, rowspan=1, \
 					num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
 					start_month=self.yaml_obj.START_MONTH, \
 					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
@@ -195,7 +190,7 @@ class MainApplication:
 			label_arr.append(tk.Label(self.mainframe, \
 				text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
 			# MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			label_arr[i].grid(column=i+1+START_COL, row=0+START_ROW, padx=(0,15), pady=0)
+			label_arr[i].grid(column=i+START_COL, row=0+START_ROW, padx=(0,15), pady=0)
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
 
