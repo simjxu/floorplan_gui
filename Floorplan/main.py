@@ -66,7 +66,7 @@ class MainApplication:
 		for i in range(self._NUMCOLS):
 			root.columnconfigure(i, minsize=_MINSIZE)
 		for i in range(self._NUMROWS):
-				root.columnconfigure(i, minsize=_MINSIZE)
+			root.columnconfigure(i, minsize=_MINSIZE)
 
 
 		# print(self.yaml_obj.START_MONTH)
