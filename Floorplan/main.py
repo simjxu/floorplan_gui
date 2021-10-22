@@ -14,7 +14,7 @@ ymlFile = './YAMLs/x_sys.yaml'
 
 # Input width of each cell
 MIN_XLEN = 150
-MIN_YLEN = 75
+MIN_YLEN = 50
 
 # # Input width of each cell
 # MIN_XLEN = 10
@@ -65,7 +65,7 @@ class MainApplication:
 		
 		# Need Frame for Builds
 		self.buildframe = tk.Frame(parent, bg="white")
-		self.buildframe.grid(row=0, column=0)
+		self.buildframe.grid(row=0, column=0, rowspan=self._NUMROWS+1)
 
 		# Need Canvas for the scrollbar
 		self.maincanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
@@ -81,7 +81,7 @@ class MainApplication:
 		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
 		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=2)
 
-		ROWS_DISP = 10  # Number of rows to display.
+		ROWS_DISP = self._NUMROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display.
 
 		# Configure size of the grid
@@ -90,6 +90,7 @@ class MainApplication:
 			self.buildframe.rowconfigure(i, minsize=MIN_YLEN)
 		for i in range(self._NUMCOLS):
 			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
+			# self.buildframe.columnconfigure(i, minsize=MIN_XLEN)
 		
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
@@ -135,9 +136,9 @@ class MainApplication:
 			# For transparency, use the parent background color
 			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
 			else:
-				self.builds_arr.append(tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], \
-					fg=self.TEXT_COLOR, bg='white', wraplength=50))
-				self.builds_arr[i].grid(column=0, row=rowptr+1, padx=10, pady=0)
+				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
+					fg=self.TEXT_COLOR, bg='white', wraplength=100))
+				self.builds_arr[i].grid(column=0, row=rowptr+1)
 				rowptr += 1
 		
 
