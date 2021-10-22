@@ -69,32 +69,44 @@ class MainApplication:
 		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
 
 		# tk.Frame for the Main Application, for reference in child class Timeline
-		self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
-		self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
+		# self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
+		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
+		self.mainframe = tk.Frame(self.maincanvas, bg="Red", bd=2)
 
-		# Configure size of the grid on root
-		for i in range(self._NUMCOLS):
-			root.columnconfigure(i, minsize=MIN_XLEN)
-		for i in range(self._NUMROWS):
-			root.columnconfigure(i, minsize=MIN_XLEN)
+		# # Configure size of the grid on root
+		# for i in range(self._NUMCOLS):
+		# 	root.columnconfigure(i, minsize=MIN_XLEN)
+		# for i in range(self._NUMROWS):
+		# 	root.columnconfigure(i, minsize=MIN_XLEN)
 
-		# Create top row of months, get array of days, set column/rowspan
-		self._NUMBER_OF_MONTHS = self.get_num_months()
-		try:
-			if self._NUMBER_OF_MONTHS >= 24:
-				raise ValueTooLargeError
-		except ValueTooLargeError:
-			print("program doesn't work for span of >= 24 months")
-		self._NUMBER_OF_DAYS = self.create_months()
+		# # Create top row of months, get array of days, set column/rowspan
+		# self._NUMBER_OF_MONTHS = self.get_num_months()
+		# try:
+		# 	if self._NUMBER_OF_MONTHS >= 24:
+		# 		raise ValueTooLargeError
+		# except ValueTooLargeError:
+		# 	print("program doesn't work for span of >= 24 months")
+		# self._NUMBER_OF_DAYS = self.create_months()
 		
-		# Create Timeline opbjects
-		self.timeline_arr = []
-		self.builds_arr = []
-		self.checkbox_arr = []
-		for i in range(len(self.yaml_obj.BUILD_NAMES)):
-			self.checkbox_arr.append(1)
-		self.load_builds() # Builds on the left side
-		self.load_timelines()
+		# # Create Timeline opbjects
+		# self.timeline_arr = []
+		# self.builds_arr = []
+		# self.checkbox_arr = []
+		# for i in range(len(self.yaml_obj.BUILD_NAMES)):
+		# 	self.checkbox_arr.append(1)
+		# self.load_builds() # Builds on the left side
+		# self.load_timelines()
+
+		ROWS, COLS = 10, 10  # Size of grid.
+		ROWS_DISP = 4  # Number of rows to display.
+		COLS_DISP = 5  # Number of columns to display.
+
+		# Add the buttons to the frame.
+		for i in range(1, ROWS+1):
+			for j in range(1, COLS+1):
+				button = tk.Label(self.mainframe, padx=7, pady=7, relief=tk.RIDGE,
+														text="TESTER")
+				button.grid(row=i, column=j, sticky='news')
 		
 		# Create canvas window to hold the buttons_frame.
 		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
@@ -102,9 +114,6 @@ class MainApplication:
 		self.mainframe.update_idletasks()  # Needed to make bbox info available.
 		bbox = self.maincanvas.bbox(tk.ALL)  # Get bounding box of canvas with Buttons.
 
-		ROWS, COLS = 20, 20  # Size of grid.
-		ROWS_DISP = 3  # Number of rows to display.
-		COLS_DISP = 4  # Number of columns to display.
 		# Define the scrollable region as entire canvas with only the desired
 		# number of rows and columns displayed.
 		w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]

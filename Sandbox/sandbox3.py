@@ -53,7 +53,7 @@
 
 import tkinter as tk
 
-ROWS, COLS = 10, 6  # Size of grid.
+ROWS, COLS = 10, 10  # Size of grid.
 ROWS_DISP = 4  # Number of rows to display.
 COLS_DISP = 5  # Number of columns to display.
 
@@ -65,10 +65,10 @@ class MyApp(tk.Tk):
         canvas = tk.Canvas(self, bg="Yellow")
         canvas.grid(row=0, column=0)
 
-        # Create a vertical scrollbar linked to the canvas.
-        vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
-        vsbar.grid(row=0, column=1, sticky=tk.NS)
-        canvas.configure(yscrollcommand=vsbar.set)
+        # # Create a vertical scrollbar linked to the canvas.
+        # vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
+        # vsbar.grid(row=0, column=1, sticky=tk.NS)
+        # canvas.configure(yscrollcommand=vsbar.set)
 
         # Create a horizontal scrollbar linked to the canvas.
         hsbar = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=canvas.xview)
