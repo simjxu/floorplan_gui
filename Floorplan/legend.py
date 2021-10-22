@@ -10,7 +10,7 @@ class Legend:
 
     # New window for the Legend
     self.window = tk.Toplevel()     # Top level needed, don't totally understand why not tk.Tk()
-    self.window.geometry("200x600+1210+100")
+    self.window.geometry("200x700+1210+100")
     self.window.title("Legend")
 
     # Buttons must be under a frame
