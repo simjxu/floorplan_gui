@@ -1,40 +1,104 @@
+# import tkinter as tk
+
+# LABEL_BG = "#ccc"  # Light gray.
+# ROWS, COLS = 10, 6  # Size of grid.
+# ROWS_DISP = 3  # Number of rows to display.
+# COLS_DISP = 4  # Number of columns to display.
+
+# class MyApp(tk.Tk):
+#     def __init__(self, title="Sample App", *args, **kwargs):
+#         tk.Tk.__init__(self, *args, **kwargs)
+
+#         # Add a canvas in that frame.
+#         canvas = tk.Canvas(self, bg="Yellow")
+#         canvas.grid(row=0, column=0)
+
+#         # Create a horizontal scrollbar linked to the canvas.
+#         hsbar = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=canvas.xview)
+#         hsbar.grid(row=1, column=0, sticky=tk.EW)
+#         canvas.configure(xscrollcommand=hsbar.set)
+
+#         # Create a frame on the canvas to contain the buttons.
+#         buttons_frame = tk.Frame(canvas, bg="Red", bd=2)
+
+#         # Add 9-by-5 buttons to the frame
+#         rows = 9
+#         columns = 15
+#         buttons = [[tk.Button() for j in range(columns)] for i in range(rows)]
+#         for i in range(0, rows):
+#             for j in range(0, columns):
+#                 buttons[i][j] = tk.Button(buttons_frame, text="TESTERTESTER")
+#                 buttons[i][j].grid(row=i, column=j, sticky='news')
+
+#         # Create canvas window to hold the buttons_frame.
+#         canvas.create_window((0,0), window=buttons_frame, anchor=tk.NW)
+
+#         buttons_frame.update_idletasks()  # Needed to make bbox info available.
+#         bbox = canvas.bbox(tk.ALL)  # Get bounding box of canvas with Buttons.
+#         #print('canvas.bbox(tk.ALL): {}'.format(bbox))
+
+#         # Define the scrollable region as entire canvas with only the desired
+#         # number of rows and columns displayed.
+#         w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
+#         dw, dh = int((w/COLS) * COLS_DISP), int((h/ROWS) * ROWS_DISP)
+#         canvas.configure(scrollregion=bbox, width=dw, height=dh)
+
+
+
+# if __name__ == "__main__":
+#     app = MyApp("Scrollable Canvas")
+#     app.mainloop()
+
+
+
 import tkinter as tk
-from tkinter import ttk
-import os
+
+ROWS, COLS = 10, 10  # Size of grid.
+ROWS_DISP = 4  # Number of rows to display.
+COLS_DISP = 5  # Number of columns to display.
+
+class MyApp(tk.Tk):
+    def __init__(self, title="Sample App", *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+
+        # Add a canvas in that frame.
+        canvas = tk.Canvas(self, bg="Yellow")
+        canvas.grid(row=0, column=0)
+
+        # # Create a vertical scrollbar linked to the canvas.
+        # vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
+        # vsbar.grid(row=0, column=1, sticky=tk.NS)
+        # canvas.configure(yscrollcommand=vsbar.set)
+
+        # Create a horizontal scrollbar linked to the canvas.
+        hsbar = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=canvas.xview)
+        hsbar.grid(row=1, column=0, sticky=tk.EW)
+        canvas.configure(xscrollcommand=hsbar.set)
+
+        # Create a frame on the canvas to contain the buttons.
+        buttons_frame = tk.Frame(canvas, bg="Red", bd=2)
+
+        # Add the buttons to the frame.
+        for i in range(1, ROWS+1):
+            for j in range(1, COLS+1):
+                button = tk.Label(buttons_frame, padx=7, pady=7, relief=tk.RIDGE,
+                                   text="TESTER")
+                button.grid(row=i, column=j, sticky='news')
+
+        # Create canvas window to hold the buttons_frame.
+        canvas.create_window((0,0), window=buttons_frame, anchor=tk.NW)
+
+        buttons_frame.update_idletasks()  # Needed to make bbox info available.
+        bbox = canvas.bbox(tk.ALL)  # Get bounding box of canvas with Buttons.
+        #print('canvas.bbox(tk.ALL): {}'.format(bbox))
+
+        # Define the scrollable region as entire canvas with only the desired
+        # number of rows and columns displayed.
+        w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
+        dw, dh = int((w/COLS) * COLS_DISP), int((h/ROWS) * ROWS_DISP)
+        canvas.configure(scrollregion=bbox, width=dw, height=dh)
 
 
-# root window
-root = tk.Tk()
-root.geometry("1200x800")
-root.title('Floor Plan')
-
-NUMCOLS = 10
-NUMROWS = 3
-MINSIZE = 50
-MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-
-# Configure the size of the Grid
-for i in range(NUMCOLS):
-    root.columnconfigure(i, minsize=MINSIZE)
-
-for i in range(NUMROWS):
-    root.rowconfigure(i, minsize=MINSIZE)
-
-# Place Months on top row
-label_arr = []
-for i in range(NUMCOLS-1):
-    label_arr.append(tk.Label(root, text=MONTHS[i]))
-    label_arr[i].grid(column=i+1, row=0)
-
-# Place Builds on left column
-build1 = tk.Label(root, text="EVT")
-build1.grid(column=0, row=1)
-
-# Place a canvas underneath
-my_canvas = tk.Canvas(root)
-my_canvas.configure(bg='white', height=50, width=100*(NUMCOLS-1))
-my_canvas.grid(column=1, row=1, sticky='w', columnspan=NUMCOLS-1)
-
-
-
-root.mainloop()
+if __name__ == "__main__":
+    app = MyApp("Scrollable Canvas")
+    app.mainloop()
