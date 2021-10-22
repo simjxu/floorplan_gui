@@ -22,6 +22,7 @@ class YAMLoutput:
 		self.BUILD_NAMES = []
 		self.DATE_ARRAYS = []
 		self.LABEL_ARRAYS = []
+		self.COLOR_ARRAYS = []
 		self.START_MONTH = 0
 		self.START_YEAR = 0
 		self.END_MONTH = 0
@@ -31,15 +32,18 @@ class YAMLoutput:
 		for key in self.yaml_dict:
 			# Get builds
 			self.BUILD_NAMES.append(key)
-			syslabel_arr = []
-			sysdate_arr = []
+			label_arr = []
+			date_arr = []
+			color_arr = []
 
 			# Get labels and dates
 			for keyS in self.yaml_dict[key]:
-				syslabel_arr.append(keyS)	
-				sysdate_arr.append(self.yaml_dict[key][keyS]['date'])
-			self.LABEL_ARRAYS.append(syslabel_arr)
-			self.DATE_ARRAYS.append(sysdate_arr)
+				label_arr.append(keyS)	
+				date_arr.append(self.yaml_dict[key][keyS]['date'])
+				color_arr.append(self.yaml_dict[key][keyS]['color'])
+			self.LABEL_ARRAYS.append(label_arr)
+			self.DATE_ARRAYS.append(date_arr)
+			self.COLOR_ARRAYS.append(color_arr)
 
 		# Get the Start and End
 		self.find_startend(self.DATE_ARRAYS)
