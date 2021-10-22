@@ -61,9 +61,21 @@ class YAMLoutput:
 		
 		self.START_MONTH = start_date.month
 		self.START_YEAR = start_date.year
+		# Go back one month so we have buffer
+		if self.START_MONTH == 1:
+			self.START_MONTH = 12
+			self.START_YEAR -= 1
+		else:
+			self.START_MONTH -= 1
+
 		self.END_MONTH = end_date.month
 		self.END_YEAR = end_date.year
-		
+		# Go forward one year so we have buffer
+		if self.END_MONTH == 12:
+			self.END_MONTH = 1
+			self.END_YEAR += 1
+		else:
+			self.END_MONTH +=1
 		# print(self.START_MONTH)
 		# print(self.START_YEAR)
 		# print(self.END_MONTH)
