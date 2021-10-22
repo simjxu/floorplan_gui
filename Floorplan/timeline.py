@@ -4,6 +4,8 @@ from YAMLoutput import YAMLoutput
 class Timeline:
   
 	MARKER_RADIUS = 8 # All marker radii will be the same
+	TEXT_COLOR = 'black'
+	MARKER_COLOR = 'orange'
 
 	def __init__(self, parent, **kwargs):
 
@@ -12,7 +14,8 @@ class Timeline:
 		self.START_YEAR = kwargs['start_year']
 		self.num_days = kwargs['num_days']
 		self.num_months = kwargs['num_months']
-		self._MINSIZE = kwargs['min_size']
+		self.MIN_XLEN = kwargs['min_xlen']
+		self.MIN_YLEN = kwargs['min_ylen']
 		self.date_array = kwargs['date_array']
 		self.label_array = kwargs['label_array']
 		self.build_name = kwargs['build_name']
@@ -22,18 +25,16 @@ class Timeline:
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
-		self.marker_ypos = self._MINSIZE/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
+		self.marker_ypos = self.MIN_YLEN/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
 		for i in range(len(self.date_array)):
 			# Append tuple into the array
 			self.array.append((self.date2pos(self.date_array[i]),self.marker_ypos))
-		
-		# # Delete below when done
-		# self.array = [(25,self.marker_ypos),(50,self.marker_ypos),(75,self.marker_ypos)]
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'])
-		self.canvas.configure(width=self._MINSIZE*(self.num_months), height=self._MINSIZE, bg='green')
+		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_YLEN, bg='white', \
+			highlightthickness=1)
 
 		# to keep all IDs and its start position
 		self.ovals = {}			# Holds the object IDs for circles
@@ -44,19 +45,19 @@ class Timeline:
 		for item in self.array:
 			# create oval and get its ID
 			item_id = self.canvas.create_circle(item[0], item[1], self.MARKER_RADIUS, \
-				fill='orange', outline='black', width=4, tags='id')
+				fill=self.MARKER_COLOR, outline='black', width=4, tags='id')
 			# remember ID and its start position
 			self.ovals[item_id] = item
 
 			# Create labels and store the label tag_id for reference during move
 			i = self.array.index(item)			# Get the index of the item
 			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
-				text=self.label_array[i], fill='white')
+				text=self.label_array[i], fill=self.TEXT_COLOR)
 
 			# Create dates and store the date tag id for reference during move
 			date_str = self.pos2date(item[0])
 			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
-				text=date_str[:-3], fill='white')
+				text=date_str[:-3], fill=self.TEXT_COLOR)
 			
 			# # Print the date texts
 			# print(self.canvas.itemcget(self.dates[item_id], 'text'))
@@ -70,13 +71,13 @@ class Timeline:
 	def pos2date(self, pos):
 		# Takes position value (not integer right now) as an input and outputs a string 
 		# without the year, e.g. 9/11
-		month_idx = math.floor(pos/self._MINSIZE)
+		month_idx = math.floor(pos/self.MIN_XLEN)
 		year = self.START_YEAR
 		month = self.START_MONTH + month_idx
 		if month/12 > 1:			# CAREFUL... Hopefully type(month)==int
 			year += math.floor(month/12)
 			month = month-12*math.floor(month/12)
-		day = self.num_days[month_idx] * ((pos-month_idx*self._MINSIZE)/self._MINSIZE)
+		day = self.num_days[month_idx] * ((pos-month_idx*self.MIN_XLEN)/self.MIN_XLEN)
 		day = round(day)
 
 		# # For Debug
@@ -102,7 +103,7 @@ class Timeline:
 		else:
 			month_idx = m - self.START_MONTH + (y-self.START_YEAR)*12
 
-		return self._MINSIZE*month_idx + d/self.num_days[month_idx]*self._MINSIZE
+		return self.MIN_XLEN*month_idx + d/self.num_days[month_idx]*self.MIN_XLEN
 
 	def update_date(self, x):
 		# Create the text that goes under the marker indicating the date
@@ -110,7 +111,7 @@ class Timeline:
 		# 1. Divide the pixel count by 100
 		# 2. Round down to integer
 		# 3. Map the integer to the month Start Month + integer
-		month_iter = math.floor(x/100)
+		month_iter = math.floor(x/self.MIN_XLEN)
 		month_num = self.START_MONTH+month_iter
 		if month_num <= 12:
 			month_num = month_num
@@ -122,7 +123,7 @@ class Timeline:
 			year = self.START_YEAR + n_yrs
 
 		return str(month_num) + "/" + \
-			str(math.ceil((x+1-100*month_iter)/100*self.num_days[month_iter])) + \
+			str(math.ceil((x+1-self.MIN_XLEN*month_iter)/self.MIN_XLEN*self.num_days[month_iter])) + \
 			"/" + str(year)[2:]
 		# TODO: Set bounds so that the marker doesn't go out of bounds
 

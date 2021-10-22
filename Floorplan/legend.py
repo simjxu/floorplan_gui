@@ -10,20 +10,16 @@ class Legend:
 
     # New window for the Legend
     self.window = tk.Toplevel()     # Top level needed, don't totally understand why not tk.Tk()
-    self.window.geometry("200x600+800+0")
+    self.window.geometry("200x600+1210+100")
     self.window.title("Legend")
 
     # Buttons must be under a frame
-    button_frame = tk.Frame(self.window)
-    button_frame.pack()
+    save_frame = tk.Frame(self.window)
+    save_frame.pack()
 
     # Create save button
-    save_button = tk.Button(button_frame, text="SAVE", fg="black", command=self.save)
-    save_button.pack()
-
-    # Create reload button
-    reload_button = tk.Button(button_frame, text="RELOAD", fg="black", command=self.reload)
-    reload_button.pack()
+    save_button = tk.Button(save_frame, text="SAVE", fg="black", command=self.save)
+    save_button.pack(pady=(0,20))
 
     # Create Checkboxes
     self.checkarray = []
@@ -35,6 +31,19 @@ class Legend:
       self.checkboxes.append(ttk.Checkbutton(self.window, text=build_name, variable=self.checkarray[i], \
         onvalue=1, offvalue=0))
       self.checkboxes[i].pack(side=tk.TOP, anchor=tk.W, pady=(10,0), padx=(50,0))
+
+    # Buttons for update frame
+    update_frame = tk.Frame(self.window)
+    update_frame.pack(pady=20)
+
+    # Create reload button
+    reload_button = tk.Button(update_frame, text="UPDATE", fg="black", command=self.reload, pady=10)
+    reload_button.pack()
+
+    # Create clear checks button
+    clearcheck_button = tk.Button(update_frame, text="CLEAR", fg="black", command=self.clear)
+    clearcheck_button.pack()
+
 
   # Pass in all YAML data into Legend object
   # Can be called when move is made
@@ -57,6 +66,10 @@ class Legend:
       self.parent.checkbox_arr[i] = self.checkarray[i].get()
     self.parent.load_builds()
     self.parent.load_timelines()
+  
+  def clear(self):
+    for checkbox in self.checkarray:
+      checkbox.set(0)
 
 class MainApplication:
   def __init__(self, parent, **kwargs):
