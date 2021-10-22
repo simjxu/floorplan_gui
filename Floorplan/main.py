@@ -14,7 +14,7 @@ ymlFile = './YAMLs/x_sys.yaml'
 
 # Input width of each cell
 MIN_XLEN = 200
-MIN_YLEN = 50
+MIN_YLEN = 75
 
 # # Input width of each cell
 # MIN_XLEN = 10
@@ -64,7 +64,7 @@ class MainApplication:
 		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
 		
 		# Need Canvas for the scrollbar
-		self.maincanvas = tk.Canvas(parent, bg="white")
+		self.maincanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
 		self.maincanvas.grid(row=0, column=0)
 
 		# Create a horizontal scrollbar linked to the canvas.
@@ -133,6 +133,7 @@ class MainApplication:
 				build.destroy()
 		self.builds_arr.clear()
 
+		rowptr = 0
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
 			if self.checkbox_arr[i] == 0:
 				self.builds_arr.append(type('empty', (object,), {})())		# append empty object
@@ -141,7 +142,8 @@ class MainApplication:
 			else:
 				self.builds_arr.append(tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], \
 					fg=self.TEXT_COLOR, bg='white'))
-				self.builds_arr[i].grid(column=0+START_COL, row=i+1+START_ROW, padx=10, pady=0)
+				self.builds_arr[i].grid(column=0+START_COL, row=rowptr+1+START_ROW, padx=10, pady=0)
+				rowptr += 1
 		
 
 	def load_timelines(self):
@@ -151,16 +153,19 @@ class MainApplication:
 			if isinstance(timeline, Timeline):
 				timeline.destroy_timeline()
 		self.timeline_arr.clear()			# if the array is not empty, clear it
+		rowptr = 0
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
 			if self.checkbox_arr[i] == 0:
+				# pass
 				self.timeline_arr.append(type('empty', (object,), {})())		# append empty object
 			else:
-				self.timeline_arr.append(Timeline(self, column=1+START_COL, row=i+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
+				self.timeline_arr.append(Timeline(self, column=1+START_COL, row=rowptr+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
 					num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
 					start_month=self.yaml_obj.START_MONTH, \
 					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
 					date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
 					build_name=self.yaml_obj.BUILD_NAMES[i]))
+				rowptr += 1
 
 	def get_num_months(self):
 		# print(self.yaml_obj.START_MONTH)
