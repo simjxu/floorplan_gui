@@ -203,7 +203,7 @@ class MainApplication:
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	root.geometry("1300x800")
+	root.geometry("1200x800")
 	root.configure(bg='white')
 	app = MainApplication(root)
 	root.mainloop()
