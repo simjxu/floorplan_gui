@@ -13,7 +13,8 @@ ymlFile = './YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell
-_MINSIZE = 100
+MIN_XLEN = 100
+MIN_YLEN = 100
 
 START_ROW = 10
 START_COL = 10
@@ -64,9 +65,9 @@ class MainApplication:
 
 		# Configure size of the grid on root
 		for i in range(self._NUMCOLS):
-			root.columnconfigure(i, minsize=_MINSIZE)
+			root.columnconfigure(i, minsize=MIN_XLEN)
 		for i in range(self._NUMROWS):
-			root.columnconfigure(i, minsize=_MINSIZE)
+			root.columnconfigure(i, minsize=MIN_XLEN)
 
 
 		# print(self.yaml_obj.START_MONTH)
@@ -128,7 +129,7 @@ class MainApplication:
 				self.timeline_arr.append(Timeline(self, column=1+START_COL, row=i+1+START_ROW, columnspan=self._NUMCOLS-1, rowspan=1, \
 					num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
 					start_month=self.yaml_obj.START_MONTH, \
-					start_year=self.yaml_obj.START_YEAR, min_size=_MINSIZE, \
+					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
 					date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
 					build_name=self.yaml_obj.BUILD_NAMES[i]))
 
