@@ -155,7 +155,7 @@ class MainApplication:
 				# pass
 				self.timeline_arr.append(type('empty', (object,), {})())		# append empty object
 			else:
-				self.timeline_arr.append(Timeline(self, column=1, row=rowptr+1, columnspan=self._NUMCOLS-1, rowspan=1, \
+				self.timeline_arr.append(Timeline(self, column=0, row=rowptr+1, columnspan=self._NUMCOLS-1, rowspan=1, \
 					num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
 					start_month=self.yaml_obj.START_MONTH, \
 					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
@@ -191,7 +191,7 @@ class MainApplication:
 			label_arr.append(tk.Label(self.mainframe, \
 				text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
 			# MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			label_arr[i].grid(column=i+1+START_COL, row=0+START_ROW, padx=(0,15), pady=0)
+			label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
 
