@@ -13,7 +13,7 @@ ymlFile = './YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell
-MIN_XLEN = 100
+MIN_XLEN = 200
 MIN_YLEN = 100
 
 START_ROW = 10
@@ -174,7 +174,7 @@ class MainApplication:
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	root.geometry("1000x800")
+	root.geometry("1300x800")
 	root.configure(bg='white')
 	app = MainApplication(root)
 	root.mainloop()

@@ -25,7 +25,7 @@ class Timeline:
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
-		self.marker_ypos = self.MIN_XLEN/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
+		self.marker_ypos = self.MIN_YLEN/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
 		for i in range(len(self.date_array)):
 			# Append tuple into the array
 			self.array.append((self.date2pos(self.date_array[i]),self.marker_ypos))
@@ -33,7 +33,7 @@ class Timeline:
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'])
-		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_XLEN, bg='white', \
+		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_YLEN, bg='white', \
 			highlightthickness=1)
 
 		# to keep all IDs and its start position

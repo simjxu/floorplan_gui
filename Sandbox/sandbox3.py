@@ -9,55 +9,31 @@ class MyApp(tk.Tk):
     def __init__(self, title="Sample App", *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        self.title(title)
-        self.configure(background="Gray")
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
-
-        master_frame = tk.Frame(self, bg="Light Blue", bd=3, relief=tk.RIDGE)
-        master_frame.grid(sticky=tk.NSEW)
-        master_frame.columnconfigure(0, weight=1)
-
-        label1 = tk.Label(master_frame, text="Frame1 Contents", bg=LABEL_BG)
-        label1.grid(row=0, column=0, pady=5, sticky=tk.NW)
-
-        frame1 = tk.Frame(master_frame, bg="Green", bd=2, relief=tk.GROOVE)
-        frame1.grid(row=1, column=0, sticky=tk.NW)
-
-        cb_var1 = tk.IntVar()
-        checkbutton1 = tk.Checkbutton(frame1, text="StartCheckBox", variable=cb_var1)
-        checkbutton1.grid(row=0, column=0, padx=2)
-
-        label2 = tk.Label(master_frame, text="Frame2 Contents", bg=LABEL_BG)
-        label2.grid(row=2, column=0, pady=5, sticky=tk.NW)
-
-        # Create a frame for the canvas and scrollbar(s).
-        frame2 = tk.Frame(master_frame)
-        frame2.grid(row=3, column=0, sticky=tk.NW)
-
         # Add a canvas in that frame.
-        canvas = tk.Canvas(frame2, bg="Yellow")
+        canvas = tk.Canvas(self, bg="Yellow")
         canvas.grid(row=0, column=0)
 
         # Create a vertical scrollbar linked to the canvas.
-        vsbar = tk.Scrollbar(frame2, orient=tk.VERTICAL, command=canvas.yview)
+        vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
         vsbar.grid(row=0, column=1, sticky=tk.NS)
         canvas.configure(yscrollcommand=vsbar.set)
 
         # Create a horizontal scrollbar linked to the canvas.
-        hsbar = tk.Scrollbar(frame2, orient=tk.HORIZONTAL, command=canvas.xview)
+        hsbar = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=canvas.xview)
         hsbar.grid(row=1, column=0, sticky=tk.EW)
         canvas.configure(xscrollcommand=hsbar.set)
 
         # Create a frame on the canvas to contain the buttons.
         buttons_frame = tk.Frame(canvas, bg="Red", bd=2)
 
-        # Add the buttons to the frame.
-        for i in range(1, ROWS+1):
-            for j in range(1, COLS+1):
-                button = tk.Button(buttons_frame, padx=7, pady=7, relief=tk.RIDGE,
-                                   text="[%d, %d]" % (i, j))
-                button.grid(row=i, column=j, sticky='news')
+        # Add 9-by-5 buttons to the frame
+        rows = 9
+        columns = 5
+        buttons = [[tk.Button() for j in range(columns)] for i in range(rows)]
+        for i in range(0, rows):
+            for j in range(0, columns):
+                buttons[i][j] = tk.Button(buttons_frame, text="TESTERTESTER")
+                buttons[i][j].grid(row=i, column=j, sticky='news')
 
         # Create canvas window to hold the buttons_frame.
         canvas.create_window((0,0), window=buttons_frame, anchor=tk.NW)
@@ -72,15 +48,6 @@ class MyApp(tk.Tk):
         dw, dh = int((w/COLS) * COLS_DISP), int((h/ROWS) * ROWS_DISP)
         canvas.configure(scrollregion=bbox, width=dw, height=dh)
 
-        label3 = tk.Label(master_frame, text="Frame3 Contents", bg=LABEL_BG)
-        label3.grid(row=4, column=0, pady=5, sticky=tk.NW)
-
-        frame3 = tk.Frame(master_frame, bg="Blue", bd=2, relief=tk.GROOVE)
-        frame3.grid(row=5, column=0, sticky=tk.NW)
-
-        cb_var2 = tk.IntVar()
-        checkbutton2 = tk.Checkbutton(frame3, text="EndCheckBox", variable=cb_var2)
-        checkbutton2.grid(row=0, column=0, padx=2)
 
 
 if __name__ == "__main__":
