@@ -39,6 +39,8 @@ from tkinter import ttk
 
 root = tk.Tk()
 
+ROWS=5
+
 # Container contains the main canvas and the scrollbar
 container = tk.Frame(root)
 
@@ -60,8 +62,10 @@ canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
 canvas.configure(xscrollcommand=scrollbar.set)
 
-for i in range(50):
-    ttk.Label(scrollable_frame, text="Sample scrolling label").grid(row=0, column=i)
+
+for i in range(ROWS):
+    scrollable_frame.rowconfigure(i, minsize=50)
+    tk.Canvas(scrollable_frame, bg='red', height=25, width=500).grid(row=i, column=0, columnspan=50)
 
 container.grid(row=0, column=0)
 canvas.grid(row=0, column=0)

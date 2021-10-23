@@ -86,10 +86,10 @@ class MyApp:
 
     # Add the buttons to the frame.
     for i in range(ROWS):
-      text_label = tk.Label(buttons_frame, text="TESTER")
-      text_label.grid(row=i, sticky=tk.N)
-      # button = tk.Canvas(buttons_frame, height=25, width=25*COLS, bg='red')
-      # button.grid(row=i, column=0, columnspan=COLS, sticky=tk.N)
+      # text_label = tk.Label(buttons_frame, text="TESTER")
+      # text_label.grid(row=i, sticky=tk.N)
+      button = tk.Canvas(buttons_frame, height=25, width=25*COLS, bg='red')
+      button.grid(row=i, column=0, columnspan=COLS, sticky=tk.N)
 
     # Create canvas window to hold the buttons_frame.
     canvas.create_window((0,0), window=buttons_frame, anchor=tk.NW)
