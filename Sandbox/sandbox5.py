@@ -47,15 +47,15 @@ ROWS_DISP=7
 right_container = tk.Frame(root)
 right_container.grid(row=0, column=1)
 
-right_canvas = tk.Canvas(right_container)
-right_canvas.grid(row=0, column=0)
+# right_canvas = tk.Canvas(right_container)
+# right_canvas.grid(row=0, column=0)
 
-right_frame = tk.Frame(right_canvas)
-right_frame.grid(row=0, column=0)
+# right_frame = tk.Frame(right_canvas)
+# right_frame.grid(row=0, column=0)
 
 for i in range(ROWS_DISP):
-    right_frame.rowconfigure(i, minsize=50)
-    tk.Label(right_frame, text='TESTER').grid(row=i, column=0, sticky=tk.N, pady=(0,20))
+    right_container.rowconfigure(i, minsize=50)
+    tk.Label(right_container, text='TESTER').grid(row=i, column=0, sticky=tk.N)
 
 
 
