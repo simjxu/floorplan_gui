@@ -8,7 +8,7 @@ from timeline import Timeline
 from exception import *
 from legend import Legend
 
-ymlFile = './YAMLs/x_sys.yaml'
+ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
@@ -37,12 +37,12 @@ class MainApplication:
 
 	TEXT_COLOR = 'black'
 
-	MAX_ROWS = 14
+	MAX_ROWS = 14			# FIX: need to base this on the MIN_YLEN
 
 	def __init__(self, parent):
 		
 		ROWS_DISP = self.MAX_ROWS  # Number of rows to display.
-		COLS_DISP = 7  # Number of columns to display.
+		COLS_DISP = 7  # Number of columns to display. FIX: need to base this on the MIN_XLEN
 
 		# import the yaml file data
 		self.yaml_obj = YAMLoutput(self, file=ymlFile)
@@ -109,7 +109,6 @@ class MainApplication:
 		
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
-		print(self._NUMBER_OF_MONTHS)
 		try:
 			if self._NUMBER_OF_MONTHS >= 24:
 				raise ValueTooLargeError
@@ -117,7 +116,6 @@ class MainApplication:
 			print("program doesn't work for span of >= 24 months")
 		self._NUMBER_OF_DAYS = []
 		self.create_months()
-		print(self._NUMBER_OF_DAYS)
 		
 		# # Create Timeline objects
 		self.timeline_arr = []
@@ -127,17 +125,6 @@ class MainApplication:
 			self.checkbox_arr.append(1)
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
-		
-		
-
-		# self.mainframe.update_idletasks()  # Needed to make bbox info available.
-		# bbox = self.maincanvas.bbox(tk.ALL)  # Get bounding box of canvas with Buttons.
-
-		# # Define the scrollable region as entire canvas with only the desired
-		# # number of rows and columns displayed.
-		# w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
-		# dw, dh = int((w/self._NUMCOLS) * COLS_DISP), int((h/self.MAX_ROWS) * ROWS_DISP)
-		# self.maincanvas.configure(scrollregion=bbox, width=dw, height=dh)
 
 	def load_builds(self):
 		# Clear builds
