@@ -36,6 +36,7 @@
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter.constants import HORIZONTAL
 
 root = tk.Tk()
 # root.geometry("400x400")
@@ -88,6 +89,8 @@ canvas.configure(xscrollcommand=scrollbar.set)
 for i in range(ROWS):
     scrollable_frame.rowconfigure(i, minsize=50)
     tk.Canvas(scrollable_frame, bg='red', height=25, width=500).grid(row=i, column=0, columnspan=50, sticky=tk.N)
+
+ttk.Separator(root, orient=HORIZONTAL).grid(column=0, row=1, columnspan=2, sticky='ns')
 
 
 root.mainloop()

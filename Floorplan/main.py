@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import os
 import math
 import calendar
@@ -96,9 +97,6 @@ class MainApplication:
 		# Configure the scrollbar object
 		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
 
-
-		
-
 		# Configure size of the grid
 		for i in range(self.MAX_ROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
@@ -125,6 +123,10 @@ class MainApplication:
 			self.checkbox_arr.append(1)
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
+
+		# parent.line_style = ttk.Style()
+		# parent.line_style.configure("Line.TSeparator", background="#000000")
+		# ttk.Separator(parent, orient=tk.VERTICAL, style="Line.TSeparator").grid(column=2, row=0, rowspan=5, sticky='ns')
 
 	def load_builds(self):
 		# Clear builds
@@ -213,6 +215,7 @@ class MainApplication:
 
 if __name__ == "__main__":
 	root = tk.Tk()
+	root.title("X1981 Floorplan")
 	root.geometry("1200x800")
 	root.configure(bg='white')
 	app = MainApplication(root)
