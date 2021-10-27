@@ -12,6 +12,13 @@ Intended to make it easier to create floorplans
 - User can name the different builds based upon CSV file
 
 ## Updates
+10/26/21:
+- Make mouse wheel scroll work for scroll bar
+- Add in dividers on the months
+- Add years on top of the months
+- Bug: 11/30 shows up as 11/29 when at a wider min_xlen (try 300)
+10/22/21: Fixed a lot of items. Remaining to do:
+- Bug: 11/30 date marker in yaml shows up as 12/0 on table
 10/17/21: Next step to add the marker labels in, maybe figure out how to move the Timeline object to another class
 10/13/21: Next step to create a YAML input
 10/11/21: Struggled to create a Marker class to control the different circle objects.

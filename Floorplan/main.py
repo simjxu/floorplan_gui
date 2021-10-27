@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import os
 import math
 import calendar
@@ -8,7 +9,7 @@ from timeline import Timeline
 from exception import *
 from legend import Legend
 
-ymlFile = './YAMLs/x_sys.yaml'
+ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
@@ -37,8 +38,12 @@ class MainApplication:
 
 	TEXT_COLOR = 'black'
 
+	MAX_ROWS = 14			# FIX: need to base this on the MIN_YLEN
+
 	def __init__(self, parent):
 		
+		ROWS_DISP = self.MAX_ROWS  # Number of rows to display.
+		COLS_DISP = 7  # Number of columns to display. FIX: need to base this on the MIN_XLEN
 
 		# import the yaml file data
 		self.yaml_obj = YAMLoutput(self, file=ymlFile)
@@ -61,33 +66,39 @@ class MainApplication:
 				month_ptr += 1
 
 		# Update the number of rows
-		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES) + 1
+		self._NUMROWS = len(self.yaml_obj.BUILD_NAMES)
 		
-		# Need Canvas and Frame for Builds
-		self.buildcanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
-		self.buildcanvas.grid(row=0, column=0)
-		self.buildframe = tk.Frame(self.buildcanvas, bg="white", bd=0)
+		# Need Frame for Builds
+		self.buildframe = tk.Frame(parent, bg="white", height=10)
 		self.buildframe.grid(row=0, column=0)
 
-		# Need Canvas for the scrollbar
-		self.maincanvas = tk.Canvas(parent, bg="white", highlightthickness=0)
-		self.maincanvas.grid(row=0, column=1)
+		# Need Container Frame, Canvas, and scrollable Frame 
+		self.containerframe = tk.Frame(parent).grid(row=0, column=1)
+		self.maincanvas = tk.Canvas(self.containerframe, bg="white", \
+			height=ROWS_DISP*MIN_YLEN, width=COLS_DISP*MIN_XLEN, highlightthickness=0)
+		self.maincanvas.grid(row=0, column=1, sticky=tk.N)
+		self.mainframe = tk.Frame(self.maincanvas, bg='white') # scrollable
 
-		# Create a horizontal scrollbar linked to the canvas.
-		self.hsbar = tk.Scrollbar(parent, orient=tk.HORIZONTAL, command=self.maincanvas.xview)
+		# Create a horizontal scrollbar linked to the container frame.
+		self.hsbar = tk.Scrollbar(self.containerframe, orient=tk.HORIZONTAL, command=self.maincanvas.xview)
 		self.hsbar.grid(row=1, column=1, sticky=tk.EW)
 		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
 
-		# tk.Frame for the Main Application, for reference in child class Timeline
-		# self.mainframe = tk.Frame(parent, width=1000, height=1000, bg='white')
-		# self.mainframe.grid(column=0, row=0, rowspan=100, columnspan=100)		# max out at 20 rows, 20 cols right now
-		self.mainframe = tk.Frame(self.maincanvas, bg="white", bd=0)
+		self.mainframe.bind(
+			"<Configure>",
+			lambda e: self.maincanvas.configure(
+					scrollregion=self.maincanvas.bbox("all")
+				)
+		)
 
-		ROWS_DISP = self._NUMROWS  # Number of rows to display.
-		COLS_DISP = 7  # Number of columns to display.
+		# Create canvas window to hold the buttons_frame.
+		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
+
+		# Configure the scrollbar object
+		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
 
 		# Configure size of the grid
-		for i in range(self._NUMROWS):
+		for i in range(self.MAX_ROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
 			self.buildframe.rowconfigure(i, minsize=MIN_YLEN+2)		# Added 2 because otherwise rows don't line up. Not sure why, need to fix
 		for i in range(self._NUMCOLS):
@@ -101,9 +112,10 @@ class MainApplication:
 				raise ValueTooLargeError
 		except ValueTooLargeError:
 			print("program doesn't work for span of >= 24 months")
-		self._NUMBER_OF_DAYS = self.create_months()
+		self._NUMBER_OF_DAYS = []
+		self.create_months()
 		
-		# Create Timeline objects
+		# # Create Timeline objects
 		self.timeline_arr = []
 		self.builds_arr = []
 		self.checkbox_arr = []
@@ -111,18 +123,10 @@ class MainApplication:
 			self.checkbox_arr.append(1)
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
-		
-		# Create canvas window to hold the buttons_frame.
-		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
 
-		self.mainframe.update_idletasks()  # Needed to make bbox info available.
-		bbox = self.maincanvas.bbox(tk.ALL)  # Get bounding box of canvas with Buttons.
-
-		# Define the scrollable region as entire canvas with only the desired
-		# number of rows and columns displayed.
-		w, h = bbox[2]-bbox[1], bbox[3]-bbox[1]
-		dw, dh = int((w/self._NUMCOLS) * COLS_DISP), int((h/self._NUMROWS) * ROWS_DISP)
-		self.maincanvas.configure(scrollregion=bbox, width=dw, height=dh)
+		# parent.line_style = ttk.Style()
+		# parent.line_style.configure("Line.TSeparator", background="#000000")
+		# ttk.Separator(parent, orient=tk.VERTICAL, style="Line.TSeparator").grid(column=2, row=0, rowspan=5, sticky='ns')
 
 	def load_builds(self):
 		# Clear builds
@@ -132,7 +136,10 @@ class MainApplication:
 		self.builds_arr.clear()
 
 		rowptr = 0
-		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+		for i in range(self._NUMROWS):
+		# for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			if rowptr >= self.MAX_ROWS-1:			# Off by 1: Builds start one row down so we want to delete extra
+				break
 			if self.checkbox_arr[i] == 0:
 				self.builds_arr.append(type('empty', (object,), {})())		# append empty object
 			# For transparency, use the parent background color
@@ -140,7 +147,7 @@ class MainApplication:
 			else:
 				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
 					fg=self.TEXT_COLOR, bg='white', wraplength=100))
-				self.builds_arr[i].grid(column=0, row=rowptr+1)
+				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
 				rowptr += 1
 
 		
@@ -154,6 +161,8 @@ class MainApplication:
 		self.timeline_arr.clear()			# if the array is not empty, clear it
 		rowptr = 0
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
+			if rowptr >= self.MAX_ROWS-1:
+				break
 			if self.checkbox_arr[i] == 0:
 				# pass
 				self.timeline_arr.append(type('empty', (object,), {})())		# append empty object
@@ -197,8 +206,7 @@ class MainApplication:
 			label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
-
-		return monthdays_arr
+		self._NUMBER_OF_DAYS=monthdays_arr
 
 	def create_builds(self):
 		a = 0
@@ -207,6 +215,7 @@ class MainApplication:
 
 if __name__ == "__main__":
 	root = tk.Tk()
+	root.title("X1981 Floorplan")
 	root.geometry("1200x800")
 	root.configure(bg='white')
 	app = MainApplication(root)

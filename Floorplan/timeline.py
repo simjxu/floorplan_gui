@@ -33,7 +33,7 @@ class Timeline:
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
-			columnspan=kwargs['columnspan'])
+			columnspan=kwargs['columnspan'], sticky='news')
 		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_YLEN, bg='white', \
 			highlightthickness=1)
 
@@ -59,6 +59,7 @@ class Timeline:
 
 			# Create dates and store the date tag id for reference during move
 			date_str = self.pos2date(item[0])
+			# print(date_str)
 			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
 				text=date_str[:-3], fill=self.TEXT_COLOR)
 			
@@ -106,7 +107,8 @@ class Timeline:
 		else:
 			month_idx = m - self.START_MONTH + (y-self.START_YEAR)*12
 
-		return self.MIN_XLEN*month_idx + d/self.num_days[month_idx]*self.MIN_XLEN
+		# d-0.5 to avoid edge cases at the edge of month (12/0 when it should be 11/30)
+		return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
 
 	def update_date(self, x):
 		# Create the text that goes under the marker indicating the date

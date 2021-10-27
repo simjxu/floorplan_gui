@@ -65,6 +65,14 @@ class MyApp(tk.Tk):
         canvas = tk.Canvas(self, bg="Yellow")
         canvas.grid(row=0, column=0)
 
+        my_canvas2 = tk.Canvas(self, bg='blue', height=100, width=50)
+        my_canvas2.grid(row=0, column=1)
+        my_frame2 = tk.Frame(my_canvas2)
+        my_frame2.grid(row=0, column=0, sticky=tk.N)
+        text_label = []
+        for i in range(ROWS):
+            text_label.append(tk.Label(my_frame2, text="TESTER"))
+            text_label[i].grid(column=0, row=i, columnspan=1, rowspan=1)
         # # Create a vertical scrollbar linked to the canvas.
         # vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
         # vsbar.grid(row=0, column=1, sticky=tk.NS)
@@ -78,12 +86,17 @@ class MyApp(tk.Tk):
         # Create a frame on the canvas to contain the buttons.
         buttons_frame = tk.Frame(canvas, bg="Red", bd=2)
 
+        # # Add the buttons to the frame.
+        # for i in range(1, ROWS+1):
+        #     for j in range(1, COLS+1):
+        #         button = tk.Label(buttons_frame, padx=7, pady=7, relief=tk.RIDGE,
+        #                            text="TESTER")
+        #         button.grid(row=i, column=j, sticky='news')
+        
         # Add the buttons to the frame.
         for i in range(1, ROWS+1):
-            for j in range(1, COLS+1):
-                button = tk.Label(buttons_frame, padx=7, pady=7, relief=tk.RIDGE,
-                                   text="TESTER")
-                button.grid(row=i, column=j, sticky='news')
+            button = tk.Canvas(buttons_frame, height=25, width=25*COLS, bg='red')
+            button.grid(row=i, columnspan=COLS, sticky='news')
 
         # Create canvas window to hold the buttons_frame.
         canvas.create_window((0,0), window=buttons_frame, anchor=tk.NW)
