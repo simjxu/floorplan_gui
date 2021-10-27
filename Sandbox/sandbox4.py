@@ -1,10 +1,10 @@
 from tkinter import *
 root = Tk()
-canvas = Canvas(root)
-canvas.pack()
 
-def round_rectangle(x1, y1, x2, y2, radius=25, **kwargs):
-        
+
+def round_rectangle(root, x1, y1, x2, y2, radius=25, col=0, **kwargs):
+    canvas = Canvas(root,width=100)
+    canvas.grid(row=0, column=col, padx=0)
     points = [x1+radius, y1,
               x1+radius, y1,
               x2-radius, y1,
@@ -26,8 +26,13 @@ def round_rectangle(x1, y1, x2, y2, radius=25, **kwargs):
               x1, y1+radius,
               x1, y1]
 
-    return canvas.create_polygon(points, **kwargs, smooth=True)
+    new_poly = canvas.create_polygon(points, **kwargs, smooth=True)
+    new_text = canvas.create_text(50,15, text="test")
 
-my_rectangle = round_rectangle(50, 50, 150, 100, radius=20, fill="blue")
+# my_rectangle = round_rectangle(canvas, 10, 10, 100, 25, radius=20, fill="gray")
+
+for i in range(5):
+    round_rectangle(root, 10, 10, 100, 25, radius=20, col=i, fill="gray")
+
 
 root.mainloop()
