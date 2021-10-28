@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.constants import ANCHOR, W
+from tkinter.constants import RIGHT
 
 class Legend:
   def __init__(self, parent, **kwargs):
@@ -21,6 +21,30 @@ class Legend:
     save_button = tk.Button(save_frame, text="SAVE", fg="black", command=self.save)
     save_button.pack(pady=(0,20))
 
+    # Create the scrollable frame
+    self.containerframe = tk.Frame(self.window)
+    self.containerframe.pack()
+    self.maincanvas = tk.Canvas(self.containerframe, \
+			height=500, width=150, highlightthickness=0)
+    self.maincanvas.pack(side=tk.LEFT)
+      # Create a horizontal scrollbar linked to the container frame.
+    self.vsbar = tk.Scrollbar(self.containerframe, orient=tk.VERTICAL, command=self.maincanvas.yview)
+    self.vsbar.pack(side=tk.LEFT, fill='y')
+
+    self.mainframe = tk.Frame(self.maincanvas) # scrollable
+    self.mainframe.pack()
+
+  
+    self.maincanvas.configure(yscrollcommand=self.vsbar.set)
+
+    self.mainframe.bind(
+			"<Configure>",
+			lambda e: self.maincanvas.configure(
+					scrollregion=self.maincanvas.bbox("all")
+				)
+		)
+    self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
+
     # Create Checkboxes
     self.checkarray = []
     self.checkboxes = []
@@ -28,9 +52,9 @@ class Legend:
     for i in range(len(parent.yaml_obj.BUILD_NAMES)):
       build_name = parent.yaml_obj.BUILD_NAMES[i]
       self.checkarray.append(tk.IntVar())
-      self.checkboxes.append(ttk.Checkbutton(self.window, text=build_name, variable=self.checkarray[i], \
+      self.checkboxes.append(ttk.Checkbutton(self.mainframe, text=build_name, variable=self.checkarray[i], \
         onvalue=1, offvalue=0))
-      self.checkboxes[i].pack(side=tk.TOP, anchor=tk.W, pady=(10,0), padx=(50,0))
+      self.checkboxes[i].pack(side=tk.TOP, anchor=tk.W, pady=(10,0), padx=(0,0))
 
     # Buttons for update frame
     update_frame = tk.Frame(self.window)

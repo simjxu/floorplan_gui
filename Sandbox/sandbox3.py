@@ -73,10 +73,10 @@ class MyApp(tk.Tk):
         for i in range(ROWS):
             text_label.append(tk.Label(my_frame2, text="TESTER"))
             text_label[i].grid(column=0, row=i, columnspan=1, rowspan=1)
-        # # Create a vertical scrollbar linked to the canvas.
-        # vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
-        # vsbar.grid(row=0, column=1, sticky=tk.NS)
-        # canvas.configure(yscrollcommand=vsbar.set)
+        # Create a vertical scrollbar linked to the canvas.
+        vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
+        vsbar.grid(row=0, column=1, sticky=tk.NS)
+        canvas.configure(yscrollcommand=vsbar.set)
 
         # Create a horizontal scrollbar linked to the canvas.
         hsbar = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=canvas.xview)
