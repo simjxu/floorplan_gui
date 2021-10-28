@@ -91,11 +91,8 @@ class MainApplication:
 				)
 		)
 
-		# Create canvas window to hold the buttons_frame.
+		# Create canvas window.
 		self.maincanvas.create_window((0,0), window=self.mainframe, anchor=tk.NW)
-
-		# Configure the scrollbar object
-		self.maincanvas.configure(xscrollcommand=self.hsbar.set)
 
 		# Configure size of the grid
 		for i in range(self.MAX_ROWS):
