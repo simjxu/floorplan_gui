@@ -15,7 +15,7 @@ Intended to make it easier to create floorplans
 10/26/21:
 - Make mouse wheel scroll work for scroll bar
 - Add in dividers on the months [DONE]
-- Add years on top of the months
+- Add years on top of the months [DONE]
 - Bug: 11/30 shows up as 11/29 when at a wider min_xlen (try 300) [DONE]
 - Bug: fix scroll bar not working properly, need to only increase canvas size of timeline, but keep window size the same [DONE]
 
