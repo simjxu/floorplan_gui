@@ -150,7 +150,7 @@ class MainApplication:
 				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
 				rowptr += 1
 
-		
+	
 
 	def load_timelines(self):
 		# print(self.checkbox_arr)
@@ -200,17 +200,43 @@ class MainApplication:
 				month = 1
 				year += 1
 
-			label_arr.append(tk.Label(self.mainframe, \
-				text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
-			# MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
+			# label_arr.append(tk.Label(self.mainframe, \
+			# 	text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
+			# # MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
+			# label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
+			self.round_rectangle_text(self.mainframe, 5, 5, MIN_XLEN, 25, radius=20, \
+				row=START_ROW, col=i+START_COL, _text=calendar.month_abbr[month], fill="gray")
+
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
 		self._NUMBER_OF_DAYS=monthdays_arr
 
-	def create_builds(self):
-		a = 0
-		return a
+	def round_rectangle_text(self, _frame, x1, y1, x2, y2, radius=25, row=0, col=0, \
+		 _text='default', **kwargs):
+		canvas = tk.Canvas(_frame, height=y2, width=x2, bg="white", highlightthickness=0)
+		canvas.grid(row=row, column=col, padx=0)
+		points = [x1+radius, y1,
+							x1+radius, y1,
+							x2-radius, y1,
+							x2-radius, y1,
+							x2, y1,
+							x2, y1+radius,
+							x2, y1+radius,
+							x2, y2-radius,
+							x2, y2-radius,
+							x2, y2,
+							x2-radius, y2,
+							x2-radius, y2,
+							x1+radius, y2,
+							x1+radius, y2,
+							x1, y2,
+							x1, y2-radius,
+							x1, y2-radius,
+							x1, y1+radius,
+							x1, y1+radius,
+							x1, y1]
+		new_poly = canvas.create_polygon(points, **kwargs, smooth=True)
+		new_text = canvas.create_text((x1+x2)/2,(y1+y2)/2, text=_text)      # center the text
 
 
 if __name__ == "__main__":

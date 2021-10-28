@@ -17,6 +17,8 @@ Intended to make it easier to create floorplans
 - Add in dividers on the months
 - Add years on top of the months
 - Bug: 11/30 shows up as 11/29 when at a wider min_xlen (try 300)
+- Bug: fix scroll bar not working properly, need to only increase canvas size of timeline, but keep window size the same
+
 10/22/21: Fixed a lot of items. Remaining to do:
 - Bug: 11/30 date marker in yaml shows up as 12/0 on table
 10/17/21: Next step to add the marker labels in, maybe figure out how to move the Timeline object to another class
