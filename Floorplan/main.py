@@ -204,14 +204,15 @@ class MainApplication:
 			# 	text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
 			# # MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
 			# label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
-			self.round_rectangle_text(self.mainframe, 5, 5, MIN_XLEN, 25, 20, \
-				0, i, calendar.month_abbr[month], fill="gray")
+			self.round_rectangle_text(self.mainframe, 5, 5, MIN_XLEN, 25, radius=20, \
+				row=START_ROW, col=i+START_COL, _text=calendar.month_abbr[month], fill="gray")
 
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
 		self._NUMBER_OF_DAYS=monthdays_arr
 
-	def round_rectangle_text(self, _frame, x1, y1, x2, y2, radius, row, col, _text, **kwargs):
+	def round_rectangle_text(self, _frame, x1, y1, x2, y2, radius=25, row=0, col=0, \
+		 _text='default', **kwargs):
 		canvas = tk.Canvas(_frame, height=y2, width=x2, bg="white", highlightthickness=0)
 		canvas.grid(row=row, column=col, padx=0)
 		points = [x1+radius, y1,
