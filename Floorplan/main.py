@@ -75,7 +75,7 @@ class MainApplication:
 		# Need Container Frame, Canvas, and scrollable Frame 
 		self.containerframe = tk.Frame(parent).grid(row=0, column=1)
 		self.maincanvas = tk.Canvas(self.containerframe, bg="white", \
-			height=ROWS_DISP*MIN_YLEN, width=COLS_DISP*MIN_XLEN, highlightthickness=0)
+			height=14*50, width=7*150, highlightthickness=0)
 		self.maincanvas.grid(row=0, column=1, sticky=tk.N)
 		self.mainframe = tk.Frame(self.maincanvas, bg='white') # scrollable
 
