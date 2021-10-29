@@ -81,6 +81,7 @@ class MainApplication:
 		self.maincanvas = tk.Canvas(self.containerframe, bg="white", \
 			height=HEIGHT_WIN-100, width=LEN_WIN-100, highlightthickness=0)
 		self.maincanvas.grid(row=0, column=1, sticky=tk.N)
+		self.maincanvas.bind_all("<MouseWheel>", self._on_mousewheel)
 		self.mainframe = tk.Frame(self.maincanvas, bg='white') # scrollable
 
 		# Create a horizontal scrollbar linked to the container frame.
@@ -238,7 +239,9 @@ class MainApplication:
 							x1, y1]
 		new_poly = canvas.create_polygon(points, **kwargs, smooth=True)
 		new_text = canvas.create_text((x1+x2)/2,(y1+y2)/2, text=_text, font=('Helvetica', 12, 'bold'))      # center the text
-
+	
+	def _on_mousewheel(self, event):
+		self.maincanvas.xview_scroll(-1*event.delta, "units")
 
 if __name__ == "__main__":
 	root = tk.Tk()

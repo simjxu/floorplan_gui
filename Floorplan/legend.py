@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.constants import RIGHT
 
 class Legend:
   def __init__(self, parent, **kwargs):
@@ -27,6 +26,8 @@ class Legend:
     self.maincanvas = tk.Canvas(self.containerframe, \
 			height=500, width=150, highlightthickness=0)
     self.maincanvas.pack(side=tk.LEFT)
+    self.maincanvas.bind("<MouseWheel>", self._on_mousewheel)
+
       # Create a horizontal scrollbar linked to the container frame.
     self.vsbar = tk.Scrollbar(self.containerframe, orient=tk.VERTICAL, command=self.maincanvas.yview)
     self.vsbar.pack(side=tk.LEFT, fill='y')
@@ -102,6 +103,10 @@ class Legend:
   def select_all(self):
     for checkbox in self.checkarray:
       checkbox.set(1)
+
+  # This doesn't work
+  # def _on_mousewheel(self, event):
+  #   self.maincanvas.yview_scroll(-1*event.delta, "units")
 
 class MainApplication:
   def __init__(self, parent, **kwargs):
