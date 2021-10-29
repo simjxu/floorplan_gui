@@ -13,6 +13,10 @@ ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/YAMLs/x_sys.yaml
 # ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
+# Window sizes
+LEN_WIN = 1400
+HEIGHT_WIN = 800
+
 # Input width of each cell
 MIN_XLEN = 150
 MIN_YLEN = 50
@@ -75,8 +79,9 @@ class MainApplication:
 		# Need Container Frame, Canvas, and scrollable Frame 
 		self.containerframe = tk.Frame(parent).grid(row=0, column=1)
 		self.maincanvas = tk.Canvas(self.containerframe, bg="white", \
-			height=14*50, width=7*150, highlightthickness=0)
+			height=HEIGHT_WIN-100, width=LEN_WIN-100, highlightthickness=0)
 		self.maincanvas.grid(row=0, column=1, sticky=tk.N)
+		self.maincanvas.bind_all("<MouseWheel>", self._on_mousewheel)
 		self.mainframe = tk.Frame(self.maincanvas, bg='white') # scrollable
 
 		# Create a horizontal scrollbar linked to the container frame.
@@ -143,7 +148,7 @@ class MainApplication:
 			# self.build = tk.Label(self.mainframe, text=self.yaml_obj.BUILD_NAMES[i], fg="black", bg="white")
 			else:
 				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
-					fg=self.TEXT_COLOR, bg='white', wraplength=100))
+					fg=self.TEXT_COLOR, bg='white', wraplength=100, font=('Helvetica', 15, 'bold')))
 				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
 				rowptr += 1
 
@@ -233,13 +238,15 @@ class MainApplication:
 							x1, y1+radius,
 							x1, y1]
 		new_poly = canvas.create_polygon(points, **kwargs, smooth=True)
-		new_text = canvas.create_text((x1+x2)/2,(y1+y2)/2, text=_text)      # center the text
-
+		new_text = canvas.create_text((x1+x2)/2,(y1+y2)/2, text=_text, font=('Helvetica', 12, 'bold'))      # center the text
+	
+	def _on_mousewheel(self, event):
+		self.maincanvas.xview_scroll(-1*event.delta, "units")
 
 if __name__ == "__main__":
 	root = tk.Tk()
 	root.title("X1981 Floorplan")
-	root.geometry("1200x800")
+	root.geometry(str(LEN_WIN)+'x'+str(HEIGHT_WIN))
 	root.configure(bg='white')
 	app = MainApplication(root)
 	root.mainloop()
