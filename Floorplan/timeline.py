@@ -82,7 +82,7 @@ class Timeline:
 			year += math.floor(month/12)
 			month = month-12*math.floor(month/12)
 		day = self.num_days[month_idx] * ((pos-month_idx*self.MIN_XLEN)/self.MIN_XLEN)
-		day = round(day)
+		day = math.ceil(day)
 
 		# # For Debug
 		# return str(math.floor(pos))
