@@ -1,5 +1,6 @@
 # Build tests
 /YAMLs
+/Floorplan_YAMLs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
