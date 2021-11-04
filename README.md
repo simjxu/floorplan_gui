@@ -12,10 +12,14 @@ Intended to make it easier to create floorplans
 - User can name the different builds based upon CSV file
 
 ## Updates
+11/1/21:
+- Have scroll center at today's date
+- Right click functionality to add new markers, change color
+
 10/26/21:
-- Make mouse wheel scroll work for scroll bar
+- Make mouse wheel scroll work for scroll bar [DONE]
 - Add in dividers on the months [DONE]
-- Add years on top of the months
+- Add years on top of the months [DONE]
 - Bug: 11/30 shows up as 11/29 when at a wider min_xlen (try 300) [DONE]
 - Bug: fix scroll bar not working properly, need to only increase canvas size of timeline, but keep window size the same [DONE]
 

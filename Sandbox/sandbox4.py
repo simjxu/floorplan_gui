@@ -1,39 +1,26 @@
 from tkinter import *
-root = Tk()
+
+startingWin = Tk()
+
+canvas = Canvas(startingWin, height=600)
+canvas.grid(row=0, column=0,sticky="nsew")
+canvasFrame = Frame(canvas)
+canvas.create_window(0, 0, window=canvasFrame, anchor='nw')
+
+for i in range(70):
+    element = Button(canvasFrame, text='Button %s ' % i)
+    element.grid(row=i, column=0)
+
+yscrollbar = Scrollbar(startingWin, orient=VERTICAL)
+yscrollbar.config(command=canvas.yview)
+canvas.config(yscrollcommand=yscrollbar.set)
+yscrollbar.grid(row=0, column=1, sticky="ns")
 
 
-def round_rectangle_text(_canvas, x1, y1, x2, y2, radius=25, row=0, col=0, _text='default', **kwargs):
-    canvas = Canvas(_canvas, height=y2-y1/2, width=x2)
-    canvas.grid(row=row, column=col, padx=0)
-    points = [x1+radius, y1,
-              x1+radius, y1,
-              x2-radius, y1,
-              x2-radius, y1,
-              x2, y1,
-              x2, y1+radius,
-              x2, y1+radius,
-              x2, y2-radius,
-              x2, y2-radius,
-              x2, y2,
-              x2-radius, y2,
-              x2-radius, y2,
-              x1+radius, y2,
-              x1+radius, y2,
-              x1, y2,
-              x1, y2-radius,
-              x1, y2-radius,
-              x1, y1+radius,
-              x1, y1+radius,
-              x1, y1]
 
-    new_poly = canvas.create_polygon(points, **kwargs, smooth=True)
-    new_text = canvas.create_text((x1+x2)/2,(y1+y2)/2, text=_text)      # center the text
+canvasFrame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
 
-# my_rectangle = round_rectangle(canvas, 10, 10, 100, 25, radius=20, fill="gray")
+# canvas.yview(END)
+canvas.yview_moveto(float(1.0)/float(2.0))
 
-for i in range(5):
-    round_rectangle_text(root, 5, 5, 100, 25, radius=20, row=0, col=i, _text="above", fill="gray")
-    round_rectangle_text(root, 5, 5, 100, 25, radius=20, row=1, col=i, _text="A", fill="gray")
-
-
-root.mainloop()
+startingWin.mainloop()

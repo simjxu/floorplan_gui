@@ -77,6 +77,7 @@ class MyApp(tk.Tk):
         vsbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=canvas.yview)
         vsbar.grid(row=0, column=1, sticky=tk.NS)
         canvas.configure(yscrollcommand=vsbar.set)
+        canvas.yview_moveto(0)
 
         # Create a horizontal scrollbar linked to the canvas.
         hsbar = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=canvas.xview)
