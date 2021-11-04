@@ -9,16 +9,21 @@ from timeline import Timeline
 from exception import *
 from legend import Legend
 
-ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/YAMLs/x_sys.yaml'
+ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
-# Window sizes
+# Normal Window sizes
 LEN_WIN = 1400
 HEIGHT_WIN = 800
 
-# Input width of each cell
-MIN_XLEN = 150
+# # Bigger Window
+# LEN_WIN = 2200
+# HEIGHT_WIN = 800
+
+# Input width of each cell: Use 350 to view smaller periods of time
+MIN_XLEN = 350
+# MIN_XLEN = 150
 MIN_YLEN = 50
 
 # # Input width of each cell
