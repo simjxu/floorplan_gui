@@ -157,8 +157,6 @@ class MainApplication:
 				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
 				rowptr += 1
 
-	
-
 	def load_timelines(self):
 		# print(self.checkbox_arr)
 		for timeline in self.timeline_arr:
@@ -207,10 +205,7 @@ class MainApplication:
 				month = 1
 				year += 1
 
-			# label_arr.append(tk.Label(self.mainframe, \
-			# 	text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
-			# # MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			# label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
+			# # MAGIC NUMBER: rounded rectangle
 			self.round_rectangle_text(self.mainframe, 5, 5, MIN_XLEN, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
