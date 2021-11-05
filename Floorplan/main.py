@@ -59,7 +59,8 @@ class MainApplication:
 		self.parent = parent
 
 		# import the yaml file data
-		self.yaml_obj = YAMLoutput(self, file=ymlFile)
+		self.yaml_file = ymlFile
+		self.yaml_obj = YAMLoutput(self, file=self.yaml_file)
 		self.DATE_ARRAYS = self.yaml_obj.DATE_ARRAYS
 		self.LABEL_ARRAYS = self.yaml_obj.LABEL_ARRAYS
 

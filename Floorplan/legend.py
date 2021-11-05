@@ -4,8 +4,7 @@ import os
 
 class Legend:
   def __init__(self, parent, **kwargs):
-    self.savefile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
-    self.testtext = "ABC"   # For testing, delete
+    self.savefile = parent.yaml_file
     self.parent = parent
 
     # New window for the Legend
