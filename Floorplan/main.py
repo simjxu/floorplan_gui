@@ -8,6 +8,7 @@ from YAMLoutput import YAMLoutput
 from timeline import Timeline
 from exception import *
 from legend import Legend
+from menu import RCMenu
 
 ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/savefile.yaml'
@@ -38,6 +39,8 @@ def _create_circle(self, x, y, r, **kwargs):
 	return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
 
+
+
 class MainApplication:
 	_NUMBER_OF_DAYS = []
 	_NUMBER_OF_MONTHS = 0
@@ -53,6 +56,7 @@ class MainApplication:
 		
 		ROWS_DISP = self.MAX_ROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display. FIX: need to base this on the MIN_XLEN
+		self.parent = parent
 
 		# import the yaml file data
 		self.yaml_obj = YAMLoutput(self, file=ymlFile)
@@ -130,6 +134,8 @@ class MainApplication:
 			self.checkbox_arr.append(1)
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
+
+		self.right_click_menu = RCMenu(self)
 
 		# parent.line_style = ttk.Style()
 		# parent.line_style.configure("Line.TSeparator", background="#000000")
@@ -242,6 +248,8 @@ class MainApplication:
 	
 	def _on_mousewheel(self, event):
 		self.maincanvas.xview_scroll(-1*event.delta, "units")
+
+	
 
 if __name__ == "__main__":
 	root = tk.Tk()
