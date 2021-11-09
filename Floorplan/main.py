@@ -23,8 +23,8 @@ HEIGHT_WIN = 800
 # HEIGHT_WIN = 800
 
 # Input width of each cell: Use 350 to view smaller periods of time
-MIN_XLEN = 350
-# MIN_XLEN = 150
+# MIN_XLEN = 350
+MIN_XLEN = 150
 MIN_YLEN = 50
 
 # # Input width of each cell

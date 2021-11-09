@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import os
+import time
 
 class Legend:
   def __init__(self, parent, **kwargs):

@@ -174,7 +174,11 @@ class Timeline:
 		self.parent.legend.update_yaml(build_name=self.build_name, \
 			label=self.canvas.itemcget(self.selected_label, 'text'), \
 			date=self.update_date(event.x))
-	
+
+	# For changing the text of a particular marker
+	def change_text(self, posx, posy, text):
+		print("placeholder")
+
 	def destroy_timeline(self):
 		self.canvas.delete('all')
 		self.canvas.destroy()
