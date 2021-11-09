@@ -8,6 +8,7 @@ from YAMLoutput import YAMLoutput
 from timeline import Timeline
 from exception import *
 from legend import Legend
+from menu import RCMenu
 
 ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
 # ymlFile = './Sample_YAML/savefile.yaml'
@@ -22,8 +23,8 @@ HEIGHT_WIN = 800
 # HEIGHT_WIN = 800
 
 # Input width of each cell: Use 350 to view smaller periods of time
-MIN_XLEN = 350
-# MIN_XLEN = 150
+# MIN_XLEN = 350
+MIN_XLEN = 150
 MIN_YLEN = 50
 
 # # Input width of each cell
@@ -37,6 +38,8 @@ START_COL = 0
 def _create_circle(self, x, y, r, **kwargs):
 	return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
+
+
 
 class MainApplication:
 	_NUMBER_OF_DAYS = []
@@ -53,9 +56,11 @@ class MainApplication:
 		
 		ROWS_DISP = self.MAX_ROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display. FIX: need to base this on the MIN_XLEN
+		self.parent = parent
 
 		# import the yaml file data
-		self.yaml_obj = YAMLoutput(self, file=ymlFile)
+		self.yaml_file = ymlFile
+		self.yaml_obj = YAMLoutput(self, file=self.yaml_file)
 		self.DATE_ARRAYS = self.yaml_obj.DATE_ARRAYS
 		self.LABEL_ARRAYS = self.yaml_obj.LABEL_ARRAYS
 
@@ -131,6 +136,8 @@ class MainApplication:
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
 
+		self.right_click_menu = RCMenu(self)
+
 		# parent.line_style = ttk.Style()
 		# parent.line_style.configure("Line.TSeparator", background="#000000")
 		# ttk.Separator(parent, orient=tk.VERTICAL, style="Line.TSeparator").grid(column=2, row=0, rowspan=5, sticky='ns')
@@ -156,8 +163,6 @@ class MainApplication:
 					fg=self.TEXT_COLOR, bg='white', wraplength=100, font=('Helvetica', 15, 'bold')))
 				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
 				rowptr += 1
-
-	
 
 	def load_timelines(self):
 		# print(self.checkbox_arr)
@@ -207,10 +212,7 @@ class MainApplication:
 				month = 1
 				year += 1
 
-			# label_arr.append(tk.Label(self.mainframe, \
-			# 	text=calendar.month_abbr[month], fg=self.TEXT_COLOR, bg='white'))
-			# # MAGIC NUMBER: padx on right needs to be 15 to have the marker match well on label
-			# label_arr[i].grid(column=i+START_COL, row=0+START_ROW)
+			# # MAGIC NUMBER: rounded rectangle
 			self.round_rectangle_text(self.mainframe, 5, 5, MIN_XLEN, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
@@ -247,6 +249,8 @@ class MainApplication:
 	
 	def _on_mousewheel(self, event):
 		self.maincanvas.xview_scroll(-1*event.delta, "units")
+
+	
 
 if __name__ == "__main__":
 	root = tk.Tk()
