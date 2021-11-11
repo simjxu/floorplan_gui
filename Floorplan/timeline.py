@@ -71,6 +71,13 @@ class Timeline:
 			self.canvas.tag_bind('id', '<B1-Motion>', self.move)
 			self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
 
+		# MENU TEST
+		self.popup_menu = tk.Menu(tearoff=0)
+		self.popup_menu.add_command(label="Create Marker",
+																		command=self.create_marker)
+
+		self.canvas.bind("<Button-2>", self.popup)
+		# probably will need to create a second one for the markers
 
 	def pos2date(self, pos):
 		# Takes position value (not integer right now) as an input and outputs a string 
@@ -235,3 +242,23 @@ class Timeline:
 	def destroy_timeline(self):
 		self.canvas.delete('all')
 		self.canvas.destroy()
+
+
+	# TESTING popup menu
+	def popup(self, event):
+		self.popup_x = event.x
+		self.popup_y = event.y
+		try:
+			self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+		finally:
+			self.popup_menu.grab_release()
+
+	def create_marker(self):
+		print(self.popup_x, self.popup_y)
+		item_id = self.canvas.create_circle(self.popup_x, self.marker_ypos, self.MARKER_RADIUS, \
+				fill='white', \
+					outline='black', width=4, tags='id')
+
+
+
+	
