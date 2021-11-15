@@ -92,25 +92,26 @@ class YAMLoutput:
 		# Update the yaml dict
 		self.yaml_dict[build_name][label]['date'] = date
 
-		# Sort the dates in the yaml file
-		sorted_indices = self.sort_dates(self.yaml_dict[build_name])
-		build_order_list = [item for item in self.yaml_dict[build_name]]
-		build_order_list = [build_order_list[i] for i in sorted_indices]
-
-		reordered_dict = {k: self.yaml_dict[build_name][k] for k in build_order_list}
-		self.yaml_dict[build_name] = reordered_dict
-
 		# Reload the dict
 		self.load_yaml()
 
 
-	def sort_dates(self, build_dict):
-		# Get date strings
-		datetime_arr = [datetime.datetime.strptime(build_dict[label]['date'], '%m/%d/%y') \
-			for label in build_dict]
-		
-		# Return the sorted indices
-		return [i[0] for i in sorted(enumerate(datetime_arr), key=lambda x:x[1])]
+	def sort_all_dates(self):
+		for build_name in self.yaml_dict:
+			# Get date strings
+			datetime_arr = [datetime.datetime.strptime(self.yaml_dict[build_name][label]['date'], \
+				'%m/%d/%y') for label in self.yaml_dict[build_name]]
+
+			# Sort the dates in the yaml file
+			sorted_indices = [i[0] for i in sorted(enumerate(datetime_arr), key=lambda x:x[1])]
+			build_order_list = [item for item in self.yaml_dict[build_name]]
+			build_order_list = [build_order_list[i] for i in sorted_indices]
+
+			reordered_dict = {k: self.yaml_dict[build_name][k] for k in build_order_list}
+			self.yaml_dict[build_name] = reordered_dict
+
+		# Reload the dict
+		self.load_yaml()
 
 	def save_current(self, saveFile):
 		with open(saveFile, 'w') as file:
