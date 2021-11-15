@@ -136,45 +136,102 @@ class Timeline:
 		# find all clicked items
 		self.selected = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
 		# get first selected item
-		self.selected = self.selected[0]
+		self.selected_arr = []
+		self.selected_arr.append(self.selected[0])
 
-		# get selected label tag
-		self.selected_label = self.canvas.find_withtag(self.labels[self.selected])
+		# get selected label tag (add it to the first index in an array)
+		self.selected_label = self.canvas.find_withtag(self.labels[self.selected[0]])
+		
+		# print(self.selected)
+		# print(self.labels)
+		# print(self.dates)
+		# print(self.ovals)
+		# print(self.selected_label)
+		# print(self.labels.items())
+
+		# NOTE: we are assumign that the labels, dates, and ovals dictionaries all have the same labels
+		self.keys_list = list(self.ovals)
+		self.selected_idx = self.keys_list.index(self.selected[0])
+		self.selected_labels = {}
+		self.selected_dates = {}
+
+		# select all the items after the one selected
+		for i in range(self.selected_idx, len(self.keys_list)):
+			self.selected_labels[i] = self.canvas.find_withtag(self.labels[self.keys_list[i]])
+			self.selected_dates[i] = self.canvas.find_withtag(self.dates[self.keys_list[i]])
+		# find the index of the selected label  in the list array
+
+
+		# get selected label and labels afterward
+
+
 		# get selected text tag
-		self.selected_date = self.canvas.find_withtag(self.dates[self.selected])
+		self.selected_date = self.canvas.find_withtag(self.dates[self.selected[0]])
+
+		# find the index of the selected text tag
+
+		# get selected text tag and text tag afterward
+
 
 	def move(self, event):
-		circle_coords = self.canvas.coords(self.selected)
+		circle_coords = self.canvas.coords(self.selected[0])
 		x0 = circle_coords[0]   # currently unused, go off of the mouse position
 		y0 = circle_coords[1]
 		x1 = circle_coords[2]   # currently unused, go off of the mouse position
 		y1 = circle_coords[3]
+		distance_moved = event.x-self.MARKER_RADIUS-x0
 
-		# move selected item, hold y position
-		self.canvas.coords(self.selected, event.x-self.MARKER_RADIUS, \
-				y0, event.x+self.MARKER_RADIUS,y1)
+		# Dictionary for new dates
+		self.selected_dates_values = {}
 
-		# Also move the label position and 
-		self.canvas.coords(self.selected_label, event.x, \
+		for i in range(self.selected_idx, len(self.keys_list)):
+
+			# Move all markers after the selected marker
+			circle_coords = self.canvas.coords(self.keys_list[i])
+			self.canvas.coords(self.keys_list[i], \
+				circle_coords[0]+distance_moved, \
+				circle_coords[1], \
+				circle_coords[2]+distance_moved, \
+				circle_coords[3])
+			
+			# Move all the labels
+			label_coords = self.canvas.coords(self.selected_labels[i])
+			self.canvas.coords(self.selected_labels[i], \
+				label_coords[0]+distance_moved, \
 				self.marker_ypos-2*self.MARKER_RADIUS)
-		self.canvas.tag_raise(self.selected_label)
+			self.canvas.tag_raise(self.selected_labels[i])
 
-		# Also move the date and update it
-		self.canvas.coords(self.selected_date, event.x, \
+			# Move all the dates
+			date_coords = self.canvas.coords(self.selected_dates[i])
+			self.canvas.coords(self.selected_dates[i], \
+				date_coords[0]+distance_moved, \
 				self.marker_ypos+2*self.MARKER_RADIUS)
-		self.canvas.tag_raise(self.selected_date)
-		self.canvas.itemconfig(self.selected_date, text=self.update_date(event.x)[:-3])
+			self.canvas.tag_raise(self.selected_dates[i])
+			# Update date
+			self.selected_dates_values[i] = self.update_date(date_coords[0]+distance_moved)
+			self.canvas.itemconfig(self.selected_dates[i], text=self.selected_dates_values[i][:-3])
+			# [:-3] slices the string to get rid of the year
 
 
 	def stop_move(self, event):
 		# print(self.canvas.itemcget(self.selected_label, 'text'))
 		# print(self.canvas.itemcget(self.selected_date, 'text'))
 
-		# send the yaml build name over, the item array, the item, and the new date
-		self.parent.legend.update_yaml(build_name=self.build_name, \
-			label=self.canvas.itemcget(self.selected_label, 'text'), \
-			date=self.update_date(event.x))
-	
+		# # send the yaml build name over, the item array, the item, and the new date
+		# self.parent.legend.update_yaml(build_name=self.build_name, \
+		# 	label=self.canvas.itemcget(self.selected_label, 'text'), \
+		# 	date=self.update_date(event.x))
+
+		# Update all the dates
+		for i in range(self.selected_idx, len(self.keys_list)):
+			self.parent.legend.update_yaml(build_name=self.build_name, \
+				label=self.canvas.itemcget(self.selected_labels[i], 'text'), \
+				date=self.selected_dates_values[i])
+
+	# For changing the text of a particular marker
+	def change_text(self, posx, posy, text):
+		print("placeholder")
+
 	def destroy_timeline(self):
 		self.canvas.delete('all')
 		self.canvas.destroy()

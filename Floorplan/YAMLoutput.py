@@ -95,7 +95,9 @@ class YAMLoutput:
 		# Reload the dict
 		self.load_yaml()
 
+
 		# print(self.yaml_dict)
+
 		# # Get index of the date you need to update
 		# build_idx = self.BUILD_NAMES.index(build_name)
 		# label_idx = self.LABEL_ARRAYS[build_idx].index(label)
