@@ -259,6 +259,17 @@ class Timeline:
 				fill='white', \
 					outline='black', width=4, tags='id')
 
+		# Add a label and date to the marker
+		label = self.canvas.create_text(self.popup_x, self.marker_ypos-2*self.MARKER_RADIUS, \
+				text="XX", fill=self.TEXT_COLOR)
+
+		date_str = self.pos2date(self.popup_x)
+		date = self.canvas.create_text(self.popup_x, self.marker_ypos+2*self.MARKER_RADIUS, \
+			text=date_str[:-3], fill=self.TEXT_COLOR)
+
+		# Append the marker item to the array of items
+
+		# Reinitialize bindings 
 
 
 	
