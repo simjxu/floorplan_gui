@@ -79,6 +79,11 @@ class Timeline:
 		self.canvas.bind("<Button-2>", self.popup)
 		# probably will need to create a second one for the markers
 
+	def create_new_marker(self, pos_x, pos_y):
+		print("placeholder")
+		# move everything in the marker creation to this function so you can reuse it for the popup marker
+		
+
 	def pos2date(self, pos):
 		# Takes position value (not integer right now) as an input and outputs a string 
 		# without the year, e.g. 9/11
@@ -268,8 +273,13 @@ class Timeline:
 			text=date_str[:-3], fill=self.TEXT_COLOR)
 
 		# Append the marker item to the array of items
+		self.array.append((self.popup_x, self.marker_ypos))
+		self.ovals[item_id] = self.array[-1]
+		self.labels[item_id] = label
+		self.dates[item_id] = date
 
-		# Reinitialize bindings 
+		# Update YAML
+		self.parent.yaml_obj.add_label(self.build_name, "XX")
 
 
 	
