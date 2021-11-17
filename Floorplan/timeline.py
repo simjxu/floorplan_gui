@@ -259,7 +259,7 @@ class Timeline:
 			self.popup_menu.grab_release()
 
 	def create_marker(self):
-		print(self.popup_x, self.popup_y)
+		# print(self.popup_x, self.popup_y)
 		item_id = self.canvas.create_circle(self.popup_x, self.marker_ypos, self.MARKER_RADIUS, \
 				fill='white', \
 					outline='black', width=4, tags='id')
