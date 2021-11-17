@@ -15,6 +15,7 @@ class Legend:
     with open(self.checkbox_selected_file) as f:
       comma_string = f.readline()
     self.checkbox_selected = [int(x) for x in comma_string.split(',')]
+    f.close()
 
     # New window for the Legend
     self.window = tk.Toplevel()     # Top level needed, don't totally understand why not tk.Tk()
@@ -106,15 +107,21 @@ class Legend:
     print("update")
 
   def reload(self):
+    open(self.checkbox_selected_file, 'w').close()
     # Set the parent checkbox array equal to this one
-    for i in range(len(self.checkarray)):
-      self.parent.checkbox_arr[i] = self.checkarray[i].get()
+    with open(self.checkbox_selected_file, 'w') as f:
+      for i in range(len(self.checkarray)):
+        self.parent.checkbox_arr[i] = self.checkarray[i].get()
+      
+        if i==0:
+          f.write(str(self.checkarray[i].get()))
+        else:
+          f.write(',')
+          f.write(str(self.checkarray[i].get()))
+
     self.parent.load_builds()
     self.parent.load_timelines()
 
-    # Save the new selected items to file
-    
-  
   def clear(self):
     for checkbox in self.checkarray:
       checkbox.set(0)
