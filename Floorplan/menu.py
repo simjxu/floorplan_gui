@@ -3,10 +3,11 @@ import tkinter as tk
 class RCMenu:
 	def __init__(self, parent, *args, **kwargs):
 		self.popup_menu = tk.Menu(tearoff=0)
+		self.popup_menu.add_command(label="New Marker",
+																command=self.new_marker)
 		self.popup_menu.add_command(label="Delete",
 																command=self.delete_selected)
-		self.popup_menu.add_command(label="Select All",
-																command=self.select_all)
+		
 
 		parent.parent.bind("<Button-2>", self.popup) # Button-2 on Aqua
 
@@ -17,11 +18,12 @@ class RCMenu:
 		finally:
 			self.popup_menu.grab_release()
 
+	def new_marker(self):	
+		print("new marker")
+
 	def delete_selected(self):
 		print("delete")
 
-	def select_all(self):	
-		print("select all")
 
 class MainApplication:
   def __init__(self, parent, **kwargs):

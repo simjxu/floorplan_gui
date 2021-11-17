@@ -136,7 +136,7 @@ class MainApplication:
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
 
-		self.right_click_menu = RCMenu(self)
+		# self.right_click_menu = RCMenu(self)
 
 		# parent.line_style = ttk.Style()
 		# parent.line_style.configure("Line.TSeparator", background="#000000")
