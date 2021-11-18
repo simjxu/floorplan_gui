@@ -85,6 +85,8 @@ class Legend:
       date=date)
   
   def save(self):
+    # Only sort the yaml object on save, which allows a new marker to be moved around
+    self.parent.yaml_obj.sort_all_dates()
     self.parent.yaml_obj.save_current(self.savefile)
     # Update dates in git repo
     os.system("cd /Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs && make git")
