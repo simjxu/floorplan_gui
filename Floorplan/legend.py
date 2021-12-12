@@ -8,6 +8,15 @@ class Legend:
     self.savefile = parent.yaml_file
     self.parent = parent
 
+    # Create an empty text file in the Floorplan folder that will hold the selected items
+    # so the next time it opens it reloads from that file
+    self.checkbox_selected_file = \
+      '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/checkbox_selected.txt'
+    with open(self.checkbox_selected_file) as f:
+      comma_string = f.readline()
+    self.checkbox_selected = [int(x) for x in comma_string.split(',')]
+    f.close()
+
     # New window for the Legend
     self.window = tk.Toplevel()     # Top level needed, don't totally understand why not tk.Tk()
     self.window.geometry("200x700+1210+100")
@@ -29,7 +38,7 @@ class Legend:
     self.maincanvas.pack(side=tk.LEFT)
     # self.maincanvas.bind("<MouseWheel>", self._on_mousewheel)
 
-      # Create a horizontal scrollbar linked to the container frame.
+    # Create a horizontal scrollbar linked to the container frame.
     self.vsbar = tk.Scrollbar(self.containerframe, orient=tk.VERTICAL, command=self.maincanvas.yview)
     self.vsbar.pack(side=tk.LEFT, fill='y')
 
@@ -74,6 +83,9 @@ class Legend:
     selectall_button = tk.Button(update_frame, text="SELECT ALL", fg="black", command=self.select_all)
     selectall_button.pack()
 
+    # Select the initial builds to show
+    self.set_initial_checkboxes()
+
 
   # Pass in all YAML data into Legend object
   # Can be called when move is made
@@ -95,15 +107,29 @@ class Legend:
     print("update")
 
   def reload(self):
+    open(self.checkbox_selected_file, 'w').close()
     # Set the parent checkbox array equal to this one
-    for i in range(len(self.checkarray)):
-      self.parent.checkbox_arr[i] = self.checkarray[i].get()
+    with open(self.checkbox_selected_file, 'w') as f:
+      for i in range(len(self.checkarray)):
+        self.parent.checkbox_arr[i] = self.checkarray[i].get()
+      
+        if i==0:
+          f.write(str(self.checkarray[i].get()))
+        else:
+          f.write(',')
+          f.write(str(self.checkarray[i].get()))
+
     self.parent.load_builds()
     self.parent.load_timelines()
-  
+
   def clear(self):
     for checkbox in self.checkarray:
       checkbox.set(0)
+  
+  def set_initial_checkboxes(self):
+    for i in range(len(self.checkbox_selected)):
+      self.checkarray[i].set(self.checkbox_selected[i])
+    self.reload()
 
   def select_all(self):
     for checkbox in self.checkarray:
