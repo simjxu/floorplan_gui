@@ -22,7 +22,6 @@ class Timeline:
 		self.build_name = kwargs['build_name']
 
 		self.parent = parent
-		parent.legend.testtext = "123"
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
