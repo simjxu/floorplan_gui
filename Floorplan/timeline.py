@@ -22,7 +22,6 @@ class Timeline:
 		self.build_name = kwargs['build_name']
 
 		self.parent = parent
-		parent.legend.testtext = "123"
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
@@ -71,6 +70,18 @@ class Timeline:
 			self.canvas.tag_bind('id', '<B1-Motion>', self.move)
 			self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
 
+		# MENU TEST
+		self.popup_menu = tk.Menu(tearoff=0)
+		self.popup_menu.add_command(label="Create Marker",
+																		command=self.create_marker)
+
+		self.canvas.bind("<Button-2>", self.popup)
+		# probably will need to create a second one for the markers
+
+	def create_new_marker(self, pos_x, pos_y):
+		print("placeholder")
+		# move everything in the marker creation to this function so you can reuse it for the popup marker
+		
 
 	def pos2date(self, pos):
 		# Takes position value (not integer right now) as an input and outputs a string 
@@ -235,3 +246,39 @@ class Timeline:
 	def destroy_timeline(self):
 		self.canvas.delete('all')
 		self.canvas.destroy()
+
+
+	# TESTING popup menu
+	def popup(self, event):
+		self.popup_x = event.x
+		self.popup_y = event.y
+		try:
+			self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+		finally:
+			self.popup_menu.grab_release()
+
+	def create_marker(self):
+		# print(self.popup_x, self.popup_y)
+		item_id = self.canvas.create_circle(self.popup_x, self.marker_ypos, self.MARKER_RADIUS, \
+				fill='white', \
+					outline='black', width=4, tags='id')
+
+		# Add a label and date to the marker
+		label = self.canvas.create_text(self.popup_x, self.marker_ypos-2*self.MARKER_RADIUS, \
+				text="XX", fill=self.TEXT_COLOR)
+
+		date_str = self.pos2date(self.popup_x)
+		date = self.canvas.create_text(self.popup_x, self.marker_ypos+2*self.MARKER_RADIUS, \
+			text=date_str[:-3], fill=self.TEXT_COLOR)
+
+		# Append the marker item to the array of items
+		self.array.append((self.popup_x, self.marker_ypos))
+		self.ovals[item_id] = self.array[-1]
+		self.labels[item_id] = label
+		self.dates[item_id] = date
+
+		# Update YAML
+		self.parent.yaml_obj.add_label(self.build_name, "XX")
+
+
+	

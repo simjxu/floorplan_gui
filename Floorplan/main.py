@@ -64,8 +64,7 @@ class MainApplication:
 		self.DATE_ARRAYS = self.yaml_obj.DATE_ARRAYS
 		self.LABEL_ARRAYS = self.yaml_obj.LABEL_ARRAYS
 
-		# Create legend window
-		self.legend = Legend(self)
+		
 
 		# Update the number of columns
 		self._NUMCOLS = 2		# Start at 1 to include the builds column, first month
@@ -133,14 +132,13 @@ class MainApplication:
 		self.checkbox_arr = []
 		for i in range(len(self.yaml_obj.BUILD_NAMES)):
 			self.checkbox_arr.append(1)
+		
 		self.load_builds() # Builds on the left side
 		self.load_timelines()
 
-		self.right_click_menu = RCMenu(self)
-
-		# parent.line_style = ttk.Style()
-		# parent.line_style.configure("Line.TSeparator", background="#000000")
-		# ttk.Separator(parent, orient=tk.VERTICAL, style="Line.TSeparator").grid(column=2, row=0, rowspan=5, sticky='ns')
+		# Create legend window
+		self.legend = Legend(self)
+		
 
 	def load_builds(self):
 		# Clear builds

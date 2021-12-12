@@ -83,6 +83,12 @@ class YAMLoutput:
 
 		return 0
 
+	def add_label(self, buildname, labelname):
+		self.yaml_dict[buildname][labelname] = {}
+		self.yaml_dict[buildname][labelname]["date"] = "placeholder"
+		self.yaml_dict[buildname][labelname]["color"] = "white"
+
+
 	def update_dates(self, **kwargs):
 		build_name = kwargs['build_name']
 		label = kwargs['label']
@@ -96,12 +102,22 @@ class YAMLoutput:
 		self.load_yaml()
 
 
-		# print(self.yaml_dict)
+	def sort_all_dates(self):
+		for build_name in self.yaml_dict:
+			# Get date strings
+			datetime_arr = [datetime.datetime.strptime(self.yaml_dict[build_name][label]['date'], \
+				'%m/%d/%y') for label in self.yaml_dict[build_name]]
 
-		# # Get index of the date you need to update
-		# build_idx = self.BUILD_NAMES.index(build_name)
-		# label_idx = self.LABEL_ARRAYS[build_idx].index(label)
-		# self.DATE_ARRAYS[build_idx][label_idx] = date
+			# Sort the dates in the yaml file
+			sorted_indices = [i[0] for i in sorted(enumerate(datetime_arr), key=lambda x:x[1])]
+			build_order_list = [item for item in self.yaml_dict[build_name]]
+			build_order_list = [build_order_list[i] for i in sorted_indices]
+
+			reordered_dict = {k: self.yaml_dict[build_name][k] for k in build_order_list}
+			self.yaml_dict[build_name] = reordered_dict
+
+		# Reload the dict
+		self.load_yaml()
 
 	def save_current(self, saveFile):
 		with open(saveFile, 'w') as file:
