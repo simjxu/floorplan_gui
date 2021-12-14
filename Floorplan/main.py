@@ -14,13 +14,14 @@ ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/
 # ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
-# Normal Window sizes
+# Macbook Screen Window
 LEN_WIN = 1400
 HEIGHT_WIN = 800
 
-# # Bigger Window
+# # Display Window
 # LEN_WIN = 2200
-# HEIGHT_WIN = 800
+# HEIGHT_WIN = 1200
+
 
 # Input width of each cell: Use 350 to view smaller periods of time
 # MIN_XLEN = 350
@@ -50,7 +51,7 @@ class MainApplication:
 
 	TEXT_COLOR = 'black'
 
-	MAX_ROWS = 14			# FIX: need to base this on the MIN_YLEN
+	MAX_ROWS = int(HEIGHT_WIN/MIN_YLEN-2)			# FIX: need to base this on the MIN_YLEN
 
 	def __init__(self, parent):
 		
@@ -159,7 +160,7 @@ class MainApplication:
 			else:
 				self.builds_arr.append(tk.Label(self.buildframe, text=self.yaml_obj.BUILD_NAMES[i], \
 					fg=self.TEXT_COLOR, bg='white', wraplength=100, font=('Helvetica', 15, 'bold')))
-				self.builds_arr[i].grid(column=0, row=rowptr+1, sticky=tk.N)
+				self.builds_arr[i].grid(column=0, row=rowptr+1)
 				rowptr += 1
 
 	def load_timelines(self):
