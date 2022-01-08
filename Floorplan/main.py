@@ -14,13 +14,13 @@ ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/
 # ymlFile = './Sample_YAML/savefile.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
-# Macbook Screen Window
-LEN_WIN = 1400
-HEIGHT_WIN = 800
+# # Macbook Screen Window
+# LEN_WIN = 1400
+# HEIGHT_WIN = 800
 
-# # Display Window
-# LEN_WIN = 2200
-# HEIGHT_WIN = 1200
+# Display Window
+LEN_WIN = 2200
+HEIGHT_WIN = 1200
 
 
 # Input width of each cell: Use 350 to view smaller periods of time
