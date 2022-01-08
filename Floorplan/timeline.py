@@ -185,12 +185,14 @@ class Timeline:
 
 
 	def move(self, event):
+		# Coordinates of the first marker
 		circle_coords = self.canvas.coords(self.selected[0])
 		x0 = circle_coords[0]   # currently unused, go off of the mouse position
 		y0 = circle_coords[1]
 		x1 = circle_coords[2]   # currently unused, go off of the mouse position
 		y1 = circle_coords[3]
 		distance_moved = event.x-self.MARKER_RADIUS-x0
+		print(distance_moved)
 
 		# Dictionary for new dates
 		self.selected_dates_values = {}
@@ -213,13 +215,14 @@ class Timeline:
 			self.canvas.tag_raise(self.selected_labels[i])
 
 			# Move all the dates
-			date_coords = self.canvas.coords(self.selected_dates[i])
+			date_coords = self.canvas.coords(self.selected_dates[i])			# Original position of the date
+			
 			self.canvas.coords(self.selected_dates[i], \
 				date_coords[0]+distance_moved, \
 				self.marker_ypos+2*self.MARKER_RADIUS)
 			self.canvas.tag_raise(self.selected_dates[i])
 			# Update date
-			self.selected_dates_values[i] = self.update_date(date_coords[0]+distance_moved)
+			self.selected_dates_values[i] = self.update_date(round(date_coords[0]+distance_moved))
 			self.canvas.itemconfig(self.selected_dates[i], text=self.selected_dates_values[i][:-3])
 			# [:-3] slices the string to get rid of the year
 

@@ -3,6 +3,7 @@ import datetime
 class YAMLoutput:
 
 	def __init__(self, parent, **kwargs):
+		print(kwargs['file'])
 		with open(kwargs['file'], "r") as stream:
 			try:
 				self.yaml_dict = yaml.safe_load(stream)
