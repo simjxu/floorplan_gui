@@ -57,7 +57,7 @@ class Timeline:
 				text=self.label_array[i], fill=self.TEXT_COLOR)
 
 			# Create dates and store the date tag id for reference during move
-			date_str = self.update_date(item[0])
+			date_str = self.pos2date(item[0])
 			# print(date_str)
 			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
 				text=date_str[:-3], fill=self.TEXT_COLOR)
@@ -83,24 +83,24 @@ class Timeline:
 		# move everything in the marker creation to this function so you can reuse it for the popup marker
 		
 
-	def pos2date(self, pos):
-		# Takes position value (not integer right now) as an input and outputs a string 
-		# without the year, e.g. 9/11
-		month_idx = math.floor(pos/self.MIN_XLEN)
-		year = self.START_YEAR
-		month = self.START_MONTH + month_idx
-		if month/12 > 1:			# CAREFUL... Hopefully type(month)==int
-			year += math.floor(month/12)
-			month = month-12*math.floor(month/12)
-		day = self.num_days[month_idx] * ((pos-month_idx*self.MIN_XLEN)/self.MIN_XLEN)
-		day = math.ceil(day)
+	# def pos2date(self, pos):
+	# 	# Takes position value (not integer right now) as an input and outputs a string 
+	# 	# without the year, e.g. 9/11
+	# 	month_idx = math.floor(pos/self.MIN_XLEN)
+	# 	year = self.START_YEAR
+	# 	month = self.START_MONTH + month_idx
+	# 	if month/12 > 1:			# CAREFUL... Hopefully type(month)==int
+	# 		year += math.floor(month/12)
+	# 		month = month-12*math.floor(month/12)
+	# 	day = self.num_days[month_idx] * ((pos-month_idx*self.MIN_XLEN)/self.MIN_XLEN)
+	# 	day = math.ceil(day)
 
-		# # For Debug
-		# return str(math.floor(pos))
+	# 	# # For Debug
+	# 	# return str(math.floor(pos))
 
-		# # Show full year string
-		return str(month) + "/" + str(day) + "/" + str(year)[2:]
-		# return str(month) + "/" + str(day) 
+	# 	# # Show full year string
+	# 	return str(month) + "/" + str(day) + "/" + str(year)[2:]
+	# 	# return str(month) + "/" + str(day) 
 
 
 	def date2pos(self, datestr):
@@ -121,7 +121,7 @@ class Timeline:
 		# d-0.5 to avoid edge cases at the edge of month (12/0 when it should be 11/30)
 		return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
 
-	def update_date(self, x):
+	def pos2date(self, x):
 		# Create the text that goes under the marker indicating the date
 		# x is the position that the mouse moves the marker to
 		# 1. Divide the pixel count by 100
@@ -195,7 +195,6 @@ class Timeline:
 		x1 = circle_coords[2]   # currently unused, go off of the mouse position
 		y1 = circle_coords[3]
 		distance_moved = event.x-self.MARKER_RADIUS-x0
-		print(distance_moved)
 
 		# Dictionary for new dates
 		self.selected_dates_values = {}
@@ -225,8 +224,7 @@ class Timeline:
 				self.marker_ypos+2*self.MARKER_RADIUS)
 			self.canvas.tag_raise(self.selected_dates[i])
 			# Update date
-			print("pos ", date_coords[0]+distance_moved)
-			self.selected_dates_values[i] = self.update_date(round(date_coords[0]+distance_moved))
+			self.selected_dates_values[i] = self.pos2date(round(date_coords[0]+distance_moved))
 				# Rounding above due to an issue with subsecquent moved markers showing an extra date at end of month, eg 3/32
 			self.canvas.itemconfig(self.selected_dates[i], text=self.selected_dates_values[i][:-3])
 			# [:-3] slices the string to get rid of the year
