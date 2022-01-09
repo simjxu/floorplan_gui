@@ -57,7 +57,7 @@ class Timeline:
 				text=self.label_array[i], fill=self.TEXT_COLOR)
 
 			# Create dates and store the date tag id for reference during move
-			date_str = self.pos2date(item[0])
+			date_str = self.update_date(item[0])
 			# print(date_str)
 			self.dates[item_id] = self.canvas.create_text(item[0], item[1]+2*self.MARKER_RADIUS, \
 				text=date_str[:-3], fill=self.TEXT_COLOR)
@@ -129,14 +129,17 @@ class Timeline:
 		# 3. Map the integer to the month Start Month + integer
 		month_iter = math.floor(x/self.MIN_XLEN)
 		month_num = self.START_MONTH+month_iter
+		year = self.START_YEAR
 		if month_num <= 12:
 			month_num = month_num
-			year = self.START_YEAR
 		else: 
 			# See how many years it is covering
-			n_yrs = math.floor((month_num/12)) 
-			month_num = month_num-12*n_yrs 					# Rollover to January
-			year = self.START_YEAR + n_yrs
+			while month_num > 12:
+				month_num -= 12
+				year += 1
+			# n_yrs = math.floor((month_num/12)) 
+			# month_num = month_num-12*n_yrs 					# Rollover to January
+			# year = self.START_YEAR + n_yrs
 
 		return str(month_num) + "/" + \
 			str(math.ceil((x+1-self.MIN_XLEN*month_iter)/self.MIN_XLEN*self.num_days[month_iter])) + \
@@ -222,7 +225,9 @@ class Timeline:
 				self.marker_ypos+2*self.MARKER_RADIUS)
 			self.canvas.tag_raise(self.selected_dates[i])
 			# Update date
+			print("pos ", date_coords[0]+distance_moved)
 			self.selected_dates_values[i] = self.update_date(round(date_coords[0]+distance_moved))
+				# Rounding above due to an issue with subsecquent moved markers showing an extra date at end of month, eg 3/32
 			self.canvas.itemconfig(self.selected_dates[i], text=self.selected_dates_values[i][:-3])
 			# [:-3] slices the string to get rid of the year
 

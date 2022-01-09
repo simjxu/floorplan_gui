@@ -10,8 +10,8 @@ from exception import *
 from legend import Legend
 from menu import RCMenu
 
-ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
-# ymlFile = './Sample_YAML/savefile.yaml'
+# ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
+ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
 # ymlFile = './Sample_YAML/example.yaml'
 
 # # Macbook Screen Window
