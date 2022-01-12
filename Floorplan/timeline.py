@@ -54,7 +54,7 @@ class Timeline:
 
 			# Create labels and store the label tag_id for reference during move
 			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
-				text=self.label_array[i], fill=self.TEXT_COLOR)
+				text=self.label_array[i], fill=self.TEXT_COLOR, font=('Helvetica', 11))
 
 			# Create dates and store the date tag id for reference during move
 			date_str = self.pos2date(item[0])
@@ -271,7 +271,7 @@ class Timeline:
 
 		# Add a label and date to the marker
 		label = self.canvas.create_text(self.popup_x, self.marker_ypos-2*self.MARKER_RADIUS, \
-				text="XX", fill=self.TEXT_COLOR)
+				text="XX", fill=self.TEXT_COLOR, font=('Helvetica', 11))
 
 		date_str = self.pos2date(self.popup_x)
 		date = self.canvas.create_text(self.popup_x, self.marker_ypos+2*self.MARKER_RADIUS, \
