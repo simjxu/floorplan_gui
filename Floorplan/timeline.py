@@ -37,7 +37,7 @@ class Timeline:
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'], sticky='news')
-		canvas_width = self.DAY_LEN*31*self.num_months		# For full canvas width, just choose max size for month
+		canvas_width = self.DAY_LEN*28*self.num_months		# For full canvas width, just choose max size for month
 		self.canvas.configure(width=canvas_width, height=self.MIN_YLEN, bg='white', \
 			highlightthickness=1)
 

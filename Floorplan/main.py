@@ -222,13 +222,9 @@ class MainApplication:
 
 			# # MAGIC NUMBER: rounded rectangle. Use length of month
 			x_padding = 1
-			# print(monthdays_arr[i]*DAY_LEN)
-			self.round_rectangle_text(self.mainframe, 0, 0, monthdays_arr[i]*DAY_LEN+10, 40, radius=25, \
+
+			self.round_rectangle_text(self.mainframe, 0, 0, monthdays_arr[i]*DAY_LEN-2, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
-			# self.round_rectangle_text(self.mainframe, 0, 0, monthdays_test[i]*100, 40, radius=25, \
-			# 	row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
-			# self.round_rectangle_text(self.mainframe, 0, 0, 155, 40, radius=0, \
-			# 	row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
 			month += 1
 		
@@ -239,7 +235,7 @@ class MainApplication:
 	def round_rectangle_text(self, _frame, x1, y1, x2, y2, radius=25, row=0, col=0, \
 		 _text='default', **kwargs):
 		canvas = tk.Canvas(_frame, height=y2, width=x2, bg="white", highlightthickness=0)
-		canvas.grid(row=row, column=col, padx=0, pady=0)
+		canvas.grid(row=row, column=col, padx=1, pady=0)
 		points = [x1+radius, y1,
 							x1+radius, y1,
 							x2-radius, y1,
