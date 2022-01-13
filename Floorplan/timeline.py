@@ -14,7 +14,7 @@ class Timeline:
 		self.START_YEAR = kwargs['start_year']
 		self.num_days = kwargs['num_days']
 		self.num_months = kwargs['num_months']
-		self.MIN_XLEN = kwargs['min_xlen']
+		self.DAY_LEN = kwargs['day_len']
 		self.MIN_YLEN = kwargs['min_ylen']
 		self.date_array = kwargs['date_array']
 		self.label_array = kwargs['label_array']
@@ -22,18 +22,26 @@ class Timeline:
 		self.build_name = kwargs['build_name']
 
 		self.parent = parent
+
+
+		#DELETE WHEN DONE TESTING
+		self.MIN_XLEN=250
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
 		self.marker_ypos = self.MIN_YLEN/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
 		for i in range(len(self.date_array)):
 			# Append tuple into the array
+			print(self.date_array[i])
+			print(self.date2pos(self.date_array[i]))
+
 			self.array.append((self.date2pos(self.date_array[i]),self.marker_ypos))
 
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'], sticky='news')
-		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_YLEN, bg='white', \
+		canvas_width = self.DAY_LEN*31*self.num_months		# For full canvas width, just choose max size for month
+		self.canvas.configure(width=canvas_width, height=self.MIN_YLEN, bg='white', \
 			highlightthickness=1)
 
 		# to keep all IDs and its start position
@@ -110,7 +118,7 @@ class Timeline:
 		# 3. Multiply month index by MINSIZE, then add days/number_days_in_month * MINSIZE
 		m_d_y = datestr.split('/')
 		m = int(m_d_y[0])
-		d = int(m_d_y[1])
+		d = int(m_d_y[1])-1 # Need to subtract 1 otherwise it will be one day ahead
 		y = int(m_d_y[2])+2000 # Need to add 2000 (won't work for after year 2099, but who cares)
 
 		if m < self.START_MONTH:
@@ -119,7 +127,8 @@ class Timeline:
 			month_idx = m - self.START_MONTH + (y-self.START_YEAR)*12
 
 		# d-0.5 to avoid edge cases at the edge of month (12/0 when it should be 11/30)
-		return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
+		# return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
+		return self.MIN_XLEN*month_idx + d/self.num_days[month_idx]*self.MIN_XLEN
 
 	def pos2date(self, x):
 		# Create the text that goes under the marker indicating the date
