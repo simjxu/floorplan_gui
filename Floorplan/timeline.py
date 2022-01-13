@@ -177,7 +177,6 @@ class Timeline:
 
 
 	def move(self, event):
-		print("pos", event.x)
 		# Coordinates of the first marker
 		circle_coords = self.canvas.coords(self.selected[0])
 		x0 = circle_coords[0]   # currently unused, go off of the mouse position

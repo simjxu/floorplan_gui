@@ -216,19 +216,14 @@ class MainApplication:
 			# Calculate the actual length for each rectangle
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			
-			# monthdays_test = [2, 1, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
-			monthdays_test = [2, 1, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-			# monthdays_test = [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30]
-
 			# # MAGIC NUMBER: rounded rectangle. Use length of month
-			x_padding = 1
+			x_padding = 1			# How much padding do you want around the month rectangles. 
+			# NOTE: IF YOU CHANGE THIS, YOU NEED TO CHANGE "padx" IN round_rectangle_text
 
-			self.round_rectangle_text(self.mainframe, 0, 0, monthdays_arr[i]*DAY_LEN-2, 40, radius=25, \
+			self.round_rectangle_text(self.mainframe, 0, 0, monthdays_arr[i]*DAY_LEN-2*x_padding, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
 			month += 1
-		
-		print(monthdays_arr)
 
 		self._NUMBER_OF_DAYS=monthdays_arr
 
