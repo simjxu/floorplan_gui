@@ -107,16 +107,16 @@ class Timeline:
 
 		# Total number of days up to month prior index, then plus the current day
 		# return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
-		return (sum(self.num_days[:month_idx-1]) + d) * self.DAY_LEN
+		return (sum(self.num_days[:month_idx]) + d + 1) * self.DAY_LEN
 
 	def pos2date(self, x):
 		# Create the text that goes under the marker indicating the date
 		# x is the position that the mouse moves the marker to
-		# 1. Divide the pixel count by 28*DAY_LEN (smallest month in the year) and round down. Use this as the index
+		# 1. Divide the pixel count by 31*DAY_LEN (largest month in the year) and round down. Use this as the index
 		# 2. Sum num_days array to index
 		# 3. Continue adding month index days until number of days*DAY_LEN exceeds pixel position
 
-		month_iter = math.floor(x/(28*self.DAY_LEN))
+		month_iter = math.floor(x/(31*self.DAY_LEN))
 		while sum(self.num_days[:month_iter+1])*self.DAY_LEN < x:
 			month_iter += 1
 
@@ -131,7 +131,7 @@ class Timeline:
 				year += 1
 
 		return str(month_num) + "/" + \
-			str(math.ceil((x-sum(self.num_days[:month_iter-1])*self.DAY_LEN)/self.DAY_LEN)) + \
+			str(math.ceil((x-sum(self.num_days[:month_iter])*self.DAY_LEN)/self.DAY_LEN)) + \
 			"/" + str(year)[2:]
 		# TODO: Set bounds so that the marker doesn't go out of bounds
 
@@ -177,7 +177,7 @@ class Timeline:
 
 
 	def move(self, event):
-		print(event.x)
+		print("pos", event.x)
 		# Coordinates of the first marker
 		circle_coords = self.canvas.coords(self.selected[0])
 		x0 = circle_coords[0]   # currently unused, go off of the mouse position

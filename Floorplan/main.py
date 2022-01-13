@@ -116,8 +116,8 @@ class MainApplication:
 		for i in range(self.MAX_ROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
 			self.buildframe.rowconfigure(i, minsize=MIN_YLEN+2)		# Added 2 because otherwise rows don't line up. Not sure why, need to fix
-		for i in range(self._NUMCOLS):
-			self.mainframe.columnconfigure(i, minsize=DAY_LEN*28)		# 28 days is the shortest month
+		# for i in range(self._NUMCOLS):
+		# 	self.mainframe.columnconfigure(i, minsize=DAY_LEN*5)		# 28 days is the shortest month
 		
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
@@ -215,18 +215,31 @@ class MainApplication:
 
 			# Calculate the actual length for each rectangle
 			monthdays_arr.append(calendar.monthrange(year,month)[1])
+			
+			# monthdays_test = [2, 1, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+			monthdays_test = [2, 1, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+			# monthdays_test = [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30]
 
 			# # MAGIC NUMBER: rounded rectangle. Use length of month
-			self.round_rectangle_text(self.mainframe, 5, 5, monthdays_arr[-1]*DAY_LEN, 40, radius=25, \
+			x_padding = 1
+			# print(monthdays_arr[i]*DAY_LEN)
+			self.round_rectangle_text(self.mainframe, 0, 0, monthdays_arr[i]*DAY_LEN+10, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
+			# self.round_rectangle_text(self.mainframe, 0, 0, monthdays_test[i]*100, 40, radius=25, \
+			# 	row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
+			# self.round_rectangle_text(self.mainframe, 0, 0, 155, 40, radius=0, \
+			# 	row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
 			month += 1
+		
+		print(monthdays_arr)
+
 		self._NUMBER_OF_DAYS=monthdays_arr
 
 	def round_rectangle_text(self, _frame, x1, y1, x2, y2, radius=25, row=0, col=0, \
 		 _text='default', **kwargs):
 		canvas = tk.Canvas(_frame, height=y2, width=x2, bg="white", highlightthickness=0)
-		canvas.grid(row=row, column=col, padx=0)
+		canvas.grid(row=row, column=col, padx=0, pady=0)
 		points = [x1+radius, y1,
 							x1+radius, y1,
 							x2-radius, y1,
