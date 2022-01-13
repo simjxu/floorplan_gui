@@ -28,6 +28,9 @@ HEIGHT_WIN = 1200
 MIN_XLEN = 250
 MIN_YLEN = 50
 
+# Start switching from MIN_XLEN to this instead:
+DAY_LEN = 5		# pixels per day
+
 # # Input width of each cell
 # MIN_XLEN = 10
 # MIN_YLEN = 10
@@ -113,9 +116,8 @@ class MainApplication:
 		for i in range(self.MAX_ROWS):
 			self.mainframe.rowconfigure(i, minsize=MIN_YLEN)
 			self.buildframe.rowconfigure(i, minsize=MIN_YLEN+2)		# Added 2 because otherwise rows don't line up. Not sure why, need to fix
-		for i in range(self._NUMCOLS):
-			self.mainframe.columnconfigure(i, minsize=MIN_XLEN)
-			# self.buildframe.columnconfigure(i, minsize=MIN_XLEN)
+		# for i in range(self._NUMCOLS):
+		# 	self.mainframe.columnconfigure(i, minsize=DAY_LEN*5)		# 28 days is the shortest month
 		
 		# Create top row of months, get array of days, set column/rowspan
 		self._NUMBER_OF_MONTHS = self.get_num_months()
@@ -181,7 +183,7 @@ class MainApplication:
 				self.timeline_arr.append(Timeline(self, column=0, row=rowptr+1, columnspan=self._NUMCOLS-1, rowspan=1, \
 					num_days=self._NUMBER_OF_DAYS, num_months=self._NUMBER_OF_MONTHS, \
 					start_month=self.yaml_obj.START_MONTH, \
-					start_year=self.yaml_obj.START_YEAR, min_xlen=MIN_XLEN, min_ylen=MIN_YLEN, \
+					start_year=self.yaml_obj.START_YEAR, day_len=DAY_LEN, min_ylen=MIN_YLEN, \
 					date_array=self.yaml_obj.DATE_ARRAYS[i], label_array=self.yaml_obj.LABEL_ARRAYS[i], \
 					color_array=self.yaml_obj.COLOR_ARRAYS[i], build_name=self.yaml_obj.BUILD_NAMES[i]))
 				rowptr += 1
@@ -211,18 +213,24 @@ class MainApplication:
 				month = 1
 				year += 1
 
-			# # MAGIC NUMBER: rounded rectangle
-			self.round_rectangle_text(self.mainframe, 5, 5, MIN_XLEN, 40, radius=25, \
+			# Calculate the actual length for each rectangle
+			monthdays_arr.append(calendar.monthrange(year,month)[1])
+			
+			# # MAGIC NUMBER: rounded rectangle. Use length of month
+			x_padding = 1			# How much padding do you want around the month rectangles. 
+			# NOTE: IF YOU CHANGE THIS, YOU NEED TO CHANGE "padx" IN round_rectangle_text
+
+			self.round_rectangle_text(self.mainframe, 0, 0, monthdays_arr[i]*DAY_LEN-2*x_padding, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
-			monthdays_arr.append(calendar.monthrange(year,month)[1])
 			month += 1
+
 		self._NUMBER_OF_DAYS=monthdays_arr
 
 	def round_rectangle_text(self, _frame, x1, y1, x2, y2, radius=25, row=0, col=0, \
 		 _text='default', **kwargs):
 		canvas = tk.Canvas(_frame, height=y2, width=x2, bg="white", highlightthickness=0)
-		canvas.grid(row=row, column=col, padx=0)
+		canvas.grid(row=row, column=col, padx=1, pady=0)
 		points = [x1+radius, y1,
 							x1+radius, y1,
 							x2-radius, y1,
