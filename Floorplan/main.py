@@ -220,7 +220,6 @@ class MainApplication:
 			self.round_rectangle_text(self.mainframe, 5, 5, monthdays_arr[-1]*DAY_LEN, 40, radius=25, \
 				row=START_ROW, col=i+START_COL, _text=str(year)+'\n '+calendar.month_abbr[month], fill="gray")
 
-			
 			month += 1
 		self._NUMBER_OF_DAYS=monthdays_arr
 

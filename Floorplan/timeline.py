@@ -32,9 +32,6 @@ class Timeline:
 		self.marker_ypos = self.MIN_YLEN/2+self.MARKER_RADIUS/2	# marker needs to be in the middle of the row
 		for i in range(len(self.date_array)):
 			# Append tuple into the array
-			print(self.date_array[i])
-			print(self.date2pos(self.date_array[i]))
-
 			self.array.append((self.date2pos(self.date_array[i]),self.marker_ypos))
 
 		self.canvas = tk.Canvas(parent.mainframe)
@@ -89,33 +86,13 @@ class Timeline:
 	def create_new_marker(self, pos_x, pos_y):
 		print("placeholder")
 		# move everything in the marker creation to this function so you can reuse it for the popup marker
-		
-
-	# def pos2date(self, pos):
-	# 	# Takes position value (not integer right now) as an input and outputs a string 
-	# 	# without the year, e.g. 9/11
-	# 	month_idx = math.floor(pos/self.MIN_XLEN)
-	# 	year = self.START_YEAR
-	# 	month = self.START_MONTH + month_idx
-	# 	if month/12 > 1:			# CAREFUL... Hopefully type(month)==int
-	# 		year += math.floor(month/12)
-	# 		month = month-12*math.floor(month/12)
-	# 	day = self.num_days[month_idx] * ((pos-month_idx*self.MIN_XLEN)/self.MIN_XLEN)
-	# 	day = math.ceil(day)
-
-	# 	# # For Debug
-	# 	# return str(math.floor(pos))
-
-	# 	# # Show full year string
-	# 	return str(month) + "/" + str(day) + "/" + str(year)[2:]
-	# 	# return str(month) + "/" + str(day) 
 
 
 	def date2pos(self, datestr):
 		# Convert the date string into a pixel position
 		# 1. Pull out the month, day, and year into integers
-		# 2. Find Month index based upon start month and year
-		# 3. Multiply month index by MINSIZE, then add days/number_days_in_month * MINSIZE
+		# 2. Identify total number of days up to the current month of marker
+		# 3. Add number of days from above to the day
 		m_d_y = datestr.split('/')
 		m = int(m_d_y[0])
 		d = int(m_d_y[1])-1 # Need to subtract 1 otherwise it will be one day ahead
@@ -126,17 +103,23 @@ class Timeline:
 		else:
 			month_idx = m - self.START_MONTH + (y-self.START_YEAR)*12
 
-		# d-0.5 to avoid edge cases at the edge of month (12/0 when it should be 11/30)
+		
+
+		# Total number of days up to month prior index, then plus the current day
 		# return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
-		return self.MIN_XLEN*month_idx + d/self.num_days[month_idx]*self.MIN_XLEN
+		return (sum(self.num_days[:month_idx-1]) + d) * self.DAY_LEN
 
 	def pos2date(self, x):
 		# Create the text that goes under the marker indicating the date
 		# x is the position that the mouse moves the marker to
-		# 1. Divide the pixel count by 100
-		# 2. Round down to integer
-		# 3. Map the integer to the month Start Month + integer
-		month_iter = math.floor(x/self.MIN_XLEN)
+		# 1. Divide the pixel count by 28*DAY_LEN (smallest month in the year) and round down. Use this as the index
+		# 2. Sum num_days array to index
+		# 3. Continue adding month index days until number of days*DAY_LEN exceeds pixel position
+
+		month_iter = math.floor(x/(28*self.DAY_LEN))
+		while sum(self.num_days[:month_iter+1])*self.DAY_LEN < x:
+			month_iter += 1
+
 		month_num = self.START_MONTH+month_iter
 		year = self.START_YEAR
 		if month_num <= 12:
@@ -146,12 +129,9 @@ class Timeline:
 			while month_num > 12:
 				month_num -= 12
 				year += 1
-			# n_yrs = math.floor((month_num/12)) 
-			# month_num = month_num-12*n_yrs 					# Rollover to January
-			# year = self.START_YEAR + n_yrs
 
 		return str(month_num) + "/" + \
-			str(math.ceil((x+1-self.MIN_XLEN*month_iter)/self.MIN_XLEN*self.num_days[month_iter])) + \
+			str(math.ceil((x-sum(self.num_days[:month_iter-1])*self.DAY_LEN)/self.DAY_LEN)) + \
 			"/" + str(year)[2:]
 		# TODO: Set bounds so that the marker doesn't go out of bounds
 
@@ -197,6 +177,7 @@ class Timeline:
 
 
 	def move(self, event):
+		print(event.x)
 		# Coordinates of the first marker
 		circle_coords = self.canvas.coords(self.selected[0])
 		x0 = circle_coords[0]   # currently unused, go off of the mouse position
