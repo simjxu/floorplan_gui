@@ -14,7 +14,7 @@ class Timeline:
 		self.START_YEAR = kwargs['start_year']
 		self.num_days = kwargs['num_days']
 		self.num_months = kwargs['num_months']
-		self.MIN_XLEN = kwargs['min_xlen']
+		self.DAY_LEN = kwargs['day_len']
 		self.MIN_YLEN = kwargs['min_ylen']
 		self.date_array = kwargs['date_array']
 		self.label_array = kwargs['label_array']
@@ -22,6 +22,10 @@ class Timeline:
 		self.build_name = kwargs['build_name']
 
 		self.parent = parent
+
+
+		#DELETE WHEN DONE TESTING
+		self.MIN_XLEN=250
 		
 		# This needs to move into the __init__ function, from reading from the yaml
 		self.array = []
@@ -33,7 +37,8 @@ class Timeline:
 		self.canvas = tk.Canvas(parent.mainframe)
 		self.canvas.grid(column=kwargs['column'], row=kwargs['row'], rowspan=kwargs['rowspan'], \
 			columnspan=kwargs['columnspan'], sticky='news')
-		self.canvas.configure(width=self.MIN_XLEN*(self.num_months), height=self.MIN_YLEN, bg='white', \
+		canvas_width = self.DAY_LEN*28*self.num_months		# For full canvas width, just choose max size for month
+		self.canvas.configure(width=canvas_width, height=self.MIN_YLEN, bg='white', \
 			highlightthickness=1)
 
 		# to keep all IDs and its start position
@@ -54,7 +59,7 @@ class Timeline:
 
 			# Create labels and store the label tag_id for reference during move
 			self.labels[item_id] = self.canvas.create_text(item[0], item[1]-2*self.MARKER_RADIUS, \
-				text=self.label_array[i], fill=self.TEXT_COLOR)
+				text=self.label_array[i], fill=self.TEXT_COLOR, font=('Helvetica', 11))
 
 			# Create dates and store the date tag id for reference during move
 			date_str = self.pos2date(item[0])
@@ -81,36 +86,16 @@ class Timeline:
 	def create_new_marker(self, pos_x, pos_y):
 		print("placeholder")
 		# move everything in the marker creation to this function so you can reuse it for the popup marker
-		
-
-	def pos2date(self, pos):
-		# Takes position value (not integer right now) as an input and outputs a string 
-		# without the year, e.g. 9/11
-		month_idx = math.floor(pos/self.MIN_XLEN)
-		year = self.START_YEAR
-		month = self.START_MONTH + month_idx
-		if month/12 > 1:			# CAREFUL... Hopefully type(month)==int
-			year += math.floor(month/12)
-			month = month-12*math.floor(month/12)
-		day = self.num_days[month_idx] * ((pos-month_idx*self.MIN_XLEN)/self.MIN_XLEN)
-		day = math.ceil(day)
-
-		# # For Debug
-		# return str(math.floor(pos))
-
-		# # Show full year string
-		return str(month) + "/" + str(day) + "/" + str(year)[2:]
-		# return str(month) + "/" + str(day) 
 
 
 	def date2pos(self, datestr):
 		# Convert the date string into a pixel position
 		# 1. Pull out the month, day, and year into integers
-		# 2. Find Month index based upon start month and year
-		# 3. Multiply month index by MINSIZE, then add days/number_days_in_month * MINSIZE
+		# 2. Identify total number of days up to the current month of marker
+		# 3. Add number of days from above to the day
 		m_d_y = datestr.split('/')
 		m = int(m_d_y[0])
-		d = int(m_d_y[1])
+		d = int(m_d_y[1])-1 # Need to subtract 1 otherwise it will be one day ahead
 		y = int(m_d_y[2])+2000 # Need to add 2000 (won't work for after year 2099, but who cares)
 
 		if m < self.START_MONTH:
@@ -118,28 +103,35 @@ class Timeline:
 		else:
 			month_idx = m - self.START_MONTH + (y-self.START_YEAR)*12
 
-		# d-0.5 to avoid edge cases at the edge of month (12/0 when it should be 11/30)
-		return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
+		
 
-	def update_date(self, x):
+		# Total number of days up to month prior index, then plus the current day
+		# return self.MIN_XLEN*month_idx + (d-0.5)/self.num_days[month_idx]*self.MIN_XLEN
+		return (sum(self.num_days[:month_idx]) + d + 1) * self.DAY_LEN
+
+	def pos2date(self, x):
 		# Create the text that goes under the marker indicating the date
 		# x is the position that the mouse moves the marker to
-		# 1. Divide the pixel count by 100
-		# 2. Round down to integer
-		# 3. Map the integer to the month Start Month + integer
-		month_iter = math.floor(x/self.MIN_XLEN)
+		# 1. Divide the pixel count by 31*DAY_LEN (largest month in the year) and round down. Use this as the index
+		# 2. Sum num_days array to index
+		# 3. Continue adding month index days until number of days*DAY_LEN exceeds pixel position
+
+		month_iter = math.floor(x/(31*self.DAY_LEN))
+		while sum(self.num_days[:month_iter+1])*self.DAY_LEN < x:
+			month_iter += 1
+
 		month_num = self.START_MONTH+month_iter
+		year = self.START_YEAR
 		if month_num <= 12:
 			month_num = month_num
-			year = self.START_YEAR
 		else: 
 			# See how many years it is covering
-			n_yrs = math.floor((month_num/12)) 
-			month_num = month_num-12*n_yrs 					# Rollover to January
-			year = self.START_YEAR + n_yrs
+			while month_num > 12:
+				month_num -= 12
+				year += 1
 
 		return str(month_num) + "/" + \
-			str(math.ceil((x+1-self.MIN_XLEN*month_iter)/self.MIN_XLEN*self.num_days[month_iter])) + \
+			str(math.ceil((x-sum(self.num_days[:month_iter])*self.DAY_LEN)/self.DAY_LEN)) + \
 			"/" + str(year)[2:]
 		# TODO: Set bounds so that the marker doesn't go out of bounds
 
@@ -192,7 +184,6 @@ class Timeline:
 		x1 = circle_coords[2]   # currently unused, go off of the mouse position
 		y1 = circle_coords[3]
 		distance_moved = event.x-self.MARKER_RADIUS-x0
-		print(distance_moved)
 
 		# Dictionary for new dates
 		self.selected_dates_values = {}
@@ -222,7 +213,8 @@ class Timeline:
 				self.marker_ypos+2*self.MARKER_RADIUS)
 			self.canvas.tag_raise(self.selected_dates[i])
 			# Update date
-			self.selected_dates_values[i] = self.update_date(round(date_coords[0]+distance_moved))
+			self.selected_dates_values[i] = self.pos2date(round(date_coords[0]+distance_moved))
+				# Rounding above due to an issue with subsecquent moved markers showing an extra date at end of month, eg 3/32
 			self.canvas.itemconfig(self.selected_dates[i], text=self.selected_dates_values[i][:-3])
 			# [:-3] slices the string to get rid of the year
 
@@ -268,7 +260,7 @@ class Timeline:
 
 		# Add a label and date to the marker
 		label = self.canvas.create_text(self.popup_x, self.marker_ypos-2*self.MARKER_RADIUS, \
-				text="XX", fill=self.TEXT_COLOR)
+				text="XX", fill=self.TEXT_COLOR, font=('Helvetica', 11))
 
 		date_str = self.pos2date(self.popup_x)
 		date = self.canvas.create_text(self.popup_x, self.marker_ypos+2*self.MARKER_RADIUS, \

@@ -21,6 +21,7 @@ class Legend:
     self.window = tk.Toplevel()     # Top level needed, don't totally understand why not tk.Tk()
     self.window.geometry("200x700+1210+100")
     self.window.title("Legend")
+    self.window.attributes('-topmost', True)
 
     # Buttons must be under a frame
     save_frame = tk.Frame(self.window)
