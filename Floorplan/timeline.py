@@ -247,15 +247,16 @@ class Timeline:
 		finally:
 			self.popup_menu.grab_release()
 
-	def create_marker(self, buildname):
+	def create_marker(self, labelname):
 		# print(self.popup_x, self.popup_y)
+		newmrkr_color = 'white'
 		item_id = self.canvas.create_circle(self.popup_x, self.marker_ypos, self.MARKER_RADIUS, \
-				fill='white', \
+				fill=newmrkr_color, \
 					outline='black', width=4, tags='id')
 
 		# Add a date to the marker
 		label = self.canvas.create_text(self.popup_x, self.marker_ypos-2*self.MARKER_RADIUS, \
-				text=buildname, fill=self.TEXT_COLOR, font=('Helvetica', 11))
+				text=labelname, fill=self.TEXT_COLOR, font=('Helvetica', 11))
 
 		date_str = self.pos2date(self.popup_x)
 		date = self.canvas.create_text(self.popup_x, self.marker_ypos+2*self.MARKER_RADIUS, \
@@ -268,7 +269,8 @@ class Timeline:
 		self.dates[item_id] = date
 
 		# Update YAML
-		self.parent.yaml_obj.add_label(self.build_name, buildname)
+		self.parent.yaml_obj.add_label(self.build_name, labelname, date_str, newmrkr_color)
+		
 	
 	# Popup with entry for name of the marker
 	def popup_entry(self):
@@ -278,7 +280,7 @@ class Timeline:
 		entry= tk.Entry(top, width= 25)
 		entry.pack()
 
-		#Create an Entry Widget in the Toplevel window
+		# Create an Entry Widget in the Toplevel window
 		button = tk.Button(top, text="Ok", \
 			command=lambda:[self.create_marker(entry.get()), top.destroy()])
 		button.pack(pady=5, side= tk.TOP)
