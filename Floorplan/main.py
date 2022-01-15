@@ -11,8 +11,8 @@ from legend import Legend
 from menu import RCMenu
 
 # ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
-ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
-# ymlFile = './Sample_YAML/example.yaml'
+# ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
+ymlFile = './Sample_YAML/example.yaml'
 
 # # Macbook Screen Window
 # LEN_WIN = 1400
@@ -29,7 +29,7 @@ MIN_XLEN = 250
 MIN_YLEN = 50
 
 # Start switching from MIN_XLEN to this instead:
-DAY_LEN = 5		# pixels per day
+DAY_LEN = 7		# pixels per day
 
 # # Input width of each cell
 # MIN_XLEN = 10
@@ -42,8 +42,6 @@ START_COL = 0
 def _create_circle(self, x, y, r, **kwargs):
 	return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
-
-
 
 class MainApplication:
 	_NUMBER_OF_DAYS = []
