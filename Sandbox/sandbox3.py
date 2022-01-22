@@ -58,8 +58,13 @@ ROWS_DISP = 4  # Number of rows to display.
 COLS_DISP = 5  # Number of columns to display.
 
 class MyApp(tk.Tk):
+    GLOBAL_SIZE = 750
+
     def __init__(self, title="Sample App", *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        
+        self.geometry(str(self.GLOBAL_SIZE)+"x550")
+        print(self.GLOBAL_SIZE)
 
         # Add a canvas in that frame.
         canvas = tk.Canvas(self, bg="Yellow")
@@ -112,6 +117,41 @@ class MyApp(tk.Tk):
         dw, dh = int((w/COLS) * COLS_DISP), int((h/ROWS) * ROWS_DISP)
         canvas.configure(scrollregion=bbox, width=dw, height=dh)
 
+        self.popupwin()
+
+    def popupwin(self):
+        #Create a Toplevel window
+        top= tk.Toplevel()
+        top.geometry("750x250")
+
+        #Create an Entry Widget in the Toplevel window
+        entry= tk.Entry(top, width= 25)
+        entry.pack()
+
+        #Create a Button to print something in the Entry widget
+        tk.Button(top,text= "Insert", command= lambda:tk.insert_val(entry)).pack(pady= 5,side=tk.TOP)
+        #Create a Button Widget in the Toplevel Window
+        button1= tk.Button(top, text="Bigger", command=lambda:self.bigger())
+        button1.pack(pady=5, side= tk.TOP)
+
+        button2= tk.Button(top, text="Smaller", command=lambda:self.smaller())
+        button2.pack(pady=5, side= tk.TOP)
+
+    def nothing(self):
+        print("test")
+
+    def bigger(self):
+        print("bigger ran")
+        self.GLOBAL_SIZE = 800
+        self.refresh()
+    
+    def smaller(self):
+        self.GLOBAL_SIZE = 400
+        self.refresh()
+
+    def refresh(self):
+        self.destroy()
+        self.__init__(title="Sample App")
 
 if __name__ == "__main__":
     app = MyApp("Scrollable Canvas")
