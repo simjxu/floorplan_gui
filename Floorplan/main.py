@@ -29,7 +29,7 @@ MIN_XLEN = 250
 MIN_YLEN = 50
 
 # Start switching from MIN_XLEN to this instead:
-DAY_LEN = 5		# pixels per day
+DAY_LEN = 7		# pixels per day
 
 # # Input width of each cell
 # MIN_XLEN = 10
@@ -42,8 +42,6 @@ START_COL = 0
 def _create_circle(self, x, y, r, **kwargs):
 	return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
 tk.Canvas.create_circle = _create_circle
-
-
 
 class MainApplication:
 	_NUMBER_OF_DAYS = []
@@ -141,7 +139,23 @@ class MainApplication:
 
 		# Create legend window
 		self.legend = Legend(self)
-		
+
+	# 	# Create popup menu
+	# 	self.popup_menu = tk.Menu(tearoff=0)
+	# 	self.popup_menu.add_command(label="Bigger",
+	# 																	command=self.test)
+	# 	self.popup_menu.add_command(label="Smaller",
+	# 																	command=self.test)
+	# 	self.maincanvas.bind("<Return>", self.mainpopup)
+
+	# def mainpopup(self):
+	# 	try:
+	# 		self.popup_menu.tk_popup(100, 100, 0)
+	# 	finally:
+	# 		self.popup_menu.grab_release()
+	
+	# def test(self):
+	# 	print("test")
 
 	def load_builds(self):
 		# Clear builds
@@ -257,11 +271,14 @@ class MainApplication:
 	def _on_mousewheel(self, event):
 		self.maincanvas.xview_scroll(-1*event.delta, "units")
 
+	def refresh(self):
+		self.destroy()
+		self.__init__()
 	
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	root.title("X1981 Floorplan")
+	root.title("X238x Floorplan")
 	root.geometry(str(LEN_WIN)+'x'+str(HEIGHT_WIN))
 	root.configure(bg='white')
 	app = MainApplication(root)

@@ -84,11 +84,10 @@ class YAMLoutput:
 
 		return 0
 
-	def add_label(self, buildname, labelname):
+	def add_label(self, buildname, labelname, date, color):
 		self.yaml_dict[buildname][labelname] = {}
-		self.yaml_dict[buildname][labelname]["date"] = "placeholder"
-		self.yaml_dict[buildname][labelname]["color"] = "white"
-
+		self.yaml_dict[buildname][labelname]["date"] = date
+		self.yaml_dict[buildname][labelname]["color"] = color
 
 	def update_dates(self, **kwargs):
 		build_name = kwargs['build_name']
