@@ -27,8 +27,11 @@ def popupwin():
    #Create a Button to print something in the Entry widget
    Button(top,text= "Insert", command= lambda:insert_val(entry)).pack(pady= 5,side=TOP)
    #Create a Button Widget in the Toplevel Window
-   button= Button(top, text="Ok", command=lambda:close_win(top))
-   button.pack(pady=5, side= TOP)
+   button1= Button(top, text="Ok", command=lambda:close_win(top))
+   button1.pack(pady=5, side= TOP)
+
+   button2= Button(top, text="Smaller", command=lambda:close_win(top))
+   button2.pack(pady=5, side= TOP)
 #Create a Label
 label= Label(win, text="Click the Button to Open the Popup Dialogue", font= ('Helvetica 15 bold'))
 label.pack(pady=20)

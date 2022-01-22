@@ -11,8 +11,8 @@ from legend import Legend
 from menu import RCMenu
 
 # ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
-# ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
-ymlFile = './Sample_YAML/example.yaml'
+ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
+# ymlFile = './Sample_YAML/example.yaml'
 
 # # Macbook Screen Window
 # LEN_WIN = 1400
@@ -139,7 +139,23 @@ class MainApplication:
 
 		# Create legend window
 		self.legend = Legend(self)
-		
+
+	# 	# Create popup menu
+	# 	self.popup_menu = tk.Menu(tearoff=0)
+	# 	self.popup_menu.add_command(label="Bigger",
+	# 																	command=self.test)
+	# 	self.popup_menu.add_command(label="Smaller",
+	# 																	command=self.test)
+	# 	self.maincanvas.bind("<Return>", self.mainpopup)
+
+	# def mainpopup(self):
+	# 	try:
+	# 		self.popup_menu.tk_popup(100, 100, 0)
+	# 	finally:
+	# 		self.popup_menu.grab_release()
+	
+	# def test(self):
+	# 	print("test")
 
 	def load_builds(self):
 		# Clear builds
@@ -255,11 +271,14 @@ class MainApplication:
 	def _on_mousewheel(self, event):
 		self.maincanvas.xview_scroll(-1*event.delta, "units")
 
+	def refresh(self):
+		self.destroy()
+		self.__init__()
 	
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	root.title("X1981 Floorplan")
+	root.title("X238x Floorplan")
 	root.geometry(str(LEN_WIN)+'x'+str(HEIGHT_WIN))
 	root.configure(bg='white')
 	app = MainApplication(root)

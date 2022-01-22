@@ -5,6 +5,9 @@ System:
   test:
     date: 2/1/20
     color: white
+  test2:
+    date: 2/15/20
+    color: white
   EVT:
     color: green
     date: 3/30/20

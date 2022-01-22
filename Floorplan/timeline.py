@@ -215,13 +215,6 @@ class Timeline:
 
 
 	def stop_move(self, event):
-		# print(self.canvas.itemcget(self.selected_label, 'text'))
-		# print(self.canvas.itemcget(self.selected_date, 'text'))
-
-		# # send the yaml build name over, the item array, the item, and the new date
-		# self.parent.legend.update_yaml(build_name=self.build_name, \
-		# 	label=self.canvas.itemcget(self.selected_label, 'text'), \
-		# 	date=self.update_date(event.x))
 
 		# Update all the dates
 		for i in range(self.selected_idx, len(self.keys_list)):
