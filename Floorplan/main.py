@@ -29,7 +29,7 @@ MIN_XLEN = 250
 MIN_YLEN = 50
 
 # Start switching from MIN_XLEN to this instead:
-DAY_LEN = 7		# pixels per day
+DAY_LEN = 3		# pixels per day
 
 # # Input width of each cell
 # MIN_XLEN = 10
