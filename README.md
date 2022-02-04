@@ -1,7 +1,7 @@
 # Floorplan GUI
 Intended to make it easier to create floorplans
 
-![alt text](https://github.com/simjxu/floorplan_gui/blob/master/x-screenshot.png?raw=true)
+![alt text](https://github.com/simjxu/floorplan_gui/blob/main/x-screenshot.png?raw=true)
 
 
 ## Features
