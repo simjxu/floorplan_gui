@@ -66,17 +66,23 @@ class Timeline:
 			# # Print the date texts
 			# print(self.canvas.itemcget(self.dates[item_id], 'text'))
 
-			# Tie callback function to mouse actions
+			# Tie callback function to mouse actions (simultaneous move)
 			self.canvas.tag_bind('id', '<ButtonPress-1>', self.start_move)
 			self.canvas.tag_bind('id', '<B1-Motion>', self.move)
 			self.canvas.tag_bind('id', '<ButtonRelease-1>', self.stop_move)
+
+			# Tie callback function to mouse actions (single move)
+			self.canvas.tag_bind('id', '<ButtonPress-2>', self.start_move2)
+			self.canvas.tag_bind('id', '<B2-Motion>', self.move2)
+			self.canvas.tag_bind('id', '<ButtonRelease-2>', self.stop_move2)
 
 		# MENU TEST
 		self.popup_menu = tk.Menu(tearoff=0)
 		self.popup_menu.add_command(label="Create Marker",
 																		command=self.popup_entry)
 
-		self.canvas.bind("<Button-2>", self.popup)
+		# self.canvas.bind("<Button-2>", self.popup)
+		self.canvas.bind("<Double-Button-1>", self.popup)
 		# probably will need to create a second one for the markers
 
 	def create_new_marker(self, pos_x, pos_y):
@@ -170,6 +176,17 @@ class Timeline:
 
 		# get selected text tag and text tag afterward
 
+	def start_move2(self, event):
+		# find all clicked items
+		self.selected = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
+		# get first selected item
+		self.selected = self.selected[0]
+
+		# get selected label tag (add it to the first index in an array)
+		self.selected_label = self.canvas.find_withtag(self.labels[self.selected])
+
+		# get selected text tag
+		self.selected_date = self.canvas.find_withtag(self.dates[self.selected])
 
 	def move(self, event):
 		# Coordinates of the first marker
@@ -208,11 +225,32 @@ class Timeline:
 				self.marker_ypos+2*self.MARKER_RADIUS)
 			self.canvas.tag_raise(self.selected_dates[i])
 			# Update date
-			self.selected_dates_values[i] = self.pos2date(round(date_coords[0]+distance_moved))
+			self.selected_dates_values[i] = self.pos2date(date_coords[0]+distance_moved)
 				# Rounding above due to an issue with subsecquent moved markers showing an extra date at end of month, eg 3/32
 			self.canvas.itemconfig(self.selected_dates[i], text=self.selected_dates_values[i][:-3])
 			# [:-3] slices the string to get rid of the year
 
+	def move2(self, event):
+		# Coordinates of the first marker
+		circle_coords = self.canvas.coords(self.selected)
+		x0 = circle_coords[0]   # currently unused, go off of the mouse position
+		y0 = circle_coords[1]
+		x1 = circle_coords[2]   # currently unused, go off of the mouse position
+		y1 = circle_coords[3]
+
+		# Move Selected item, hold Y position
+		self.canvas.coords(self.selected, event.x-self.MARKER_RADIUS, \
+			y0, event.x+self.MARKER_RADIUS, y1)
+
+		# Also move the label position
+		self.canvas.coords(self.selected_label, event.x, \
+			self.marker_ypos-2*self.MARKER_RADIUS)
+
+		# Also move the date and update it
+		self.canvas.coords(self.selected_date, event.x, \
+			self.marker_ypos+2*self.MARKER_RADIUS)
+		self.canvas.tag_raise(self.selected_date)
+		self.canvas.itemconfig(self.selected_date, text=self. pos2date(event.x)[:-3])
 
 	def stop_move(self, event):
 
@@ -221,6 +259,13 @@ class Timeline:
 			self.parent.legend.update_yaml(build_name=self.build_name, \
 				label=self.canvas.itemcget(self.selected_labels[i], 'text'), \
 				date=self.selected_dates_values[i])
+		
+	def stop_move2(self, event):
+
+		# Update all the dates
+		self.parent.legend.update_yaml(build_name=self.build_name, \
+			label=self.canvas.itemcget(self.selected_label, 'text'), \
+			date=self.pos2date(event.x))
 
 	# For changing the text of a particular marker
 	def change_text(self, posx, posy, text):

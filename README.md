@@ -1,6 +1,9 @@
 # Floorplan GUI
 Intended to make it easier to create floorplans
 
+![alt text](https://github.com/simjxu/floorplan_gui/blob/master/x-screenshot.png?raw=true)
+
+
 ## Features
 - CSV input: Use CSV file with inputs to indicate the different milestones that need to be mapped
 - Image should resize with the window
