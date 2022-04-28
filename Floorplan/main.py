@@ -10,18 +10,9 @@ from exception import *
 from legend import Legend
 from menu import RCMenu
 
-# ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/x_sys.yaml'
-# ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
-ymlFile = './Sample_YAML/example.yaml'
-
-# # Macbook Screen Window
-# LEN_WIN = 1400
-# HEIGHT_WIN = 800
-
-# Display Window
-LEN_WIN = 2200
-HEIGHT_WIN = 1200
-
+ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/i8x3y.yaml'
+# ymlFile = '/Users/simonxu/Documents/Github-simjxu/floorplan_gui/Floorplan_YAMLs/splt_pts_ok2b.yaml'
+# ymlFile = './Sample_YAML/example.yaml'
 
 # Input width of each cell: Use 350 to view smaller periods of time
 # MIN_XLEN = 350
@@ -29,7 +20,7 @@ MIN_XLEN = 250
 MIN_YLEN = 50
 
 # Start switching from MIN_XLEN to this instead:
-DAY_LEN = 3		# pixels per day
+DAY_LEN = 6		# pixels per day
 
 # # Input width of each cell
 # MIN_XLEN = 10
@@ -52,10 +43,11 @@ class MainApplication:
 
 	TEXT_COLOR = 'black'
 
-	MAX_ROWS = int(HEIGHT_WIN/MIN_YLEN-2)			# FIX: need to base this on the MIN_YLEN
+	
 
-	def __init__(self, parent):
+	def __init__(self, parent, LEN_WIN, HEIGHT_WIN):
 		
+		self.MAX_ROWS = int(HEIGHT_WIN/MIN_YLEN-2)			# FIX: need to base this on the MIN_YLEN
 		ROWS_DISP = self.MAX_ROWS  # Number of rows to display.
 		COLS_DISP = 7  # Number of columns to display. FIX: need to base this on the MIN_XLEN
 		self.parent = parent
@@ -88,6 +80,7 @@ class MainApplication:
 		self.buildframe.grid(row=0, column=0)
 
 		# Need Container Frame, Canvas, and scrollable Frame 
+		print(LEN_WIN)
 		self.containerframe = tk.Frame(parent).grid(row=0, column=1)
 		self.maincanvas = tk.Canvas(self.containerframe, bg="white", \
 			height=HEIGHT_WIN-100, width=LEN_WIN-100, highlightthickness=0)
@@ -139,23 +132,6 @@ class MainApplication:
 
 		# Create legend window
 		self.legend = Legend(self)
-
-	# 	# Create popup menu
-	# 	self.popup_menu = tk.Menu(tearoff=0)
-	# 	self.popup_menu.add_command(label="Bigger",
-	# 																	command=self.test)
-	# 	self.popup_menu.add_command(label="Smaller",
-	# 																	command=self.test)
-	# 	self.maincanvas.bind("<Return>", self.mainpopup)
-
-	# def mainpopup(self):
-	# 	try:
-	# 		self.popup_menu.tk_popup(100, 100, 0)
-	# 	finally:
-	# 		self.popup_menu.grab_release()
-	
-	# def test(self):
-	# 	print("test")
 
 	def load_builds(self):
 		# Clear builds
@@ -277,9 +253,15 @@ class MainApplication:
 	
 
 if __name__ == "__main__":
+
 	root = tk.Tk()
 	root.title("X238x Floorplan")
-	root.geometry(str(LEN_WIN)+'x'+str(HEIGHT_WIN))
+
+	# Get the screen width and adjust by a factor to not be full screen (use 1 for full screen, default 0.8)
+	wlength = round(root.winfo_screenwidth()*0.9)
+	wheight = round(root.winfo_screenheight()*0.9)
+
+	root.geometry(str(wlength)+'x'+str(wheight))
 	root.configure(bg='white')
-	app = MainApplication(root)
+	app = MainApplication(root, wlength, wheight)
 	root.mainloop()
