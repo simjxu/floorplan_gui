@@ -1,42 +1,79 @@
-#Import the required library
-from tkinter import*
+import tkinter as tk
+from tkinter import ttk
 
-#Create an instance of tkinter frame
-win= Tk()
+class MainApplication:
 
-#Define geometry of the window
-win.geometry("750x250")
+   def __init__(self, parent):
+      # # Frame containing everything
+      # self.containerframe = tk.Frame(parent).grid(row=0, column=0)
+      
+      self.emptylabel = tk.Label(parent, borderwidth=1)
 
-#Define a function to close the popup window
-def close_win(top):
-   top.destroy()
-def insert_val(e):
-   print(e.get())
-   e.insert(0, "Hello World!")
+      # Canvas for the title
+      self.titlecanvas = tk.Canvas(parent, \
+         height=50, width=600, bg="white")
+      self.titlecanvas.grid(row=0, column=0, columnspan=12)
+      self.titlelabel = self.titlecanvas.create_text(300, 25, \
+         text="D37 (X2834) | Battery Floorplan - P1 Detail", \
+         font=("Helvetica Neue", "25"), fill="black")
 
-#Define a function to open the Popup Dialogue
-def popupwin():
-   #Create a Toplevel window
-   top= Toplevel(win)
-   top.geometry("750x250")
+      # Canvas for the blank spot
+      self.canvas00 = tk.Canvas(parent, \
+			height=50, width=100, bg="white", highlightthickness=1)
+      self.canvas00.grid(row=1, column=0, rowspan=2, columnspan=2)
 
-   #Create an Entry Widget in the Toplevel window
-   entry= Entry(top, width= 25)
-   entry.pack()
+      #Canvas for the System build
+      self.systemcanvas = tk.Canvas(parent, \
+			height=50, width=100, bg="white", highlightthickness=1)
+      self.systemcanvas.grid(row=4, column=0, columnspan=2)
+      self.systemlabel = self.systemcanvas.create_text(0,0,text="System", fill="black")
+      
+      # COLUMN 1::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      # Canvas for pack
+      self.packcanvas = tk.Canvas(parent, \
+			width=50, height=50, bg="white", highlightthickness=1)
+      self.packcanvas.grid(row=5, column=0)
+      self.packlabel = self.packcanvas.create_text(25,25,text="Pack", \
+         font=("Helvetica", "18"), fill="black")
 
-   #Create a Button to print something in the Entry widget
-   Button(top,text= "Insert", command= lambda:insert_val(entry)).pack(pady= 5,side=TOP)
-   #Create a Button Widget in the Toplevel Window
-   button1= Button(top, text="Ok", command=lambda:close_win(top))
-   button1.pack(pady=5, side= TOP)
+      # Canvas for Cell
+      self.cellcanvas = tk.Canvas(parent, \
+			height=50, width=50, bg="white", highlightthickness=1).grid( \
+         row=6, column=0, rowspan=2)
 
-   button2= Button(top, text="Smaller", command=lambda:close_win(top))
-   button2.pack(pady=5, side= TOP)
-#Create a Label
-label= Label(win, text="Click the Button to Open the Popup Dialogue", font= ('Helvetica 15 bold'))
-label.pack(pady=20)
+      # Canvas for BMU
+      self.bmucanvas = tk.Canvas(parent, \
+			height=50, width=50, bg="white", highlightthickness=1).grid( \
+         row=8, column=0, rowspan=3)
 
-#Create a Button
-button= Button(win, text= "Click Me!", command= popupwin, font= ('Helvetica 14 bold'))
-button.pack(pady=20)
-win.mainloop()
+      # COLUMN 2::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      # Canvas for Pack Vendor
+      self.packvcanvas = tk.Canvas(parent, \
+			width=50, height=50, bg="white", highlightthickness=1)
+      self.packvcanvas.grid(row=5, column=1) 
+      self.packvlabel = self.packvcanvas.create_text(25,25,text="SWD/SMP", \
+         font=("Helvetica", "18"), fill="black")
+
+      # Canvas for Cell Vendors
+      self.cellatlcanvas = tk.Canvas(parent, \
+			height=25, width=50, bg="white", highlightthickness=1).grid( \
+         row=6, column=1)
+      self.celllgcanvas = tk.Canvas(parent, \
+			height=25, width=50, bg="white", highlightthickness=1).grid( \
+         row=6, column=1)
+
+def motion(event):
+      x, y = event.x, event.y
+      print('{}, {}'.format(x, y))
+
+if __name__ == "__main__":
+   
+   root = tk.Tk()
+   root.title("X2384 Floorplan")
+   root.geometry("1280x720")
+   # root.geometry("2560x1440")
+   root.configure(bg='white')
+   root.bind("<Motion>", motion)
+
+   app = MainApplication(root)
+   root.mainloop()
