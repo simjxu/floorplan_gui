@@ -35,22 +35,25 @@ scaled_points = [i*3 for i in points]
 
 shape = my_canvas.create_polygon(scaled_points, fill="gray")
 
-def change_position(points, x, y):
+def change_position(pts, x, y):
+
     # Find center coords of the polygon
-    x0 = (points[7]+points[3])/2
-    y0 = (points[6]+points[1])/2
+    x0 = (pts[6]+pts[2])/2
+    y0 = (pts[5]+pts[1])/2
+
 
     # Calculate x and y distance to new position
     xdiff = x - x0
     ydiff = y - y0
 
     # Add x difference to x, y difference to y
-    points[::2] = [i+xdiff for i in points[::2]]        # Add xdiff to odd points
-    points[1::2] = [i+ydiff for i in points[1::2]]      # add ydiff to even points
+    pts[::2] = [i+xdiff for i in pts[::2]]        # Add xdiff to odd points
+    pts[1::2] = [i+ydiff for i in pts[1::2]]      # add ydiff to even points
 
-    return points
+    return pts
 
 newshape = my_canvas.create_polygon(change_position(scaled_points, 100,100), fill="gray")
+newline = my_canvas.create_line(100,100,400,100, fill="red", width=5)
 
 # root.configure(bg="white")
 root.mainloop()
