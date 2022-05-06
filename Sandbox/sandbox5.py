@@ -1,66 +1,25 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import PhotoImage, ttk
 
 class MainApplication:
 
    def __init__(self, parent):
-      # # Frame containing everything
-      # self.containerframe = tk.Frame(parent).grid(row=0, column=0)
-      
-      self.emptylabel = tk.Label(parent, borderwidth=1)
 
       # Canvas for the title
-      self.titlecanvas = tk.Canvas(parent, \
-         height=50, width=600, bg="white")
-      self.titlecanvas.grid(row=0, column=0, columnspan=12)
-      self.titlelabel = self.titlecanvas.create_text(300, 25, \
-         text="D37 (X2834) | Battery Floorplan - P1 Detail", \
-         font=("Helvetica Neue", "25"), fill="black")
-
-      # Canvas for the blank spot
-      self.canvas00 = tk.Canvas(parent, \
-			height=50, width=100, bg="white", highlightthickness=1)
-      self.canvas00.grid(row=1, column=0, rowspan=2, columnspan=2)
-
-      #Canvas for the System build
-      self.systemcanvas = tk.Canvas(parent, \
-			height=50, width=100, bg="white", highlightthickness=1)
-      self.systemcanvas.grid(row=4, column=0, columnspan=2)
-      self.systemlabel = self.systemcanvas.create_text(0,0,text="System", fill="black")
+      self.slidecanvas = tk.Canvas(parent, height=720, width=1280, bg="white")
+      self.slidecanvas.pack()
       
-      # COLUMN 1::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      # Canvas for pack
-      self.packcanvas = tk.Canvas(parent, \
-			width=50, height=50, bg="white", highlightthickness=1)
-      self.packcanvas.grid(row=5, column=0)
-      self.packlabel = self.packcanvas.create_text(25,25,text="Pack", \
-         font=("Helvetica", "18"), fill="black")
+      img = PhotoImage(file="/Users/simonxu/Documents/Github-simjxu/floorplan_gui/fp_images/test.png")
 
-      # Canvas for Cell
-      self.cellcanvas = tk.Canvas(parent, \
-			height=50, width=50, bg="white", highlightthickness=1).grid( \
-         row=6, column=0, rowspan=2)
+      # self.slidecanvas.create_image(260,125, anchor="nw", image=img)
+      self.loc_label = self.slidecanvas.create_text(500,500,text="",fill="black")
 
-      # Canvas for BMU
-      self.bmucanvas = tk.Canvas(parent, \
-			height=50, width=50, bg="white", highlightthickness=1).grid( \
-         row=8, column=0, rowspan=3)
+      self.slidecanvas.bind("<B1-Motion>", self.move)
 
-      # COLUMN 2::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      # Canvas for Pack Vendor
-      self.packvcanvas = tk.Canvas(parent, \
-			width=50, height=50, bg="white", highlightthickness=1)
-      self.packvcanvas.grid(row=5, column=1) 
-      self.packvlabel = self.packvcanvas.create_text(25,25,text="SWD/SMP", \
-         font=("Helvetica", "18"), fill="black")
+   def move(self, event):
+      self.slidecanvas.itemconfig(self.loc_label, \
+         text="Coordinates"+str(event.x)+","+(event.y))
 
-      # Canvas for Cell Vendors
-      self.cellatlcanvas = tk.Canvas(parent, \
-			height=25, width=50, bg="white", highlightthickness=1).grid( \
-         row=6, column=1)
-      self.celllgcanvas = tk.Canvas(parent, \
-			height=25, width=50, bg="white", highlightthickness=1).grid( \
-         row=6, column=1)
 
 def motion(event):
       x, y = event.x, event.y
@@ -73,7 +32,6 @@ if __name__ == "__main__":
    root.geometry("1280x720")
    # root.geometry("2560x1440")
    root.configure(bg='white')
-   root.bind("<Motion>", motion)
 
    app = MainApplication(root)
    root.mainloop()

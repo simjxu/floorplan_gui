@@ -1,26 +1,56 @@
-from tkinter import *
+import tkinter as tk
+from tkinter import PhotoImage, ttk
 
-startingWin = Tk()
+root = tk.Tk()
+root.geometry("1000x800")
+w = 800
+h = 600
+x = w/2
+y = h/2
 
-canvas = Canvas(startingWin, height=600)
-canvas.grid(row=0, column=0,sticky="nsew")
-canvasFrame = Frame(canvas)
-canvas.create_window(0, 0, window=canvasFrame, anchor='nw')
+img = PhotoImage(file="/Users/simonxu/Documents/Github-simjxu/floorplan_gui/fp_images/test.png")
 
-for i in range(70):
-    element = Button(canvasFrame, text='Button %s ' % i)
-    element.grid(row=i, column=0)
+# Make image half as small
+img = img.subsample(2)
 
-yscrollbar = Scrollbar(startingWin, orient=VERTICAL)
-yscrollbar.config(command=canvas.yview)
-canvas.config(yscrollcommand=yscrollbar.set)
-yscrollbar.grid(row=0, column=1, sticky="ns")
+my_canvas = tk.Canvas(root, width=w, height=h, bg="white")
+my_canvas.pack(pady=20)
+my_canvas.create_image(0,0, anchor="nw", image=img)
 
+def move(e):
+    my_label.config(text="Coords: "+str(e.x)+","+str(e.y))
 
+my_label = tk.Label(root, text="", fg="white")
+my_label.pack(pady=20)
 
-canvasFrame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
+my_canvas.bind("<B1-Motion>", move)
 
-# canvas.yview(END)
-canvas.yview_moveto(float(1.0)/float(2.0))
+# Text box placement
+new_label = my_canvas.create_text(206, 162,text="TESTER",fill="black")
+# new_label.place(x=100, y=100)
 
-startingWin.mainloop()
+# Create a diamond
+points = [5,1, 3,4, 5,7, 7,4]
+scaled_points = [i*3 for i in points]
+
+shape = my_canvas.create_polygon(scaled_points, fill="gray")
+
+def change_position(points, x, y):
+    # Find center coords of the polygon
+    x0 = (points[7]+points[3])/2
+    y0 = (points[6]+points[1])/2
+
+    # Calculate x and y distance to new position
+    xdiff = x - x0
+    ydiff = y - y0
+
+    # Add x difference to x, y difference to y
+    points[::2] = [i+xdiff for i in points[::2]]        # Add xdiff to odd points
+    points[1::2] = [i+ydiff for i in points[1::2]]      # add ydiff to even points
+
+    return points
+
+newshape = my_canvas.create_polygon(change_position(scaled_points, 100,100), fill="gray")
+
+# root.configure(bg="white")
+root.mainloop()
